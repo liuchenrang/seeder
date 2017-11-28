@@ -6,21 +6,31 @@ activate server
 
 server --> IDBufferManager: handler -> getIdByBizTag
 activate IDBufferManager
+    IDBufferManager -> IDBufferManager: isMake IDBufferSegment?
+    IDBufferManager -> IDBufferSegment: factory!
+    IDBufferSegment -> IDBuffer: factory
+    IDBuffer -> DBGen
+    DBGen -> IDBufferManager: finish
     IDBufferManager -> IDBufferSegment: getIDBufferSegmentByBizTag
     activate IDBufferSegment
-        IDBufferSegment -> IDBufferSegment: select IDbuffer
-        IDBufferSegment -> IDBufferSegment:  confirm IDBuffer
-        IDBufferSegment --> IDBufferSegment: go check IDBuffer
-        IDBufferSegment --> IDBufferSegment: loop check
+        IDBufferSegment -> IDBuffer:  Select Current IDBuffer
+        IDBuffer -> IDBufferSegment: finish 
+        IDBufferSegment --> IDBuffer: flush
+        IDBufferSegment -> IDBufferSegment: change  
+        IDBufferSegment -> IDBuffer: is finish ?
+        IDBuffer -> IDBufferSegment: finish 
+        IDBufferSegment -> IDBufferSegment:wait ! 
+        IDBufferSegment --> IDBufferSegment: finish ok 
             IDBufferSegment -> IDBuffer: getId
                 activate IDBuffer
                 activate Stats
-                Stats -> IDBuffer: dig stats
+                Stats --> IDBuffer: dig stats
+                IDBuffer --> Stats: is flush Buffer? getCurrentPercent
+                Stats --> IDBufferSegment: flush IDBuffer
                 deactivate Stats
                 destroy Stats
-                IDBuffer->IDBuffer: getId with buffer
-                IDBuffer->IDBuffer: getId with buffer
-                
+
+                IDBuffer->IDBuffer: getId with Buffer
                 IDBuffer --> DBGen: getId
                 DBGen --> IDBuffer: return id
             IDBuffer -> IDBufferSegment: return id
