@@ -1,0 +1,52 @@
+@startuml
+title IDFactory设计
+class Stats {
+  - int total
+  - int current
+  - string make(chan string)
+  +setTotal()
+  +dig()
+  +getCurrentPercent()
+  -evnet()
+}
+class IDBuffer {
+  - Stats stats 
+  - int currentId
+  - int maxId
+  - flush()
+  + getStats()
+  + DBGen gen
+}
+class IDBufferSegment{
+    - currentSegment
+    - IDBuffer[] idList 
+    - slectIdBuffer() IDBuffer
+    - updateSegment()
+    + getId() int
+}
+class IDBufferManager {
+    - bufferPool <string bizTag,IDBufferSegment[] list> 
+    - getIDBufferSegmentByBizTag(string tag)
+    - getIdBufferByTag(string tag)
+    + getIdByBizTag(string tag)
+}
+class DBGen{
+    bool create(string bizTag,int startId, int step, int bufferStep)
+    int  getId(string bizTag, int step)
+}
+interface IDGen{
+    bool create(string bizTag,int startId, int step, int bufferStep)
+    int  getId(string bizTag, int step) 
+}
+class IDFactoryService{
+    bool Register(string getnType, string biz_tag,int startId, int step, int bufferStep )
+    int  makeId(string bizTag)
+    
+}
+class TypeIDMake{
+    IDGen factory(string type)
+}
+DBGen --|> IDGen
+
+
+@enduml

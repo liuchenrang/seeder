@@ -1,0 +1,34 @@
+@startuml
+title "业务时序图"
+
+client --> server:   makeId
+activate server
+
+server --> IDBufferManager: handler -> getIdByBizTag
+activate IDBufferManager
+    IDBufferManager -> IDBufferSegment: getIDBufferSegmentByBizTag
+    activate IDBufferSegment
+        IDBufferSegment -> IDBufferSegment: select IDbuffer
+        IDBufferSegment -> IDBufferSegment:  confirm IDBuffer
+        IDBufferSegment --> IDBufferSegment: go check IDBuffer
+        IDBufferSegment --> IDBufferSegment: loop check
+            IDBufferSegment -> IDBuffer: getId
+                activate IDBuffer
+                activate Stats
+                Stats -> IDBuffer: dig stats
+                deactivate Stats
+                destroy Stats
+                IDBuffer->IDBuffer: getId with buffer
+                IDBuffer->IDBuffer: getId with buffer
+                
+                IDBuffer --> DBGen: getId
+                DBGen --> IDBuffer: return id
+            IDBuffer -> IDBufferSegment: return id
+            deactivate IDBuffer
+        IDBufferSegment -> IDBufferManager: return id
+        deactivate IDBufferSegment
+    IDBufferManager -> server: reeturn id
+server -> client : handler -> getId
+deactivate server
+
+@enduml
