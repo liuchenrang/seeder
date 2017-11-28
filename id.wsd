@@ -15,7 +15,10 @@ class IDBuffer {
   - int maxId
   - flush()
   + getStats()
-  + DBGen gen
+  + isFinish()
+  + getId()
+  + flush()
+  - DBGen gen
 }
 class IDBufferSegment{
     - currentSegment

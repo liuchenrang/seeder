@@ -13,14 +13,19 @@ activate IDBufferManager
     DBGen -> IDBufferManager: finish
     IDBufferManager -> IDBufferSegment: getIDBufferSegmentByBizTag
     activate IDBufferSegment
-        IDBufferSegment -> IDBuffer:  Select Current IDBuffer
+        IDBufferSegment -> IDBufferSegment:  Select Current IDBuffer
+        IDBufferSegment -> IDBuffer: Buffer 1 is finish ?
+        activate IDBuffer
         IDBuffer -> IDBufferSegment: finish 
+        deactivate IDBuffer
         IDBufferSegment --> IDBuffer: flush
-        IDBufferSegment -> IDBufferSegment: change  
-        IDBufferSegment -> IDBuffer: is finish ?
-        IDBuffer -> IDBufferSegment: finish 
-        IDBufferSegment -> IDBufferSegment:wait ! 
+        activate IDBuffer
+        IDBuffer --> IDBufferSegment: flush finish
+        deactivate IDBuffer
+        IDBufferSegment --> IDBufferSegment:wait ! 
         IDBufferSegment --> IDBufferSegment: finish ok 
+        IDBufferSegment --> IDBufferSegment: update Buffer1 
+        IDBufferSegment -> IDBufferSegment: User Buffer 2 
             IDBufferSegment -> IDBuffer: getId
                 activate IDBuffer
                 activate Stats
