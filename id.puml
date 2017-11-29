@@ -2,33 +2,38 @@
 title IDFactory设计
 class Stats {
   - int total
-  - int current
-  - string make(chan string)
-  +setTotal()
+  +getTotal()
   +dig()
-  +getCurrentPercent()
+  +clear()
   -evnet()
 }
+class Monitor {
+    Stats stats
+    setVigilantValue()
+    isOutVigilantValue()
+    event(*IDBuffer, done chan<-int)
+} 
 class IDBuffer {
   - Stats stats 
   - int currentId
   - int maxId
-  - flush()
+  + factory()
   + getStats()
-  + isFinish()
+  + isUseOut()
   + getId()
-  + flush()
+  + flush(flush chan<-int)
   - DBGen gen
 }
 class IDBufferSegment{
-    - currentSegment
+    - IDBuffer currentIDBuffer
     - IDBuffer[] idList 
+    - factory()
     - slectIdBuffer() IDBuffer
     - updateSegment()
     + getId() int
 }
 class IDBufferManager {
-    - bufferPool <string bizTag,IDBufferSegment[] list> 
+    - bufferPool <string bizTag,IDBufferSegment seg> 
     - getIDBufferSegmentByBizTag(string tag)
     - getIdBufferByTag(string tag)
     + getIdByBizTag(string tag)
@@ -43,8 +48,8 @@ interface IDGen{
 }
 class IDFactoryService{
     bool Register(string getnType, string biz_tag,int startId, int step, int bufferStep )
-    int  makeId(string bizTag)
-    
+    int  makeId(string bizTag, int type)
+        
 }
 class TypeIDMake{
     IDGen factory(string type)
