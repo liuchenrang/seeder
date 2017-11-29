@@ -32,7 +32,7 @@ class IDBufferSegment{
     - updateSegment()
     + getId() int
 }
-class IDBufferManager {
+class IDBufferSegmentManager {
     - bufferPool <string bizTag,IDBufferSegment seg> 
     - getIDBufferSegmentByBizTag(string tag)
     - getIdBufferByTag(string tag)

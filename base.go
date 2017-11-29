@@ -1,4 +1,4 @@
-package seed
+package main
 import (
     "sync"
 )
@@ -22,6 +22,7 @@ type IDBuffer struct{
 type TypeIDMake struct{
 
 }
+
 type TypeMake interface {
 	 factory(makeType string) IDGen
 }

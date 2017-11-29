@@ -1,4 +1,4 @@
-package buffer
+package generator
 
 type IDBufferSegment struct {
 	currentIDBuffer IDBuffer
