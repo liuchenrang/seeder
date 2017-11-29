@@ -14,7 +14,7 @@ type DBGen struct{
 func (gen *DBGen) GetId(bizTag string , step int) (int){
    gen.Lock.Lock()
    gen.Counter = gen.Counter+step
-   if gen.Counter == 10001 {
+   if gen.Counter == 10000 {
 	   gen.Fin<- gen.Counter
    }
    defer gen.Lock.Unlock()
