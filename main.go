@@ -1,19 +1,22 @@
 package main
 import "fmt"
 import "sync"
-import "seeder/segment"
-func test(gen base.IDGen){
+import (
+	"seeder/seed"
+)
+func test(gen seed.IDGen){
 	fmt.Println("", gen.GetId("photo", 1))
 }
 func main()  {
 	// runtime.GOMAXPROCS(runtime.NumCPU())
 	// runtime.GOMAXPROCS(1)
-	inchan := make(chan int, 1)
-	idGen := &base.DBGen{Counter:1, Fin: inchan,Lock: sync.Mutex{}}
-	i:=1
-	for i <= 10000 {
-	    go test(idGen)
+	inchan := make(chan int)
+	lck := &sync.Mutex{}
+	idGen := &seed.DBGen{Counter:1, Fin: inchan,Lock: lck }
+	i:=0
+	for i < 10000 {
 		i = i + 1
+	    go test(idGen)
 	}
 	select {
 	case ct := <-inchan:
