@@ -1,19 +1,22 @@
-package segment
+package base 
+import (
+    "sync"
+)
 type IDGen interface{
-	getId(bizTag string , step int ) int
+	GetId(bizTag string , step int ) int
 }
 
 type DBGen struct{
-   counter int 
-   lock sync.Mutex
-   fin chan<- int
+   Counter int 
+   Lock sync.Mutex
+   Fin chan<- int
 }
-func (gen *DBGen) getId(bizTag string , step int) (int){
-   gen.lock.Lock()
-   gen.counter = gen.counter+step
-   if gen.counter == 10001 {
-	   gen.fin<- gen.counter
+func (gen *DBGen) GetId(bizTag string , step int) (int){
+   gen.Lock.Lock()
+   gen.Counter = gen.Counter+step
+   if gen.Counter == 10001 {
+	   gen.Fin<- gen.Counter
    }
-   defer gen.lock.Unlock()
-   return gen.counter
+   defer gen.Lock.Unlock()
+   return gen.Counter
 }
