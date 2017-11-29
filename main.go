@@ -1,7 +1,7 @@
 package main
 import "fmt"
 import "sync"
-import "segment"
+import "seeder/segment"
 func test(gen IDGen){
 	fmt.Println("", gen.getId("photo", 1))
 }
