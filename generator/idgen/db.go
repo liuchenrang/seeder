@@ -3,7 +3,7 @@ package idgen
 import "sync"
 
 type DBGen struct{
-	Counter int
+	Counter uint64
 	Lock *sync.Mutex
 	Fin chan<- int
 }

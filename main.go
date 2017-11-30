@@ -2,9 +2,9 @@ package main
 import "fmt"
 import "sync"
 import (
-	"seeder/seed"
+	"seeder/generator/idgen"
 )
-func test(gen seed.IDGen){
+func test(gen idgen.IDGen){
 	fmt.Println("", gen.GetId("photo", 1))
 }
 func main()  {
@@ -12,7 +12,7 @@ func main()  {
 	// runtime.GOMAXPROCS(1)
 	inchan := make(chan int)
 	lck := &sync.Mutex{}
-	idGen := &seed.DBGen{Counter:1, Fin: inchan,Lock: lck }
+	idGen := &idgen.DBGen{Counter:1, Fin: inchan,Lock: lck }
 	i:=0
 	for i < 10000 {
 		i = i + 1

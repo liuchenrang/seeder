@@ -28,7 +28,7 @@ class IDBufferSegment{
     - IDBuffer currentIDBuffer
     - IDBuffer[] idList 
     - factory()
-    - slectIdBuffer() IDBuffer
+    - selectIdBuffer() IDBuffer
     - updateSegment()
     + getId() int
 }

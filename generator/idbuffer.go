@@ -1,15 +1,20 @@
 package generator
-
+import "sync/atomic"
 type IDBuffer struct{
-	currentId int
-	maxId int
+	currentId uint64
+	maxId uint64
 }
 
-func (buffer IDBuffer) GetId() int {
-	return 0
+func (buffer *IDBuffer) GetId() uint64 {
+	pint := & buffer.currentId
+	atomic.AddUint64(pint, 1)
+	return buffer.currentId;
 }
-func NewIDBuffer() IDBuffer {
-	return IDBuffer{}
+func (buffer *IDBuffer) IsUseOut() bool {
+	return false
+}
+func NewIDBuffer() *IDBuffer {
+	return &IDBuffer{currentId:0}
 }
 
 
