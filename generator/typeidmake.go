@@ -10,8 +10,10 @@ type TypeMake interface {
 	factory(makeType string) idgen.IDGen
 }
 
+type IdGenFactory func() idgen.IDGen
+
 func (typeMake TypeIDMake ) make() idgen.IDGen {
-	return idgen.DBGen{}
+	return &idgen.DBGen{}
 }
 func NewTypeIDMake() TypeIDMake {
 	return TypeIDMake{}

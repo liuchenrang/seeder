@@ -10,7 +10,7 @@ import (
 )
 func TestNewEqual(t *testing.T) {
 	// Different allocations should not be equal.
-	segment := generator.NewIDBufferSegment()
+	segment := generator.NewIDBufferSegment("photo")
 	id := segment.GetId()
 	t.Log("id ", id)
 	if id == 1 {

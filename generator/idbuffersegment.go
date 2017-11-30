@@ -2,12 +2,13 @@ package generator
 
 
 type IDBufferSegment struct {
-	currentIDBuffer *IDBuffer
-	idList []*IDBuffer
+	currentIdBuffer *IDBuffer
+	ids [] *IDBuffer
+	bizTag string
 }
 
 func (segment *IDBufferSegment) GetId() uint64  {
-	idBuf := segment.currentIDBuffer
+	idBuf := segment.currentIdBuffer
 
 	if idBuf.IsUseOut() {
 		for idBuf = segment.selectIdBuffer(); !idBuf.IsUseOut(); {
@@ -17,23 +18,27 @@ func (segment *IDBufferSegment) GetId() uint64  {
 	return idBuf.GetId();
 }
 func (segment *IDBufferSegment) selectIdBuffer() *IDBuffer {
-	if segment.idList[0].IsUseOut() {
+	 tagChan := make(chan string);
+	 tagStep := make(chan int);
+	 go segment.currentIdBuffer.flush(tagChan,tagStep)
+	 <-tagStep;
+	 return segment.currentIdBuffer;
 
-	} else {
-
-	}
-	return segment.idList[0]
 }
-func (segment *IDBufferSegment) Init() bool  {
-	idbuffer := NewIDBuffer()
-	segment.idList = append(segment.idList, idbuffer)
-	segment.currentIDBuffer = segment.selectIdBuffer()
+func (segment *IDBufferSegment) Init(bizTag string) bool  {
+	segment.bizTag = bizTag
+	idbuffer := NewIDBuffer(bizTag)
+	segment.ids = append(segment.ids, idbuffer)
+	segment.currentIdBuffer = segment.selectIdBuffer()
 	return true;
 }
+func (segment *IDBufferSegment) SetBizTag(bizTag string)   {
+	segment.bizTag = bizTag
+}
 
-func NewIDBufferSegment() (*IDBufferSegment) {
+func NewIDBufferSegment(bizTag string) (*IDBufferSegment) {
 	segment :=  &IDBufferSegment{}
-	segment.Init()
+	segment.Init(bizTag)
 	return segment
 }
 

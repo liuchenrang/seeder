@@ -14,13 +14,12 @@ type DBGen struct{
 
 
 
-func (dbgen *DBGen ) 	GetId(bizTag string , step int ) uint64 {
-	//dbgen.Lock.Lock()
+func (dbgen *DBGen ) GetId(bizTag string , step int ) uint64 {
 	pint := &dbgen.Counter
 	atomic.AddUint64(pint, 1)
 	if dbgen.Counter == 10001 {
 		dbgen.Fin <- 10001
 	}
-	//defer dbgen.Lock.Unlock()
 	return dbgen.Counter
 }
+

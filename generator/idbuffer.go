@@ -13,7 +13,10 @@ func (buffer *IDBuffer) GetId() uint64 {
 func (buffer *IDBuffer) IsUseOut() bool {
 	return false
 }
-func NewIDBuffer() *IDBuffer {
+func (buffer *IDBuffer) flush(tagChan <-chan string, stepChan chan<- int) bool {
+	return false
+}
+func NewIDBuffer(bizTag string) *IDBuffer {
 	return &IDBuffer{currentId:0}
 }
 

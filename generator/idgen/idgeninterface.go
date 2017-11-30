@@ -1,5 +1,5 @@
 package idgen
 
 type IDGen interface{
-	GetId(bizTag string , step int ) int
+	GetId(bizTag string , step int ) uint64
 }
