@@ -27,8 +27,8 @@ func (segment *IDBufferSegment) selectIdBuffer() *IDBuffer {
 }
 func (segment *IDBufferSegment) Init(bizTag string) bool  {
 	segment.bizTag = bizTag
-	idbuffer := NewIDBuffer(bizTag)
-	segment.ids = append(segment.ids, idbuffer)
+	idBuffer := NewIDBuffer(bizTag)
+	segment.ids = append(segment.ids, idBuffer)
 	segment.currentIdBuffer = segment.selectIdBuffer()
 	return true;
 }

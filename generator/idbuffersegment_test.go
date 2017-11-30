@@ -1,6 +1,5 @@
 package generator_test
 
-
 import (
 	//"errors"
 	//"fmt"
@@ -8,6 +7,7 @@ import (
 	"seeder/generator"
 	"time"
 )
+
 func TestNewEqual(t *testing.T) {
 	// Different allocations should not be equal.
 	segment := generator.NewIDBufferSegment("photo")
@@ -26,10 +26,9 @@ func TestNewEqual(t *testing.T) {
 		t.Error("xxx")
 	}
 
-		go func(){
-			t.Log("id",segment.GetId())
-		}()
+	go func() {
+		t.Log("id", segment.GetId())
+	}()
 
-	time.Sleep(time.Second*3)
+	time.Sleep(time.Second * 3)
 }
-
