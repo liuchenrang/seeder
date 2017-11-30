@@ -1,6 +1,10 @@
 package idgen
 
-import "sync"
+import (
+	"sync"
+	//"sync/atomic"
+	"sync/atomic"
+)
 
 type DBGen struct{
 	Counter uint64
@@ -10,6 +14,13 @@ type DBGen struct{
 
 
 
-func (dbgen DBGen ) 	GetId(bizTag string , step int ) int {
-	return 0
+func (dbgen *DBGen ) 	GetId(bizTag string , step int ) uint64 {
+	//dbgen.Lock.Lock()
+	pint := &dbgen.Counter
+	atomic.AddUint64(pint, 1)
+	if dbgen.Counter == 10001 {
+		dbgen.Fin <- 10001
+	}
+	//defer dbgen.Lock.Unlock()
+	return dbgen.Counter
 }

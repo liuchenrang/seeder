@@ -1,5 +1,7 @@
 package monitor
 
+import . "seeder/stats"
+
 type Monitor struct{
 	stats Stats
 }
