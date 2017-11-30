@@ -1,15 +1,16 @@
 package stats
 
+import "sync/atomic"
 
 type Stats struct{
-	stats Stats
-	total  int
+	total  int32
 }
-func (stats *Stats) GetTotal() int{
+func (stats *Stats) GetTotal() int32{
 	return stats.total
 }
 func (stats *Stats) Dig(){
-	stats.total++
+	pint := &stats.total;
+	atomic.AddInt32(pint,1)
 }
 func (stats *Stats) Clear(){
 	stats.total = 0
