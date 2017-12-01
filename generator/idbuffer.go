@@ -5,7 +5,6 @@ import (
 	"seeder/stats"
 	"sync"
 	"seeder/generator/idgen"
-	"fmt"
 )
 type IDBuffer struct{
 	currentId uint64
@@ -38,7 +37,7 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	}
 	buffer.lck.Lock()
 	buffer.isUseOut = buffer.currentId > buffer.maxId
-	fmt.Println("currentId ", buffer.currentId, "maxId", buffer.maxId,"isUseOut",  buffer.isUseOut)
+	logger.Debug("currentId ", buffer.currentId, "maxId", buffer.maxId,"isUseOut",  buffer.isUseOut)
 	buffer.lck.Unlock()
 	return buffer.isUseOut
 }
@@ -61,7 +60,7 @@ func NewIDBuffer(bizTag string) *IDBuffer {
 	}()
 	row := make(map[string]uint64)
 	row = <-IdChan
-	buffer := &IDBuffer{bizTag:bizTag, currentId: row["maxId"], maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}, lck:&sync.Mutex{}, db: dbGen, isUseOut:false}  //
+	buffer := &IDBuffer{bizTag:bizTag, currentId: row["maxId"]+1, maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}, lck:&sync.Mutex{}, db: dbGen, isUseOut:false}  //
 	return buffer
 }
 

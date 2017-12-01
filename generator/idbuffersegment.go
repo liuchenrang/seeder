@@ -18,6 +18,10 @@ func (segment *IDBufferSegment) GetId() uint64 {
 
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 	segment.masterIDBuffer = NewIDBuffer(bizTag)
+	flushDB := make(chan string)
+	go func() {
+		segment.masterIDBuffer.Flush(flushDB)
+	}()
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
