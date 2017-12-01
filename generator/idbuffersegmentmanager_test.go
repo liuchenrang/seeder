@@ -3,6 +3,7 @@ package generator
 import (
 	"testing"
 	"fmt"
+	"time"
 )
 
 
@@ -15,11 +16,17 @@ func TestManager(t *testing.T) {
 		runTime := 1000;
 		for i <= runTime {
 			i++
-			fmt.Println("id:", m.GetId("uts"))
+			id := m.GetId("uts")
+			if id <= 0 {
+				m.segment.ChangeSlaveToMaster()
+			}
+			fmt.Println("id:", id)
 		}
 		if i == runTime {
 			wait<- runTime
 		}
+		time.Sleep(time.Second*10)
+
 		wait<- runTime
 	}()
 	<-wait

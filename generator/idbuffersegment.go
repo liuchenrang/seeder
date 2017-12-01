@@ -2,10 +2,6 @@ package generator
 
 import (
 	"sync"
-	"seeder/logger"
-)
-var (
-	logger logger.Logger{}
 )
 type IDBufferSegment struct {
 	changeLock sync.Mutex
@@ -46,9 +42,14 @@ func NewSegmentBizTag(bizTag string) (*IDBufferSegment) {
 func (segment *IDBufferSegment) ChangeSlaveToMaster()  {
 	logger.Debug(segment.bizTag + " changeSlaveToMaster")
 	segment.changeLock.Lock()
-	segment.masterIDBuffer = segment.slaveIdBuffer
-	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag)
-	defer segment.changeLock.Unlock()
+		flushDB := make(chan string)
+		go func(){
+			segment.masterIDBuffer.flush(flushDB)
+		}()
+		<-flushDB
+		segment.masterIDBuffer = segment.slaveIdBuffer
+		segment.slaveIdBuffer = NewIDBuffer(segment.bizTag)
+	segment.changeLock.Unlock()
 }
 
 

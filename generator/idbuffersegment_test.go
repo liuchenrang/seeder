@@ -14,7 +14,7 @@ func TestNewEqual(t *testing.T) {
 	segment := generator.NewIDBufferSegment("photo")
 	segment.CreateMasterIDBuffer("photo")
 	id := segment.GetId()
-	logger := logger.New()
+	logger := SeederLogger.New()
 	var i uint64
 	for i < 2000 {
 		id = segment.GetId()

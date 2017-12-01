@@ -1,7 +1,10 @@
 package generator
 
 import (
+	"seeder/logger"
+	"fmt"
 )
+var logger SeederLogger.Logger
 
 type IDBufferSegmentManager struct{
 		segment *IDBufferSegment
@@ -15,11 +18,14 @@ func NewIDBufferSegmentManager(bizTag string) *IDBufferSegmentManager{
 	go func(){
 		for{
 			monitor := NewMonitor(segment)
-			monitor.SetVigilantValue(200)
+			monitor.SetVigilantValue(5)
 			vigilant := monitor.IsOutVigilantValue()
 			if vigilant {
+				fmt.Println(" Over call CreateSlaveIDBuffer ",bizTag)
 				segment.CreateSlaveIDBuffer(bizTag)
+				//segment.GetMasterIdBuffer().GetStats().Clear()
 			}
+
 		}
 	}()
 	return &IDBufferSegmentManager{segment:segment}

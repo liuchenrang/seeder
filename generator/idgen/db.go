@@ -44,7 +44,7 @@ func (dbgen *DBGen) find(bizTag string) {
 	dbgen.cacheStep = cacheStep
 	dbgen.maxId = currentId + cacheStep
 }
-func (dbgen *DBGen) updateStep(bizTag string) (int64, error) {
+func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
 	stmt, errPrepare := dbgen.db.Prepare("UPDATE common_generator SET currentId = currentId + cacheStep where keyName= ? ")
 	var errorUpdate error
 	defer stmt.Close()
@@ -62,7 +62,7 @@ func (dbgen *DBGen) updateStep(bizTag string) (int64, error) {
 	}
 	return affected, errorUpdate
 }
-func NewDBGen(bizTag string) *DBGen {
+func NewDBGen(bizTag string) IDGen {
 
 	db, errOpen := sql.Open("mysql", "root:tortdh_gogo888!@tcp(10.10.106.218:3306)/maindb?charset=utf8") //
 	if db == nil {
