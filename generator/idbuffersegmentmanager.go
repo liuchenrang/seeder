@@ -2,7 +2,19 @@ package generator
 
 
 import(
-	"../generator/pool"
+	"../generator/"
+	"../monitor"
 )
 
 
+
+
+func main(){
+	
+	 segment := generator.NewIDBufferSegment('tag')
+	 segment.CreateMasterIDBuffer()
+
+	 monitor := monitor.NewMonitor()
+
+
+}
