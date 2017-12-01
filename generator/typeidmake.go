@@ -1,7 +1,7 @@
 package generator
 
 import (
-	"./idgen"
+	"seeder/generator/idgen"
 )
 
 type TypeIDMake struct {

@@ -1,8 +1,8 @@
 package monitor
 
 import (
-	"../stats"
-	"../generator"
+	"seeder/generator"
+	"seeder/stats"
 )
 
 type Monitor struct {

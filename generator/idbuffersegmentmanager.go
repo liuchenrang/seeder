@@ -1,12 +1,18 @@
 package generator
 
-import "seeder/monitor"
+import (
+	"seeder/monitor"
+	"seeder/pool"
+)
 
-type NewIDBufferSegmentManager struct{
-
+type IDBufferSegmentManager struct{
+		pool pool.Pool
+		segment *IDBufferSegment
 }
-
-func NewIDBufferSegmentManager(bizTag string){
+func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64{
+	return manager.segment.GetId()
+}
+func NewIDBufferSegmentManager(bizTag string) *IDBufferSegmentManager{
 	segment := NewIDBufferSegment(bizTag)
 	segment.CreateMasterIDBuffer(bizTag)
 	go func(){
@@ -19,5 +25,5 @@ func NewIDBufferSegmentManager(bizTag string){
 			}
 		}
 	}()
-	segment.GetId()
+	return &IDBufferSegmentManager{segment:segment}
 }

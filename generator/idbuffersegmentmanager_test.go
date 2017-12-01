@@ -2,10 +2,13 @@ package generator
 
 import (
 	"testing"
+	"fmt"
 )
 
 
 func TestNewEqual(t *testing.T) {
 	// Different allocations should not be equal.
-	NewIDBufferSegmentManager("uts")
+	m := NewIDBufferSegmentManager("uts")
+	//m.GetId("uts")
+	fmt.Println(m.GetId("uts"))
 }
