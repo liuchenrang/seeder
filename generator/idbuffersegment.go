@@ -3,49 +3,17 @@ package generator
 import "sync"
 
 type IDBufferSegment struct {
+	changeLock sync.Mutex
 	masterIDBuffer *IDBuffer
 	slaveIdBuffer *IDBuffer
-	ids [] *IDBuffer
-	changeLock sync.Mutex
 	bizTag string
 }
 
 func (segment *IDBufferSegment) GetId() uint64  {
 	idBuf := segment.masterIDBuffer
-	if idBuf.IsUseOut() {
-		for idBuf = segment.selectIdBuffer(); !idBuf.IsUseOut(); {
-
-		}
-	}
 	return idBuf.GetId();
 }
-func (segment *IDBufferSegment) selectIdBuffer() *IDBuffer {
-	 tagChan := make(chan string);
-	 tagStep := make(chan uint64);
-	 hasOneUse := 0
-	for _, idBuf := range segment.ids {
-		if !idBuf.IsUseOut() {
-			segment.masterIDBuffer = idBuf
-		}else{
-			hasOneUse++
-		}
-	}
-	if hasOneUse == 1 {
-		go segment.masterIDBuffer.flush(tagChan,tagStep)
-	} else if hasOneUse == 2 {
-		go segment.masterIDBuffer.flush(tagChan,tagStep)
-		segment.masterIDBuffer.maxId = <-tagStep
-	}
-	return segment.masterIDBuffer;
 
-}
-
-func (segment *IDBufferSegment) Init(bizTag string) bool  {
-	idBuffer := NewIDBuffer(bizTag)
-	segment.ids = append(segment.ids, idBuffer)
-	segment.masterIDBuffer = segment.selectIdBuffer()
-	return true;
-}
 
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string)  *IDBuffer {
 	segment.masterIDBuffer = NewIDBuffer(bizTag)
