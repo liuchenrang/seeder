@@ -6,11 +6,13 @@ import (
 	"testing"
 	"seeder/generator"
 	"seeder/logger"
+	"fmt"
 )
 
 func TestNewEqual(t *testing.T) {
 	// Different allocations should not be equal.
 	segment := generator.NewIDBufferSegment("photo")
+	segment.CreateMasterIDBuffer("photo")
 	id := segment.GetId()
 	logger := logger.New()
 	var i uint64
@@ -20,7 +22,8 @@ func TestNewEqual(t *testing.T) {
 			t.Error("id error")
 			break;
 		}
-		logger.Debug("id ")
+		fmt.Println()
+		logger.Debug("id ", id)
 		i++;
 	}
 }

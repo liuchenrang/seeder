@@ -28,14 +28,12 @@ func (buffer *IDBuffer) flush(tagChan <-chan string, tagStepChan chan<- uint64) 
 	tagStepChan <- 2000
 	return false
 }
-func (buffer *IDBuffer) Init(bizTag string)  {
-	buffer.stats = &stats.Stats{}
-}
+
 func NewIDBuffer(bizTag string) *IDBuffer {
 	IdChan := make(chan map[string]uint64)
 	typeIdMake := TypeIDMake{}
 	go func(){
-		maxId, cacheStep, _ := typeIdMake.Make().GenerateSegment(bizTag)
+		maxId, cacheStep, _ := typeIdMake.Make(bizTag).GenerateSegment(bizTag)
 		find := make(map[string]uint64)
 		find["maxId"] = maxId
 		find["cacheStep"] = cacheStep
@@ -43,8 +41,7 @@ func NewIDBuffer(bizTag string) *IDBuffer {
 	}()
 	row := make(map[string]uint64)
 	row = <-IdChan
-	buffer := &IDBuffer{currentId: row["maxId"], maxId: row["maxId"]  +  row["cacheStep"] }  //
-	buffer.Init(bizTag)
+	buffer := &IDBuffer{currentId: row["maxId"], maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}}  //
 	return buffer
 }
 

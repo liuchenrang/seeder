@@ -9,11 +9,11 @@ import (
 )
 func TestIdBuffer(t *testing.T) {
 	// Different allocations should not be equal.
-	idBuf := generator.NewIDBuffer("photo")
+	idBuf := generator.NewIDBuffer("uts")
 	idBuf.GetId()
 	i := 1
 	var id uint64;
-	for  i < 1000  {
+	for  i < 50  {
 		id = idBuf.GetId()
 		getId := idBuf.GetId()
 		if id+1 != getId {

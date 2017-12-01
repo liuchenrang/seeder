@@ -6,14 +6,10 @@ type TypeIDMake struct{
 
 }
 
-type TypeMake interface {
-	factory(makeType string) idgen.IDGen
-}
 
-type IdGenFactory func() idgen.IDGen
 
-func (typeMake TypeIDMake ) Make() idgen.IDGen {
-	return &idgen.DBGen{}
+func (typeMake TypeIDMake ) Make(bizTag string) idgen.IDGen {
+	return idgen.NewDBGen(bizTag)
 }
 func NewTypeIDMake() TypeIDMake {
 	return TypeIDMake{}
