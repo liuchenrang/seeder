@@ -1,0 +1,37 @@
+@startuml  
+title "启动"
+== 启动流程 ==
+
+Manager->Segment:初始NewSegmentBizTag
+
+Manager->Segment:CreateMasterIDBuffer
+
+Manager-->Monitor: 启动Monitor 监控 上一步的IDbuffer
+
+== 消费监控 ==
+
+Monitor-->Manager: 通知Manager 即将ID消耗完毕
+Manager-->Segment: CreateSlaveIDBuffer
+
+
+== 服务正常 ==
+
+Manager->Segment: getId
+Segment->IDBuffer: 返回ID
+IDBuffer->Segment: 返回成功!
+Segment->Manager: finish
+
+== 服务失败 ==
+
+IDBuffer->Segment: 返回失败!
+Segment->Manager:失败情况1:切换主从, 2:直接尝试
+Manager->Segment: ChangeSlaveToMaster
+
+Manager->Segment: 再次重试
+Segment->IDBuffer: 重试
+activate IDBuffer
+IDBuffer->Segment: GetId
+deactivate IDBuffer
+Segment->Manager: GetId
+
+@enduml
