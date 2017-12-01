@@ -5,6 +5,7 @@ import (
 	//"fmt"
 	"testing"
 	"seeder/generator"
+	"fmt"
 )
 func TestIdBuffer(t *testing.T) {
 	// Different allocations should not be equal.
@@ -14,13 +15,23 @@ func TestIdBuffer(t *testing.T) {
 	var id uint64;
 	for  i < 1000  {
 		id = idBuf.GetId()
-		if id+1 != idBuf.GetId() {
+		getId := idBuf.GetId()
+		if id+1 != getId {
 			t.Error("id error")
 			break;
 		}
-		//fmt.Println("id", id)
+		fmt.Println("id", id)
+		fmt.Println("id", getId)
 		i++;
 
 	}
+}
+
+func TestNewIDBuffer(t *testing.T) {
+	// Different allocations should not be equal.
+	idBuf := generator.NewIDBuffer("photo")
+	fmt.Println(idBuf)
+	fmt.Println(idBuf.GetId())
+
 }
 

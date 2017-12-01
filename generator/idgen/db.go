@@ -14,7 +14,7 @@ type DBGen struct{
 
 
 
-func (dbgen *DBGen ) generateSegment(bizTag string  ) (uint64, uint64, error) {
+func (dbgen *DBGen ) GenerateSegment(bizTag string  ) (uint64, uint64, error) {
 	dbgen.find(bizTag)
 	return dbgen.maxId, dbgen.cacheStep, nil
 }
