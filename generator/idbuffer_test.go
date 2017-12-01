@@ -10,15 +10,17 @@ func TestIdBuffer(t *testing.T) {
 	// Different allocations should not be equal.
 	idBuf := generator.NewIDBuffer("photo")
 	idBuf.GetId()
-	i := 0
+	i := 1
 	var id uint64;
 	for  i < 1000  {
-		i++;
 		id = idBuf.GetId()
-		if id != idBuf.GetId() {
+		if id+1 != idBuf.GetId() {
 			t.Error("id error")
 			break;
 		}
+		//fmt.Println("id", id)
+		i++;
+
 	}
 }
 

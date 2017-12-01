@@ -9,7 +9,6 @@ type IDBufferSegment struct {
 
 func (segment *IDBufferSegment) GetId() uint64  {
 	idBuf := segment.currentIdBuffer
-
 	if idBuf.IsUseOut() {
 		for idBuf = segment.selectIdBuffer(); !idBuf.IsUseOut(); {
 
@@ -19,12 +18,25 @@ func (segment *IDBufferSegment) GetId() uint64  {
 }
 func (segment *IDBufferSegment) selectIdBuffer() *IDBuffer {
 	 tagChan := make(chan string);
-	 tagStep := make(chan int);
-	 go segment.currentIdBuffer.flush(tagChan,tagStep)
-	 <-tagStep;
-	 return segment.currentIdBuffer;
+	 tagStep := make(chan uint64);
+	 hasOneUse := 0
+	for _, idBuf := range segment.ids {
+		if !idBuf.IsUseOut() {
+			segment.currentIdBuffer = idBuf
+		}else{
+			hasOneUse++
+		}
+	}
+	if hasOneUse == 1 {
+		go segment.currentIdBuffer.flush(tagChan,tagStep)
+	} else if hasOneUse == 2 {
+		go segment.currentIdBuffer.flush(tagChan,tagStep)
+		segment.currentIdBuffer.maxId = <-tagStep
+	}
+	return segment.currentIdBuffer;
 
 }
+
 func (segment *IDBufferSegment) Init(bizTag string) bool  {
 	segment.bizTag = bizTag
 	idBuffer := NewIDBuffer(bizTag)
