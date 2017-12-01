@@ -23,7 +23,7 @@ func NewIDBufferSegmentManager(bizTag string) *IDBufferSegmentManager{
 			if vigilant {
 				fmt.Println(" Over call CreateSlaveIDBuffer ",bizTag)
 				segment.CreateSlaveIDBuffer(bizTag)
-				//segment.GetMasterIdBuffer().GetStats().Clear()
+				segment.GetMasterIdBuffer().GetStats().Clear()
 			}
 
 		}

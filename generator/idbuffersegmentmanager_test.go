@@ -18,6 +18,7 @@ func TestManager(t *testing.T) {
 			i++
 			id := m.GetId("uts")
 			if id <= 0 {
+				logger.Debug("Do ChangeSlaveToMaster")
 				m.segment.ChangeSlaveToMaster()
 			}
 			fmt.Println("id:", id)

@@ -27,3 +27,11 @@ func TestNewEqual(t *testing.T) {
 		i++;
 	}
 }
+
+func TestStats(t *testing.T) {
+	// Different allocations should not be equal.
+	segment := generator.NewIDBufferSegment("photo")
+	segment.CreateMasterIDBuffer("photo")
+	segment.ChangeSlaveToMaster()
+	segment.GetMasterIdBuffer().GetStats()
+}

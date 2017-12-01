@@ -42,10 +42,10 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	buffer.lck.Unlock()
 	return buffer.isUseOut
 }
- func (buffer *IDBuffer) flush(tagChan chan string) bool {
- 	buffer.db.UpdateStep(buffer.bizTag)
- 	tagChan <-"finish"
- 	return false
+ func (buffer *IDBuffer) Flush(tagChan chan string)  {
+	 buffer.db.UpdateStep(buffer.bizTag)
+	 tagChan <- "finish"
+	 logger.Debug("Do IDBuffer Write"  , <-tagChan)
  }
 
 func NewIDBuffer(bizTag string) *IDBuffer {
