@@ -2,22 +2,22 @@ package generator
 
 import (
 	"sync/atomic"
-	"seeder/monitor"
 	"fmt"
+	"seeder/stats"
 )
 type IDBuffer struct{
 	currentId uint64
 	maxId uint64
-	monitor *monitor.Monitor
+	stats *stats.Stats
 	bizTag string
 }
 
 func (buffer *IDBuffer) GetId() uint64 {
 
-	buffer.monitor.GetStats().Dig()
+	buffer.stats.Dig()
 	pint := & buffer.currentId
 	atomic.AddUint64(pint, 1)
-	fmt.Println("dig ", buffer.monitor.GetStats().GetTotal())
+	fmt.Println("dig ", buffer.stats.GetTotal())
 	return buffer.currentId;
 }
 func (buffer *IDBuffer) IsUseOut() bool {
@@ -27,17 +27,18 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	isUseOut := buffer.currentId > buffer.maxId
 	return isUseOut
 }
-func (buffer *IDBuffer) flush(tagChan <-chan string, tagStepChan chan<- int) bool {
+func (buffer *IDBuffer) flush(tagChan <-chan string, tagStepChan chan<- uint64) bool {
+	buffer.stats.Clear()
 	tagStepChan <- 2000
 	return false
 }
 func (buffer *IDBuffer) Init(bizTag string)  {
-	buffer.monitor = monitor.NewMonitor()
-	buffer.maxId = 1000;
-
+	buffer.stats = &stats.Stats{}
 }
 func NewIDBuffer(bizTag string) *IDBuffer {
-	buffer := &IDBuffer{currentId: 0}
+	make := TypeIDMake{}
+	make.Make().GetId(bizTag, 1)
+	buffer := &IDBuffer{currentId: 0, maxId: 1000}  //
 	buffer.Init(bizTag)
 	return buffer
 }

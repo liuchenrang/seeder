@@ -40,11 +40,11 @@ class IDBufferSegmentManager {
 }
 class DBGen{
     bool create(string bizTag,int startId, int step, int bufferStep)
-    int  getId(string bizTag, int step)
+    int  generateSegment(bizTag string  ) (uint64, uint64, error)   - maxId step errro
 }
 interface IDGen{
     bool create(string bizTag,int startId, int step, int bufferStep)
-    int  getId(string bizTag, int step) 
+    int  generateSegment(bizTag string  ) (uint64, uint64, error)   - maxId step errro
 }
 class IDFactoryService{
     bool Register(string getnType, string biz_tag,int startId, int step, int bufferStep )
