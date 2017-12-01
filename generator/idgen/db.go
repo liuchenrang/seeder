@@ -2,24 +2,30 @@ package idgen
 
 import (
 	"sync"
-	//"sync/atomic"
-	"sync/atomic"
 )
 
 type DBGen struct{
-	Counter uint64
+	counter uint64
+	maxId uint64
+	cacheStep uint64
 	Lock *sync.Mutex
 	Fin chan<- int
 }
 
 
 
-func (dbgen *DBGen ) GetId(bizTag string , step int ) uint64 {
-	pint := &dbgen.Counter
-	atomic.AddUint64(pint, 1)
-	if dbgen.Counter == 10001 {
-		dbgen.Fin <- 10001
-	}
-	return dbgen.Counter
+func (dbgen *DBGen ) generateSegment(bizTag string  ) (uint64, uint64, error) {
+	dbgen.find(bizTag)
+	return dbgen.maxId, dbgen.cacheStep, nil
 }
-
+func (dbgen *DBGen) flush(bizTag string){
+	dbgen.find(bizTag)
+}
+func (dbgen *DBGen) find(bizTag string){
+	dbgen.counter++
+	dbgen.cacheStep = 500
+	dbgen.maxId = 3000*dbgen.counter
+}
+func NewDBGen(bizTag string) *DBGen{
+	return &DBGen{}
+}

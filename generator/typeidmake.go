@@ -12,7 +12,7 @@ type TypeMake interface {
 
 type IdGenFactory func() idgen.IDGen
 
-func (typeMake TypeIDMake ) make() idgen.IDGen {
+func (typeMake TypeIDMake ) Make() idgen.IDGen {
 	return &idgen.DBGen{}
 }
 func NewTypeIDMake() TypeIDMake {
