@@ -1,13 +1,12 @@
-package monitor
+package generator
 
 import (
-	"seeder/generator"
 	"seeder/stats"
 )
 
 type Monitor struct {
 	threshold uint64
-	segment  *generator.IDBufferSegment
+	segment  *IDBufferSegment
 }
 
 func (m *Monitor) SetVigilantValue(threshold uint64) {
@@ -24,6 +23,6 @@ func (m *Monitor) GetStats() *stats.Stats {
 	return m.segment.GetMasterIdBuffer().GetStats()
 }
 
-func NewMonitor(seg *generator.IDBufferSegment) *Monitor {
+func NewMonitor(seg *IDBufferSegment) *Monitor {
 	return &Monitor{segment: seg}
 }

@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="da77d9fc-f400-4de4-a4f7-c06c969e8bd0" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/generator/idbuffer.go" afterPath="$PROJECT_DIR$/generator/idbuffer.go" />
+      <change beforePath="$PROJECT_DIR$/generator/idbuffersegment.go" afterPath="$PROJECT_DIR$/generator/idbuffersegment.go" />
       <change beforePath="$PROJECT_DIR$/generator/idbuffersegmentmanager.go" afterPath="$PROJECT_DIR$/generator/idbuffersegmentmanager.go" />
       <change beforePath="$PROJECT_DIR$/generator/idbuffersegmentmanager_test.go" afterPath="$PROJECT_DIR$/generator/idbuffersegmentmanager_test.go" />
-      <change beforePath="$PROJECT_DIR$/generator/typeidmake.go" afterPath="$PROJECT_DIR$/generator/typeidmake.go" />
-      <change beforePath="$PROJECT_DIR$/monitor/monitor.go" afterPath="$PROJECT_DIR$/monitor/monitor.go" />
+      <change beforePath="$PROJECT_DIR$/generator/idgen/db.go" afterPath="$PROJECT_DIR$/generator/idgen/db.go" />
+      <change beforePath="$PROJECT_DIR$/monitor/monitor.go" afterPath="$PROJECT_DIR$/generator/monitor.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,63 +37,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="id.puml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource/id.puml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="42" column="24" lean-forward="false" selection-start-line="42" selection-start-column="9" selection-end-line="42" selection-end-column="24" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tutorial.thrift" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource/tutorial.thrift">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="idbuffersegmentmanager.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/generator/idbuffersegmentmanager.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="34" lean-forward="true" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
-              <folding>
-                <element signature="e#19#62#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pool.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pool/pool.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="8" column="5" lean-forward="false" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+            <state relative-caret-position="210">
+              <caret line="14" column="14" lean-forward="true" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="idbuffersegment_test.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/generator/idbuffersegment_test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="idbuffersegmentmanager_test.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="idbuffersegmentmanager_test.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/generator/idbuffersegmentmanager_test.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="165">
-              <caret line="11" column="20" lean-forward="true" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
+              <caret line="11" column="13" lean-forward="true" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
               <folding>
                 <element signature="e#19#47#0" expanded="true" />
               </folding>
@@ -98,32 +59,81 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="typeidmake.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/generator/typeidmake.go">
+      <file leaf-file-name="db_test.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/generator/idgen/db_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+            <state relative-caret-position="180">
+              <caret line="16" column="15" lean-forward="true" selection-start-line="16" selection-start-column="15" selection-end-line="16" selection-end-column="15" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="newSeq.puml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resource/newSeq.puml">
+      <file leaf-file-name="db.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/generator/idgen/db.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="27" column="37" lean-forward="false" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="37" />
+            <state relative-caret-position="60">
+              <caret line="4" column="38" lean-forward="false" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="38" />
+              <folding>
+                <marker date="1512121690692" expanded="true" signature="552:628" ph="SELECT curre... common_generator" />
+                <marker date="1512121690692" expanded="true" signature="1143:1221" ph="UPDATE common_generator... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sql.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../../../go/src/database/sql/sql.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="594" column="5" lean-forward="false" selection-start-line="594" selection-start-column="5" selection-end-line="594" selection-end-column="5" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="idbuffersegment.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/generator/idbuffersegment.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="395">
+              <caret line="46" column="36" lean-forward="false" selection-start-line="46" selection-start-column="36" selection-end-line="46" selection-end-column="36" />
+              <folding>
+                <element signature="e#19#54#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="builtin.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../../../go/src/builtin/builtin.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="196">
+              <caret line="181" column="5" lean-forward="false" selection-start-line="181" selection-start-column="5" selection-end-line="181" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="idbuffer.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/generator/idbuffer.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="86">
+              <caret line="7" column="5" lean-forward="false" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+              <folding>
+                <element signature="e#19#68#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="monitor.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/monitor/monitor.go">
+        <entry file="file://$PROJECT_DIR$/generator/monitor.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="375">
+              <caret line="25" column="21" lean-forward="false" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+              <folding>
+                <element signature="e#19#45#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -133,7 +143,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="105">
               <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="e#15#35#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -165,6 +177,7 @@
       <find>masterBuffer</find>
       <find>bizTag</find>
       <find>tag</find>
+      <find>cycle</find>
     </findStrings>
     <replaceStrings>
       <replace>seeder</replace>
@@ -178,6 +191,8 @@
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/../../../../../go/src/net/http</dir>
+      <dir>$PROJECT_DIR$</dir>
+      <dir>$PROJECT_DIR$/generator</dir>
     </dirStrings>
   </component>
   <component name="GOROOT" path="$PROJECT_DIR$/../../../../../go" />
@@ -209,17 +224,18 @@
         <option value="$PROJECT_DIR$/generator/idgen/db_test.go" />
         <option value="$PROJECT_DIR$/seeder.yml" />
         <option value="$PROJECT_DIR$/generator/idbuffer_test.go" />
-        <option value="$PROJECT_DIR$/generator/idgen/db.go" />
         <option value="$PROJECT_DIR$/stats/stats_test.go" />
         <option value="$PROJECT_DIR$/logger/logger.go" />
         <option value="$PROJECT_DIR$/generator/idbuffersegment_test.go" />
-        <option value="$PROJECT_DIR$/generator/idbuffersegment.go" />
-        <option value="$PROJECT_DIR$/generator/idbuffer.go" />
         <option value="$PROJECT_DIR$/stats/stats.go" />
-        <option value="$PROJECT_DIR$/generator/idbuffersegmentmanager.go" />
-        <option value="$PROJECT_DIR$/generator/idbuffersegmentmanager_test.go" />
-        <option value="$PROJECT_DIR$/monitor/monitor.go" />
         <option value="$PROJECT_DIR$/generator/typeidmake.go" />
+        <option value="$PROJECT_DIR$/generator/idgen/db.go" />
+        <option value="$PROJECT_DIR$/monitor/monitor.go" />
+        <option value="$PROJECT_DIR$/generator/idbuffersegmentmanager.go" />
+        <option value="$PROJECT_DIR$/generator/monitor.go" />
+        <option value="$PROJECT_DIR$/generator/idbuffersegmentmanager_test.go" />
+        <option value="$PROJECT_DIR$/generator/idbuffer.go" />
+        <option value="$PROJECT_DIR$/generator/idbuffersegment.go" />
       </list>
     </option>
   </component>
@@ -285,11 +301,6 @@
             <path>
               <item name="seeder" type="b2602c69:ProjectViewProjectNode" />
               <item name="seeder" type="462c0819:PsiDirectoryNode" />
-              <item name="monitor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="seeder" type="b2602c69:ProjectViewProjectNode" />
-              <item name="seeder" type="462c0819:PsiDirectoryNode" />
               <item name="pool" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -348,6 +359,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/generator" />
       <recent name="$PROJECT_DIR$/generator/idgen" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/idgen" />
@@ -365,7 +377,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestNewEqual in idbuffersegment_test.go">
+  <component name="RunManager" selected="Go Test.TestManager in idbuffersegmentmanager_test.go">
     <configuration name="TestIdBuffer in idbuffer_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true">
       <module name="IdFacotry" />
       <working_directory value="$PROJECT_DIR$/generator" />
@@ -374,6 +386,15 @@
       <kind value="PACKAGE" />
       <package value="seeder/generator" />
       <pattern value="^TestIdBuffer$" />
+    </configuration>
+    <configuration name="TestManager in idbuffersegmentmanager_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true">
+      <module name="IdFacotry" />
+      <working_directory value="$PROJECT_DIR$/generator" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="seeder/generator" />
+      <pattern value="^TestManager$" />
     </configuration>
     <configuration name="TestNewEqual in db_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true">
       <module name="IdFacotry" />
@@ -393,15 +414,6 @@
       <package value="seeder/generator" />
       <pattern value="^TestNewEqual$" />
     </configuration>
-    <configuration name="TestNewIDBuffer in idbuffer_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true">
-      <module name="IdFacotry" />
-      <working_directory value="$PROJECT_DIR$/generator" />
-      <go_parameters value="-i" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="seeder/generator" />
-      <pattern value="^TestNewIDBuffer$" />
-    </configuration>
     <configuration name="db_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true">
       <module name="IdFacotry" />
       <working_directory value="$PROJECT_DIR$/generator/idgen" />
@@ -413,18 +425,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Go Test.TestIdBuffer in idbuffer_test.go" />
-      <item index="1" class="java.lang.String" itemvalue="Go Test.TestNewIDBuffer in idbuffer_test.go" />
-      <item index="2" class="java.lang.String" itemvalue="Go Test.TestNewEqual in db_test.go" />
-      <item index="3" class="java.lang.String" itemvalue="Go Test.db_test.go" />
-      <item index="4" class="java.lang.String" itemvalue="Go Test.TestNewEqual in idbuffersegment_test.go" />
+      <item index="1" class="java.lang.String" itemvalue="Go Test.TestNewEqual in db_test.go" />
+      <item index="2" class="java.lang.String" itemvalue="Go Test.db_test.go" />
+      <item index="3" class="java.lang.String" itemvalue="Go Test.TestNewEqual in idbuffersegment_test.go" />
+      <item index="4" class="java.lang.String" itemvalue="Go Test.TestManager in idbuffersegmentmanager_test.go" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Go Test.TestNewEqual in idbuffersegment_test.go" />
-        <item index="1" class="java.lang.String" itemvalue="Go Test.TestIdBuffer in idbuffer_test.go" />
+        <item index="0" class="java.lang.String" itemvalue="Go Test.TestManager in idbuffersegmentmanager_test.go" />
+        <item index="1" class="java.lang.String" itemvalue="Go Test.TestNewEqual in idbuffersegment_test.go" />
         <item index="2" class="java.lang.String" itemvalue="Go Test.TestNewEqual in db_test.go" />
-        <item index="3" class="java.lang.String" itemvalue="Go Test.db_test.go" />
-        <item index="4" class="java.lang.String" itemvalue="Go Test.TestNewIDBuffer in idbuffer_test.go" />
+        <item index="3" class="java.lang.String" itemvalue="Go Test.TestIdBuffer in idbuffer_test.go" />
+        <item index="4" class="java.lang.String" itemvalue="Go Test.db_test.go" />
       </list>
     </recent_temporary>
   </component>
@@ -446,39 +458,48 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="TestIdBuffer_in_idbuffer_test_go - 2017.12.01 at 16h 36m 57s.xml">
-      <configuration name="TestIdBuffer in idbuffer_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 17h 57m 56s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestIdBuffer_in_idbuffer_test_go - 2017.12.01 at 17h 00m 06s.xml">
-      <configuration name="TestIdBuffer in idbuffer_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 17h 59m 12s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_db_test_go - 2017.12.01 at 16h 34m 55s.xml">
-      <configuration name="TestNewEqual in db_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 00m 25s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 16h 54m 49s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 00m 45s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 16h 56m 55s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 01m 15s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 16h 58m 59s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 02m 09s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 17h 00m 14s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 02m 15s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 17h 01m 39s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 02m 44s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 17h 04m 35s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 03m 10s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestNewEqual_in_idbuffersegment_test_go - 2017.12.01 at 17h 05m 47s.xml">
-      <configuration name="TestNewEqual in idbuffersegment_test.go" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestManager_in_idbuffersegmentmanager_test_go - 2017.12.01 at 18h 07m 58s.xml">
+      <configuration name="TestManager in idbuffersegmentmanager_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="682000" />
+  </component>
+  <component name="TodoView" selected-index="3">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1020" extended-state="6" />
@@ -486,11 +507,11 @@
     <layout>
       <window_info id="PlantUML" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3024494" sideWeight="0.50625" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25772098" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32960597" sideWeight="0.49375" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32914045" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -662,13 +683,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../go/src/builtin/builtin.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="35" column="5" lean-forward="false" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../../go/src/log/log.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-233">
@@ -749,37 +763,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generator/idgen/db_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="18" lean-forward="false" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="18" />
-          <folding>
-            <element signature="e#15#54#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generator/idgen/db.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="69" column="24" lean-forward="false" selection-start-line="69" selection-start-column="24" selection-end-line="69" selection-end-column="24" />
-          <folding>
-            <element signature="e#15#56#0" expanded="false" />
-            <marker date="1512119708380" expanded="true" signature="546:622" ph="SELECT curre... common_generator" />
-            <marker date="1512119708380" expanded="true" signature="1140:1216" ph="SELECT curre... common_generator" />
-            <marker date="1512119708380" expanded="true" signature="1140:1218" ph="UPDATE common_generator... " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../go/src/database/sql/sql.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="32" column="26" lean-forward="false" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/dsn.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1008">
@@ -830,34 +813,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generator/idbuffer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37">
-          <caret line="7" column="5" lean-forward="false" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-          <folding>
-            <element signature="e#19#68#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generator/idbuffersegment.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="28" column="56" lean-forward="true" selection-start-line="28" selection-start-column="56" selection-end-line="28" selection-end-column="56" />
-          <folding>
-            <element signature="e#19#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/stats/stats.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resource/newSeq.puml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
@@ -898,24 +853,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/monitor/monitor.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generator/idbuffersegmentmanager.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="34" lean-forward="true" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
-          <folding>
-            <element signature="e#19#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/generator/typeidmake.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -924,12 +861,95 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../go/src/database/sql/sql.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="594" column="5" lean-forward="false" selection-start-line="594" selection-start-column="5" selection-end-line="594" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generator/idgen/db.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="38" lean-forward="false" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="38" />
+          <folding>
+            <marker date="1512121690692" expanded="true" signature="552:628" ph="SELECT curre... common_generator" />
+            <marker date="1512121690692" expanded="true" signature="1143:1221" ph="UPDATE common_generator... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generator/idgen/db_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="16" column="15" lean-forward="true" selection-start-line="16" selection-start-column="15" selection-end-line="16" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stats/stats.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#15#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generator/monitor.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="21" lean-forward="false" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+          <folding>
+            <element signature="e#19#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generator/idbuffer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="86">
+          <caret line="7" column="5" lean-forward="false" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+          <folding>
+            <element signature="e#19#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generator/idbuffersegmentmanager.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="14" lean-forward="true" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../go/src/builtin/builtin.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="181" column="5" lean-forward="false" selection-start-line="181" selection-start-column="5" selection-end-line="181" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/generator/idbuffersegmentmanager_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
-          <caret line="11" column="20" lean-forward="true" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
+          <caret line="11" column="13" lean-forward="true" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
           <folding>
             <element signature="e#19#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generator/idbuffersegment.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="46" column="36" lean-forward="false" selection-start-line="46" selection-start-column="36" selection-end-line="46" selection-end-column="36" />
+          <folding>
+            <element signature="e#19#54#0" expanded="true" />
           </folding>
         </state>
       </provider>

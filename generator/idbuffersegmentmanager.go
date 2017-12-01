@@ -1,12 +1,9 @@
 package generator
 
 import (
-	"seeder/monitor"
-	"seeder/pool"
 )
 
 type IDBufferSegmentManager struct{
-		pool pool.Pool
 		segment *IDBufferSegment
 }
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64{
@@ -17,7 +14,7 @@ func NewIDBufferSegmentManager(bizTag string) *IDBufferSegmentManager{
 	segment.CreateMasterIDBuffer(bizTag)
 	go func(){
 		for{
-			monitor := monitor.NewMonitor(segment)
+			monitor := NewMonitor(segment)
 			monitor.SetVigilantValue(200)
 			vigilant := monitor.IsOutVigilantValue()
 			if vigilant {
