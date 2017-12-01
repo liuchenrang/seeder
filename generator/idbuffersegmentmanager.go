@@ -1,35 +1,23 @@
 package generator
 
+import "seeder/monitor"
 
-import(
-	"../generator"
-	"../monitor"
-)
+type NewIDBufferSegmentManager struct{
 
+}
 
-func main(){
-	
-	 tag := "tag"
-	 segment := generator.NewIDBufferSegment(tag)
-	 masterBuffer := segment.CreateMasterIDBuffer()
-
-	 go func(){
+func NewIDBufferSegmentManager(bizTag string){
+	segment := NewIDBufferSegment(bizTag)
+	segment.CreateMasterIDBuffer(bizTag)
+	go func(){
 		for{
 			monitor := monitor.NewMonitor(segment)
 			monitor.SetVigilantValue(200)
 			vigilant := monitor.IsOutVigilantValue()
 			if vigilant {
-				segment.CreateSlaveIDBuffer(tag)
-			}	
+				segment.CreateSlaveIDBuffer(bizTag)
+			}
 		}
-	 }
-
-	 id = segment.GetId()
-	 if id {
-		 return id
-	 }else{
-		 segment.ChangeSlaveToMaster()
-		 return segment.GetId()
-	 }
-	 
+	}()
+	segment.GetId()
 }

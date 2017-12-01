@@ -26,7 +26,9 @@ func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string)  *IDBuffer {
 func (segment *IDBufferSegment) SetBizTag(bizTag string)   {
 	segment.bizTag = bizTag
 }
-
+func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer   {
+	return segment.masterIDBuffer
+}
 func NewIDBufferSegment(bizTag string) (*IDBufferSegment) {
 	segment :=  &IDBufferSegment{}
 	segment.SetBizTag(bizTag)

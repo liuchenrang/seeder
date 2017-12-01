@@ -7,22 +7,23 @@ import (
 
 type Monitor struct {
 	threshold uint64
-	segment  *segment
+	segment  *generator.IDBufferSegment
 }
 
-func (m *Monitor) SetVigilantValue(threshold: uint64) {
+func (m *Monitor) SetVigilantValue(threshold uint64) {
 	m.threshold = threshold
 }
-func (m *Monitor) IsOutVigilantValue() {
-	return m.segment.masterIDBuffer.total >= m.threshold
+func (m *Monitor) IsOutVigilantValue() bool {
+	i := m.segment.GetMasterIdBuffer().GetStats().GetTotal()
+	return i >= m.threshold
 }
 func (m *Monitor) Event(tag <-chan string) {
 
 }
-func (m *Monitor) GetStats() *Stats {
-	return m.segment.masterIDBuffer.stats
+func (m *Monitor) GetStats() *stats.Stats {
+	return m.segment.GetMasterIdBuffer().GetStats()
 }
 
-func NewMonitor(seg *IDBufferSegment) *Monitor {
+func NewMonitor(seg *generator.IDBufferSegment) *Monitor {
 	return &Monitor{segment: seg}
 }

@@ -12,6 +12,7 @@ type IDBuffer struct{
 	bizTag string
 }
 var m = sync.Mutex{}
+
 func (buffer *IDBuffer) GetId() uint64 {
 
 	buffer.stats.Dig()
@@ -19,15 +20,18 @@ func (buffer *IDBuffer) GetId() uint64 {
 	atomic.AddUint64(pint, 1)
 	return buffer.currentId;
 }
+func (buffer *IDBuffer) GetStats()  *stats.Stats {
+	return buffer.stats
+}
 func (buffer *IDBuffer) IsUseOut() bool {
 	isUseOut := buffer.currentId > buffer.maxId
 	return isUseOut
 }
-func (buffer *IDBuffer) flush(tagChan <-chan string, tagStepChan chan<- uint64) bool {
-	buffer.stats.Clear()
-	tagStepChan <- 2000
-	return false
-}
+// func (buffer *IDBuffer) flush(tagChan <-chan string, tagStepChan chan<- uint64) bool {
+// 	buffer.stats.Clear()
+// 	tagStepChan <- 2000
+// 	return false
+// }
 
 func NewIDBuffer(bizTag string) *IDBuffer {
 	IdChan := make(chan map[string]uint64)
