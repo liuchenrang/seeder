@@ -1,5 +1,5 @@
 package idgen
 
 type IDGen interface{
-	GetId(bizTag string , step int ) uint64
+	generateSegment(bizTag string  ) (uint64, uint64, error)
 }
