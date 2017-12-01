@@ -71,7 +71,7 @@ func NewSegmentBizTag(bizTag string) (*IDBufferSegment) {
 func (segment *IDBufferSegment) ChangeSlaveToMaster()  {
 	segment.changeLock.Lock()
 	segment.masterIDBuffer = segment.slaveIdBuffer
-	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag)
+	segment.slaveIDBuffer = NewIDBuffer(segment.bizTag)
 	defer segment.changeLock.Unlock()
 }
 

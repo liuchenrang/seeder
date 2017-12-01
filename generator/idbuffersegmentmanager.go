@@ -7,14 +7,29 @@ import(
 )
 
 
-
-
 func main(){
 	
-	 segment := generator.NewIDBufferSegment('tag')
-	 segment.CreateMasterIDBuffer()
+	 tag := "tag"
+	 segment := generator.NewIDBufferSegment(tag)
+	 masterBuffer := segment.CreateMasterIDBuffer()
 
-	 monitor := monitor.NewMonitor()
+	 go func(){
+		for{
+			monitor := monitor.NewMonitor(segment)
+			monitor.SetVigilantValue(200)
+			vigilant := monitor.IsOutVigilantValue()
+			if vigilant {
+				segment.CreateSlaveIDBuffer(tag)
+			}	
+		}
+	 }
 
-
+	 id = segment.GetId()
+	 if id {
+		 return id
+	 }else{
+		 segment.ChangeSlaveToMaster()
+		 return segment.GetId()
+	 }
+	 
 }
