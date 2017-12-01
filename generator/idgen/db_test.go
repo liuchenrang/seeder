@@ -9,8 +9,8 @@ import (
 
 
 func test(g IDGen){
-	fmt.Println(g.generateSegment("biz"))
-	fmt.Println(g.generateSegment("biz"))
+	fmt.Println(g.GenerateSegment("biz"))
+	fmt.Println(g.GenerateSegment("biz"))
 }
 func TestNewEqual(t *testing.T)  {
 	runtime.GOMAXPROCS(runtime.NumCPU())
