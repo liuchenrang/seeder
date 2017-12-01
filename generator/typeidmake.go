@@ -1,14 +1,13 @@
 package generator
 
-import "seeder/generator/idgen"
+import (
+	"./idgen"
+)
 
-type TypeIDMake struct{
-
+type TypeIDMake struct {
 }
 
-
-
-func (typeMake TypeIDMake ) Make(bizTag string) idgen.IDGen {
+func (typeMake TypeIDMake) Make(bizTag string) idgen.IDGen {
 	return idgen.NewDBGen(bizTag)
 }
 func NewTypeIDMake() TypeIDMake {

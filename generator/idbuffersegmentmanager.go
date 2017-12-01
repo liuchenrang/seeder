@@ -2,7 +2,7 @@ package generator
 
 
 import(
-	"../generator/"
+	"../generator"
 	"../monitor"
 )
 
