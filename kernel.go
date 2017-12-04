@@ -6,6 +6,8 @@ import (
 	"seeder/bootstrap"
 	"seeder/thrift/packages/generator"
 	"git.apache.org/thrift.git/lib/go/thrift"
+	generator2 "seeder/generator"
+	"seeder/config"
 )
 
 type strapper bootstrap.Strapper
@@ -37,25 +39,34 @@ func (s *Kernel) BootstrapWith() {
 }
 
 const (
-	HOST = "localhost"
+	HOST = "0.0.0.0"
 	PORT = "8080"
 )
-//var manager generator2.IDBufferSegmentManager
+var manager generator2.IDBufferSegmentManager
 type IdGeneratorServiceImpl struct {
 }
 
-func (*IdGeneratorServiceImpl) Ping() (r string, user_exception *generator.UserException, system_exception *generator.SystemException, unknown_exception *generator.UnknownException, err error) {
-	return "ping", nil, nil, nil, nil
+//func (*IdGeneratorServiceImpl) Ping() (r string, user_exception *generator.UserException, system_exception *generator.SystemException, unknown_exception *generator.UnknownException, err error) {
+//}
+//
+//func (*IdGeneratorServiceImpl) GetId(t *generator.TGetIdParams) (r string, user_exception *generator.UserException, system_exception *generator.SystemException, unknown_exception *generator.UnknownException, err error) {
+//
+//}
+func (*IdGeneratorServiceImpl)  Ping() (r string, err error){
+	return "ping", nil
+
 }
+// Parameters:
+//  - Params
+func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, err error){
+	fmt.Printf("request tag: %v, type: %v", params)
 
-func (*IdGeneratorServiceImpl) GetId(t *generator.TGetIdParams) (r string, user_exception *generator.UserException, system_exception *generator.SystemException, unknown_exception *generator.UnknownException, err error) {
-	fmt.Printf("request tag: %v, type: %v", t.Tag, t.GeneratorType)
-
-	//id := manager.GetId(t.Tag)
-	return string(3), nil, nil, nil, nil
+	id := manager.GetId(params.GetTag())
+	fmt.Println("id", id)
+	return fmt.Sprintf("%d", id), nil
 }
 func init()  {
-	//manager = 	*generator2.NewIDBufferSegmentManager(config.NewSeederConfig("./seeder.yaml"))
+	manager = 	*generator2.NewIDBufferSegmentManager(config.NewSeederConfig("./seeder.yaml"))
 }
 func (*Kernel) Serve() {
 
