@@ -51,7 +51,7 @@ func (dbgen *DBGen) find(bizTag string) {
 	}
 	tx.Commit()
 	dbgen.cacheStep = cacheStep
-	dbgen.maxId = currentId + cacheStep
+	dbgen.maxId = currentId + cacheStep + 1
 }
 func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
 	dbgen.lock.Lock()

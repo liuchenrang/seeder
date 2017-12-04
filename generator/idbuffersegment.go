@@ -14,16 +14,22 @@ type IDBufferSegment struct {
 }
 
 func (segment *IDBufferSegment) GetId() uint64 {
+	logger.Debug( " segment nil ", segment == nil)
 	idBuf := segment.masterIDBuffer
+
 	return idBuf.GetId();
 }
 
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
+	segment.changeLock.Lock()
+	defer segment.changeLock.Unlock()
+
 	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.config)
 	flushDB := make(chan string)
 	go func() {
 		segment.masterIDBuffer.Flush(flushDB)
 	}()
+	logger.Debug(" Segment CreateMasterIDBuffer ",segment.masterIDBuffer)
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
@@ -40,14 +46,13 @@ func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 	return segment.slaveIdBuffer
 }
 func NewIDBufferSegment(bizTag string,  config config.SeederConfig) (*IDBufferSegment) {
+
 	segment := &IDBufferSegment{config: config}
+
 	segment.SetBizTag(bizTag)
 	return segment
 }
-func NewSegmentBizTag(bizTag string, config config.SeederConfig) (*IDBufferSegment) {
-	segment := NewIDBufferSegment(bizTag, config)
-	return segment
-}
+
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	logger.Debug(segment.bizTag + " changeSlaveToMaster")
 	segment.changeLock.Lock()
