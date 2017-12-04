@@ -9,3 +9,4 @@ import:
 - package: github.com/go-sql-driver/mysql
   version: v1.2
 - package: gopkg.in/yaml.v2
+- package: github.com/alecthomas/log4go

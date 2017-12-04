@@ -5,6 +5,7 @@ import (
 	"seeder/stats"
 	"sync"
 	"seeder/generator/idgen"
+	"seeder/config"
 )
 type IDBuffer struct{
 	currentId uint64
@@ -47,10 +48,10 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	 logger.Debug("Do IDBuffer Write"  , <-tagChan)
  }
 
-func NewIDBuffer(bizTag string) *IDBuffer {
+func NewIDBuffer(bizTag string, seederConfig config.SeederConfig) *IDBuffer {
 	IdChan := make(chan map[string]uint64)
 	typeIdMake := TypeIDMake{}
-	dbGen := typeIdMake.Make(bizTag)
+	dbGen := typeIdMake.Make(bizTag, seederConfig)
 	go func(){
 		maxId, cacheStep, _ := dbGen.GenerateSegment(bizTag)
 		find := make(map[string]uint64)

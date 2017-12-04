@@ -6,16 +6,24 @@ import (
 	"io/ioutil"
 	"log"
 )
+var (
+	seederConfig SeederConfig
+)
 type Account struct{
 	Name string
 	Password string
 	Database string
 	Table string
+	DBName string `yaml:"dbname"`
 }
-
+type ConnectionInfo struct{
+	Max int
+	Idle int
+}
 type Database struct{
 	Account Account
 	Master  []Server
+	ConnectionInfo ConnectionInfo `yaml:"connection_info"`
 }
 type Logger struct{
 	Path string `yaml:"path"`

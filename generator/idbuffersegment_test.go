@@ -7,11 +7,12 @@ import (
 	"seeder/generator"
 	"seeder/logger"
 	"fmt"
+	"seeder/config"
 )
 
 func TestNewEqual(t *testing.T) {
 	// Different allocations should not be equal.
-	segment := generator.NewIDBufferSegment("photo")
+	segment := generator.NewIDBufferSegment("photo",config.NewSeederConfig("../seeder.yaml"))
 	segment.CreateMasterIDBuffer("photo")
 	id := segment.GetId()
 	logger := SeederLogger.New()
@@ -30,7 +31,7 @@ func TestNewEqual(t *testing.T) {
 
 func TestStats(t *testing.T) {
 	// Different allocations should not be equal.
-	segment := generator.NewIDBufferSegment("photo")
+	segment := generator.NewIDBufferSegment("photo" , config.NewSeederConfig("../seeder.yaml"))
 	segment.CreateMasterIDBuffer("photo")
 	segment.ChangeSlaveToMaster()
 	segment.GetMasterIdBuffer().GetStats()
