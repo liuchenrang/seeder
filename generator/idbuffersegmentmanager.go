@@ -20,10 +20,10 @@ type IDBufferSegmentManager struct {
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
+	manager.bizTag = bizTag
 	manager.lock.Lock()
 	defer manager.lock.Unlock()
 	manager.CreateBizTagSegment()
-
 	manager.segment = manager.tagPool[bizTag]
 	if  manager.segment == nil{
 		log.Fatal("bizTag " , bizTag, " not create")
@@ -65,8 +65,8 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment() *IDBufferSegment {
 	return manager.segment
 }
 
-func NewIDBufferSegmentManager(bizTag string, config config.SeederConfig) *IDBufferSegmentManager {
-	manager := &IDBufferSegmentManager{config: config, bizTag: bizTag, tagPool: make(map[string] *IDBufferSegment), lock: &sync.Mutex{}}
+func NewIDBufferSegmentManager(config config.SeederConfig) *IDBufferSegmentManager {
+	manager := &IDBufferSegmentManager{config: config, tagPool: make(map[string] *IDBufferSegment), lock: &sync.Mutex{}}
 
 	//manager.CreateBizTagSegment()
 
