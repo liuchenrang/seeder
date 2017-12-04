@@ -12,7 +12,7 @@ func TestManager(t *testing.T) {
 	wait := make(chan int)
 	go func(){
 		i := 0
-		runTime := 1000;
+		runTime := 2000;
 		for i <= runTime {
 			i++
 			id := m.GetId("uts")
@@ -29,4 +29,9 @@ func TestManager(t *testing.T) {
 		wait<- runTime
 	}()
 	<-wait
+}
+
+func TestFmt(t *testing.T) {
+	// Different allocations should not be equal.
+	fmt.Println("xx")
 }

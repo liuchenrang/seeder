@@ -60,7 +60,7 @@ func NewIDBuffer(bizTag string) *IDBuffer {
 	}()
 	row := make(map[string]uint64)
 	row = <-IdChan
-	buffer := &IDBuffer{bizTag:bizTag, currentId: row["maxId"]+1, maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}, lck:&sync.Mutex{}, db: dbGen, isUseOut:false}  //
+	buffer := &IDBuffer{bizTag:bizTag, currentId: row["maxId"], maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}, lck:&sync.Mutex{}, db: dbGen, isUseOut:false}  //
 	return buffer
 }
 

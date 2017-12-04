@@ -5,9 +5,7 @@ import (
 	"seeder/generator/idgen"
 	"runtime"
 )
-func test(gen *idgen.DBGen){
-	fmt.Println("", gen.GetId("photo", 1))
-}
+
 func main()  {
 	 runtime.GOMAXPROCS(runtime.NumCPU())
 	// runtime.GOMAXPROCS(1)

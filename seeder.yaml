@@ -1,0 +1,16 @@
+database:
+    account:
+         "name": "root"
+         "password": "tortdh_gogo888!"
+         "database": "maindb"
+         "table": "common_generator"
+    master:
+        -
+           host: 10.10.106.218
+           port: 3306
+logger:
+     path: "/tmp"
+     level: "1"
+server:
+     port: 4400
+     host: 127.0.0.1

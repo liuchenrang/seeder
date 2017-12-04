@@ -1,8 +1,0 @@
-database:
-    account: { "name" :"root" , "password":"tortdh_gogo888!", "database":"maindb", "table"=>"common_generator"}
-    master:
-        - {"host":"", "port":3306}
-        - {"host":"", "port":3306}
-    slave:
-        - {"host":"", "port":3306}
-        - {"host":"", "port":3306}
