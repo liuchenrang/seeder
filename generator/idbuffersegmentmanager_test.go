@@ -3,12 +3,14 @@ package generator
 import (
 	"testing"
 	"fmt"
+	"seeder/config"
 )
 
 
 func TestManager(t *testing.T) {
 	// Different allocations should not be equal.
-	m := NewIDBufferSegmentManager("uts")
+
+	m := NewIDBufferSegmentManager("uts", config.NewSeederConfig("../seeder.yaml"))
 	wait := make(chan int)
 	go func(){
 		i := 0

@@ -2,6 +2,7 @@ package generator
 
 import (
 	"sync"
+	"seeder/config"
 )
 
 type IDBufferSegment struct {
@@ -9,6 +10,7 @@ type IDBufferSegment struct {
 	masterIDBuffer *IDBuffer
 	slaveIdBuffer  *IDBuffer
 	bizTag         string
+	config config.SeederConfig
 }
 
 func (segment *IDBufferSegment) GetId() uint64 {
@@ -17,7 +19,7 @@ func (segment *IDBufferSegment) GetId() uint64 {
 }
 
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
-	segment.masterIDBuffer = NewIDBuffer(bizTag)
+	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.config)
 	flushDB := make(chan string)
 	go func() {
 		segment.masterIDBuffer.Flush(flushDB)
@@ -25,7 +27,7 @@ func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
-	segment.slaveIdBuffer = NewIDBuffer(bizTag)
+	segment.slaveIdBuffer = NewIDBuffer(bizTag, segment.config)
 	return segment.slaveIdBuffer
 }
 func (segment *IDBufferSegment) SetBizTag(bizTag string) {
@@ -37,13 +39,13 @@ func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer {
 func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 	return segment.slaveIdBuffer
 }
-func NewIDBufferSegment(bizTag string) (*IDBufferSegment) {
-	segment := &IDBufferSegment{}
+func NewIDBufferSegment(bizTag string,  config config.SeederConfig) (*IDBufferSegment) {
+	segment := &IDBufferSegment{config: config}
 	segment.SetBizTag(bizTag)
 	return segment
 }
-func NewSegmentBizTag(bizTag string) (*IDBufferSegment) {
-	segment := NewIDBufferSegment(bizTag)
+func NewSegmentBizTag(bizTag string, config config.SeederConfig) (*IDBufferSegment) {
+	segment := NewIDBufferSegment(bizTag, config)
 	return segment
 }
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
@@ -59,6 +61,6 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	}()
 	<-flushDB
 	segment.masterIDBuffer = segment.slaveIdBuffer
-	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag)
+	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.config)
 	segment.changeLock.Unlock()
 }

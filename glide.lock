@@ -1,14 +1,14 @@
-hash: fefe87aa19ff8810ed857a6fb0fae435d1945609c1c5314a806a72ed5fa3ea38
-updated: 2017-11-27T12:17:46.532573+08:00
+hash: c675d57bbea1f038887f500ba98bba080d0cbbd5b09d31d5887829c45f0ddd84
+updated: 2017-12-04T16:48:43.463172+08:00
 imports:
 - name: git.apache.org/thrift.git
   version: 0dd823580c78a79ae9696eb9b3650e400fff140f
   subpackages:
   - lib/go/thrift
+- name: github.com/alecthomas/log4go
+  version: a9cdec6a8ef5b02d7e1b8dd0782d34c62648f07d
 - name: github.com/go-sql-driver/mysql
   version: a732e14c62dde3285440047bba97581bc472ae18
-- name: github.com/mattn/go-adodb
-  version: 8a75490faf6ae99c92e96d210caeebdba7c93522
 - name: gopkg.in/yaml.v2
   version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
 testImports: []

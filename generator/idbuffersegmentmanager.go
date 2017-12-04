@@ -3,6 +3,7 @@ package generator
 import (
 	"seeder/logger"
 	"fmt"
+	"seeder/config"
 )
 var logger SeederLogger.Logger
 
@@ -12,8 +13,8 @@ type IDBufferSegmentManager struct{
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64{
 	return manager.segment.GetId()
 }
-func NewIDBufferSegmentManager(bizTag string) *IDBufferSegmentManager{
-	segment := NewIDBufferSegment(bizTag)
+func NewIDBufferSegmentManager(bizTag string, config config.SeederConfig) *IDBufferSegmentManager{
+	segment := NewIDBufferSegment(bizTag, config)
 	segment.CreateMasterIDBuffer(bizTag)
 	go func(){
 		for{

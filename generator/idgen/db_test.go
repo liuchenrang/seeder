@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"testing"
+	"seeder/config"
 )
 
 
@@ -13,7 +14,8 @@ func test(g IDGen){
 }
 func TestNewEqual(t *testing.T)  {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	idGen := NewDBGen("uts")
+	seederConfig := config.NewSeederConfig("../../seeder.yaml")
+	idGen := NewDBGen("uts", seederConfig)
 	test(idGen)
-
+	fmt.Println(seederConfig)
 }

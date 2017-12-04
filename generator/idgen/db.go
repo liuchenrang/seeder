@@ -5,18 +5,24 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"sync"
+	"seeder/config"
+	"fmt"
 )
 
 type DBGen struct {
-	counter   uint64
 	maxId     uint64
 	db        *sql.DB
 	cacheStep uint64
-	Lock      *sync.Mutex
+	lock      *sync.Mutex
 	Fin       chan<- int
+	config config.SeederConfig
+
+
 }
 
-var db *sql.DB
+var (
+	db *sql.DB
+)
 
 func (dbgen *DBGen) GenerateSegment(bizTag string) (uint64, uint64, error) {
 	return dbgen.maxId, dbgen.cacheStep, nil
@@ -25,8 +31,11 @@ func (dbgen *DBGen) flush(bizTag string) {
 	dbgen.find(bizTag)
 }
 func (dbgen *DBGen) find(bizTag string) {
+	dbgen.lock.Lock()
+	defer dbgen.lock.Unlock()
+
 	tx, errBegin := dbgen.db.Begin()
-	stmt, errPrepare := dbgen.db.Prepare("SELECT currentId,cacheStep from common_generator where keyName= ? FOR UPDATE")
+	stmt, errPrepare := dbgen.db.Prepare("SELECT currentId,cacheStep from " + dbgen.config.Database.Account.Table + " where keyName= ? FOR UPDATE")
 	defer stmt.Close()
 	if errPrepare != nil {
 		log.Fatal(errBegin)
@@ -45,7 +54,10 @@ func (dbgen *DBGen) find(bizTag string) {
 	dbgen.maxId = currentId + cacheStep
 }
 func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
-	stmt, errPrepare := dbgen.db.Prepare("UPDATE common_generator SET currentId = currentId + cacheStep where keyName= ? ")
+	dbgen.lock.Lock()
+	defer dbgen.lock.Unlock()
+
+	stmt, errPrepare := dbgen.db.Prepare("UPDATE " + dbgen.config.Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
 	var errorUpdate error
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -62,19 +74,31 @@ func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
 	}
 	return affected, errorUpdate
 }
-func NewDBGen(bizTag string) IDGen {
+func init()  {
 
-	db, errOpen := sql.Open("mysql", "root:tortdh_gogo888!@tcp(10.10.106.218:3306)/maindb?charset=utf8") //
+}
+func NewDBGen(bizTag string, config config.SeederConfig) IDGen {
 	if db == nil {
-		if errOpen != nil {
-			log.Fatal(errOpen)
+		var errOpen error;
+
+		fmt.Sprintf(
+			"%s:%s@tcp(%s:%s)/%s?charset=utf8",
+			config.Database.Account.Name,
+				config.Database.Account.Password,
+				config.Database.Master[0].Host,
+				config.Database.Master[0].Port,
+				config.Database.Account.DBName,
+			)
+		db, errOpen = sql.Open("mysql", "root:tortdh_gogo888!@tcp(10.10.106.218:3306)/maindb?charset=utf8") //
+		if db == nil {
+			if errOpen != nil {
+				log.Fatal(errOpen)
+			}
 		}
+		db.SetMaxOpenConns(10)
+		db.SetMaxIdleConns(5)
 	}
-
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(5)
-
-	dbGen := &DBGen{db: db}
+	dbGen := &DBGen{db: db, lock: &sync.Mutex{}, config: config}
 	dbGen.find(bizTag)
 	return dbGen
 }
