@@ -22,7 +22,9 @@ func (segment *IDBufferSegment) GetId() uint64 {
 	segment.application.GetLogger().Debug( " segment nil ", segment == nil)
 	idBuf := segment.masterIDBuffer
 
-	return idBuf.GetId();
+	id := idBuf.GetId();
+
+	return id
 }
 
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
@@ -43,6 +45,9 @@ func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
 }
 func (segment *IDBufferSegment) SetBizTag(bizTag string) {
 	segment.bizTag = bizTag
+}
+func (segment *IDBufferSegment) GetBizTag() string {
+	return segment.bizTag
 }
 func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer {
 	return segment.masterIDBuffer

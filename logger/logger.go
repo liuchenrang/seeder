@@ -45,7 +45,7 @@ func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Lo
 	flw.SetFormat("[%D %T] [%L] (%S) %M")
 	flw.SetRotate(true)
 	flw.SetRotateSize(1024*1024*100)
-	flw.SetRotateLines(100)
+	flw.SetRotateLines(0)
 	flw.SetRotateDaily(true)
 	log.AddFilter("file", level, flw)
 	return log

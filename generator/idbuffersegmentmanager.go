@@ -4,6 +4,7 @@ import (
 	"sync"
 	"log"
 	"seeder/bootstrap"
+	"time"
 )
 
 
@@ -25,7 +26,15 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 	if  segment == nil{
 		log.Fatal("bizTag " , bizTag, " not create")
 	}
-	return segment.GetId()
+	var id uint64;
+	for  {
+		id = segment.GetId()
+		if id > 0 {
+			segment.ChangeSlaveToMaster()
+			break
+		}
+	}
+	return id
 }
 func (manager *IDBufferSegmentManager)getSegmentByBizTag(bizTag string)  *IDBufferSegment {
 	_, has := manager.tagPool[bizTag]
@@ -50,7 +59,10 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 		manager.tagPool[bizTag] = segment
 		go func() {
 			for {
-				monitor := NewMonitor(segment)
+				time.Sleep(time.Millisecond*100)
+				manager.application.GetLogger().Debug("NewMonitor timer ", bizTag)
+
+				monitor := NewMonitor(segment,  manager.application)
 				monitor.SetVigilantValue(5)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant {
