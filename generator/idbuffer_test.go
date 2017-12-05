@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"seeder/config"
 	"seeder/bootstrap"
+	"seeder/logger"
 )
 func TestIdBuffer(t *testing.T) {
 	// Different allocations should not be equal.
 	Application := bootstrap.NewApplication()
-	config :=  config.NewSeederConfig("../seeder.yaml")
-	Application.Set("globalSeederConfig", config)
+	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
 
 	idBuf := generator.NewIDBuffer("test", Application)
 	idBuf.GetId()

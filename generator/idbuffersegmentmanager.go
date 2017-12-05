@@ -1,20 +1,16 @@
 package generator
 
 import (
-	"seeder/config"
 	"sync"
-	"fmt"
 	"log"
-	"seeder/logger"
 	"seeder/bootstrap"
+	"github.com/alecthomas/log4go"
 )
 
 
 type IDBufferSegmentManager struct {
 	bizTag  string
-	config  config.SeederConfig
 
-	SeederLogger.Logger
 	lock *sync.Mutex
 	tagPool map[string] *IDBufferSegment
 
@@ -34,22 +30,24 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 }
 func (manager *IDBufferSegmentManager)getSegmentByBizTag(bizTag string)  *IDBufferSegment {
 	_, has := manager.tagPool[bizTag]
-	manager.Debug("init ", bizTag, has)
+	manager.application.Get("globalLogger").(log4go.Logger).Debug("init ", bizTag, has)
 	if !has  {
 		return manager.CreateBizTagSegment(bizTag)
 	}
 	return manager.tagPool[bizTag]
 }
+
 func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBufferSegment {
 
 	_, has := manager.tagPool[bizTag]
-	manager.Debug("init ", bizTag, has)
+	manager.application.Get("globalLogger").(log4go.Logger).Debug("init ", bizTag, has)
 
 	if  has == false {
 
 		segment := NewIDBufferSegment(bizTag, manager.application)
 		segment.CreateMasterIDBuffer(bizTag)
-		manager.Debug(" Segment Out CreateMasterIDBuffer ",segment.masterIDBuffer.GetId())
+
+		manager.application.Get("globalLogger").(log4go.Logger).Debug(" Segment Out CreateMasterIDBuffer ",segment.masterIDBuffer.GetId())
 		manager.tagPool[bizTag] = segment
 		go func() {
 			for {
@@ -57,7 +55,7 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 				monitor.SetVigilantValue(5)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant {
-					fmt.Println(" Over call CreateSlaveIDBuffer ", bizTag)
+					manager.application.Get("globalLogger").(log4go.Logger).Debug(" Over call CreateSlaveIDBuffer ", bizTag)
 					segment.CreateSlaveIDBuffer(bizTag)
 					segment.GetMasterIdBuffer().GetStats().Clear()
 				}

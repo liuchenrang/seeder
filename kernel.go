@@ -49,12 +49,6 @@ var (
 type IdGeneratorServiceImpl struct {
 }
 
-//func (*IdGeneratorServiceImpl) Ping() (r string, user_exception *generator.UserException, system_exception *generator.SystemException, unknown_exception *generator.UnknownException, err error) {
-//}
-//
-//func (*IdGeneratorServiceImpl) GetId(t *generator.TGetIdParams) (r string, user_exception *generator.UserException, system_exception *generator.SystemException, unknown_exception *generator.UnknownException, err error) {
-//
-//}
 func (*IdGeneratorServiceImpl)  Ping() (r string, err error){
 	return "idgen", nil
 
@@ -72,6 +66,8 @@ func init()  {
 
 	applicaton := bootstrap.NewApplication()
 	applicaton.Set("globalSeederConfig", seederConfig)
+
+	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
 
 	manager = 	*generator2.NewIDBufferSegmentManager(applicaton)
 	logger = SeederLogger.NewLogger(seederConfig)

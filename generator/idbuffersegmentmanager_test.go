@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"seeder/config"
 	"seeder/bootstrap"
+	"seeder/logger"
 )
 
 
@@ -14,6 +15,8 @@ func TestManager(t *testing.T) {
 	Application := bootstrap.NewApplication()
 	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
+
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
 
 	m := NewIDBufferSegmentManager(Application)
 	wait := make(chan int)

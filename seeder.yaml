@@ -14,7 +14,7 @@ database:
         idle: 3
 logger:
      path: "/usr/local/Cellar/go/gopath/src/seeder/logs"
-     level: "1"
+     level: "3"
      file: "seeder.log"
 
 server:

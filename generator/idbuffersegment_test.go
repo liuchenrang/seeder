@@ -18,6 +18,8 @@ func TestNewEqual(t *testing.T) {
 	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
+
 
 	segment := generator.NewIDBufferSegment("test", Application)
 
