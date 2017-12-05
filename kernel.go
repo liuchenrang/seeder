@@ -44,6 +44,7 @@ func (s *Kernel) BootstrapWith() {
 var (
 	manager generator2.IDBufferSegmentManager
 	seederConfig config.SeederConfig
+	logger SeederLogger.Logger
 )
 type IdGeneratorServiceImpl struct {
 }
@@ -69,6 +70,7 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 func init()  {
 	seederConfig = config.NewSeederConfig("./seeder.yaml")
 	manager = 	*generator2.NewIDBufferSegmentManager(seederConfig)
+	logger = SeederLogger.NewLogger(seederConfig)
 }
 func (kernel *Kernel) Serve() {
 	handlers := &IdGeneratorServiceImpl{}

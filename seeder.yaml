@@ -13,8 +13,10 @@ database:
         max: 5
         idle: 3
 logger:
-     path: "/tmp"
+     path: "/usr/local/Cellar/go/gopath/src/seeder/logs"
      level: "1"
+     file: "seeder.log"
+
 server:
      port: 8080
      host: 0.0.0.0

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNewIDBuffer(t *testing.T) {
+func TestConfig(t *testing.T) {
 	 //time.LoadLocation("Asia/Chongqing")
 	// Different allocations should not be equal.
 	seederConfig := NewSeederConfig("../seeder.yaml")

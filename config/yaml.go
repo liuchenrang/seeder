@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 )
-
 type Account struct{
 	Name string
 	Password string
@@ -26,6 +25,7 @@ type Database struct{
 type Logger struct{
 	Path string `yaml:"path"`
 	Level string `yaml:"level"`
+	File string `yaml:"file"`
 }
 type Server struct{
 	Port int `yaml:"port"`
@@ -38,6 +38,8 @@ type SeederConfig struct{
 }
 
 func NewSeederConfig(yamlfile string) SeederConfig{
+
+
 	seederConfig := SeederConfig{}
 	content, err := ioutil.ReadFile(yamlfile)
 	if err != nil {

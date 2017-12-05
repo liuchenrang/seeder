@@ -6,6 +6,7 @@ import (
 	"sync"
 	"seeder/generator/idgen"
 	"seeder/config"
+	"seeder/logger"
 )
 type IDBuffer struct{
 	currentId uint64
@@ -15,9 +16,10 @@ type IDBuffer struct{
 	lck *sync.Mutex
 	isUseOut bool
 	db idgen.IDGen
+	
+	SeederLogger.Logger
 
 }
-var m = sync.Mutex{}
 
 func (buffer *IDBuffer) GetId() uint64 {
 	out := buffer.IsUseOut()
@@ -30,7 +32,7 @@ func (buffer *IDBuffer) GetId() uint64 {
 	return buffer.currentId;
 }
 func (buffer *IDBuffer) GetStats()  *stats.Stats {
-	//logger.Debug("buffer  nil ", buffer == nil)
+	//buffer.Debug("buffer  nil ", buffer == nil)
 	return buffer.stats
 }
 func (buffer *IDBuffer) IsUseOut() bool {
@@ -39,14 +41,14 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	}
 	buffer.lck.Lock()
 	buffer.isUseOut = buffer.currentId > buffer.maxId
-	logger.Debug("currentId ", buffer.currentId, "maxId", buffer.maxId,"isUseOut",  buffer.isUseOut)
+	buffer.Debug("currentId ", buffer.currentId, "maxId", buffer.maxId,"isUseOut",  buffer.isUseOut)
 	buffer.lck.Unlock()
 	return buffer.isUseOut
 }
  func (buffer *IDBuffer) Flush(tagChan chan string)  {
 	 buffer.db.UpdateStep(buffer.bizTag)
 	 tagChan <- "finish"
-	 logger.Debug("Do IDBuffer Write"  , <-tagChan)
+	 buffer.Debug("Do IDBuffer Write"  , <-tagChan)
  }
 
 func NewIDBuffer(bizTag string, seederConfig config.SeederConfig) *IDBuffer {

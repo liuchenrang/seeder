@@ -11,7 +11,6 @@ func TestManager(t *testing.T) {
 	// Different allocations should not be equal.
 
 	m := NewIDBufferSegmentManager(config.NewSeederConfig("../seeder.yaml"))
-
 	wait := make(chan int)
 	go func(){
 		i := 0

@@ -3,6 +3,7 @@ package generator
 import (
 	"sync"
 	"seeder/config"
+	"seeder/logger"
 )
 
 type IDBufferSegment struct {
@@ -11,10 +12,12 @@ type IDBufferSegment struct {
 	slaveIdBuffer  *IDBuffer
 	bizTag         string
 	config config.SeederConfig
+	
+	SeederLogger.Logger
 }
 
 func (segment *IDBufferSegment) GetId() uint64 {
-	logger.Debug( " segment nil ", segment == nil)
+	segment.Debug( " segment nil ", segment == nil)
 	idBuf := segment.masterIDBuffer
 
 	return idBuf.GetId();
@@ -29,7 +32,7 @@ func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 	go func() {
 		segment.masterIDBuffer.Flush(flushDB)
 	}()
-	logger.Debug(" Segment CreateMasterIDBuffer ",segment.masterIDBuffer)
+	segment.Debug(" Segment CreateMasterIDBuffer ",segment.masterIDBuffer)
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
@@ -54,7 +57,7 @@ func NewIDBufferSegment(bizTag string,  config config.SeederConfig) (*IDBufferSe
 }
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
-	logger.Debug(segment.bizTag + " changeSlaveToMaster")
+	segment.Debug(segment.bizTag + " changeSlaveToMaster")
 	segment.changeLock.Lock()
 	if segment.slaveIdBuffer == nil {
 		segment.CreateSlaveIDBuffer(segment.bizTag)
