@@ -10,7 +10,8 @@ import (
 func TestNewIDBuffer(t *testing.T) {
 	 //time.LoadLocation("Asia/Chongqing")
 	// Different allocations should not be equal.
-	fmt.Printf("--- t:\n%v\n\n", seederConfig)
+	seederConfig := NewSeederConfig("../seeder.yaml")
+	fmt.Printf("--- t:\n%+v\n\n", seederConfig)
 	log := l4g.NewDefaultLogger(l4g.DEBUG)
 	defer log.Close()
 	log.AddFilter("stdout", l4g.DEBUG, l4g.NewConsoleLogWriter())

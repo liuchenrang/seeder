@@ -6,9 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 )
-var (
-	seederConfig SeederConfig
-)
+
 type Account struct{
 	Name string
 	Password string

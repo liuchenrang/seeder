@@ -8,6 +8,7 @@ import (
 	"git.apache.org/thrift.git/lib/go/thrift"
 	generator2 "seeder/generator"
 	"seeder/config"
+	"seeder/logger"
 )
 
 type strapper bootstrap.Strapper
@@ -15,6 +16,7 @@ type strapper bootstrap.Strapper
 type Kernel struct {
 	booted        bool
 	bootstrappers []strapper
+	SeederLogger.Logger
 }
 
 func NewKernel(debug bool) *Kernel {
@@ -53,27 +55,23 @@ type IdGeneratorServiceImpl struct {
 //
 //}
 func (*IdGeneratorServiceImpl)  Ping() (r string, err error){
-	return "ping", nil
+	return "idgen", nil
 
 }
 // Parameters:
 //  - Params
 func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, err error){
-	fmt.Printf("request tag: %v, type: %v", params)
 
 	id := manager.GetId(params.GetTag())
 	fmt.Println("id", id)
 	return fmt.Sprintf("%d", id), nil
 }
 func init()  {
-	manager = 	*generator2.NewIDBufferSegmentManager(seederConfig)
 	seederConfig = config.NewSeederConfig("./seeder.yaml")
-
+	manager = 	*generator2.NewIDBufferSegmentManager(seederConfig)
 }
-func (*Kernel) Serve() {
-
+func (kernel *Kernel) Serve() {
 	handlers := &IdGeneratorServiceImpl{}
-
 	processor := generator.NewIdGeneratorServiceProcessor(handlers)
 	serverTransport, err := thrift.NewTServerSocket(seederConfig.Server.Host + ":" + fmt.Sprintf("%d",seederConfig.Server.Port))
 	if err != nil {

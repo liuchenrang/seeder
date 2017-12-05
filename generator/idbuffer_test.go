@@ -10,7 +10,7 @@ import (
 )
 func TestIdBuffer(t *testing.T) {
 	// Different allocations should not be equal.
-	idBuf := generator.NewIDBuffer("photo", config.NewSeederConfig("../seeder.yaml"))
+	idBuf := generator.NewIDBuffer("test", config.NewSeederConfig("../seeder.yaml"))
 	idBuf.GetId()
 	i := 1
 	var id uint64;

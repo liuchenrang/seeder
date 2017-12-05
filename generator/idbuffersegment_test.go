@@ -12,27 +12,30 @@ import (
 
 func TestNewEqual(t *testing.T) {
 	// Different allocations should not be equal.
-	segment := generator.NewIDBufferSegment("uts",config.NewSeederConfig("../seeder.yaml"))
-	segment.CreateMasterIDBuffer("uts")
+	segment := generator.NewIDBufferSegment("test",config.NewSeederConfig("../seeder.yaml"))
+	segment.CreateMasterIDBuffer("test")
+	segment.CreateSlaveIDBuffer("test")
 	id := segment.GetId()
 	logger := SeederLogger.New()
 	var i uint64
-	for i < 2000 {
+	for i < 40 {
 		id = segment.GetId()
-		if id+1 != segment.GetId() {
+		nextId := segment.GetId()
+		logger.Debug("id ", id, "nextId", nextId)
+		fmt.Printf("xxxx")
+		if id+1 != nextId {
 			t.Error("id error")
 			break;
 		}
 		fmt.Println()
-		logger.Debug("id ", id)
 		i++;
 	}
 }
 
 func TestStats(t *testing.T) {
 	// Different allocations should not be equal.
-	segment := generator.NewIDBufferSegment("uts" , config.NewSeederConfig("../seeder.yaml"))
-	segment.CreateMasterIDBuffer("uts")
+	segment := generator.NewIDBufferSegment("test" , config.NewSeederConfig("../seeder.yaml"))
+	segment.CreateMasterIDBuffer("test")
 	segment.ChangeSlaveToMaster()
 	segment.GetMasterIdBuffer().GetStats()
 }

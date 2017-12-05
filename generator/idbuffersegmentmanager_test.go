@@ -15,14 +15,18 @@ func TestManager(t *testing.T) {
 	wait := make(chan int)
 	go func(){
 		i := 0
-		runTime := 100;
+		runTime := 10;
 		for i <= runTime {
 			i++
-			id := m.GetId("test")
+			id := m.GetId("uts")
 			if id <= 0 {
 				logger.Debug("Do ChangeSlaveToMaster")
-				m.segment.ChangeSlaveToMaster()
+				m.getSegmentByBizTag("uts").ChangeSlaveToMaster()
 			}
+			fmt.Println("id ", id)
+
+			id = m.GetId("eyas")
+
 			fmt.Println("id ", id)
 		}
 		if i == runTime {
@@ -32,6 +36,7 @@ func TestManager(t *testing.T) {
 		wait<- runTime
 	}()
 	<-wait
+
 }
 
 func TestFmt(t *testing.T) {

@@ -30,6 +30,7 @@ func (buffer *IDBuffer) GetId() uint64 {
 	return buffer.currentId;
 }
 func (buffer *IDBuffer) GetStats()  *stats.Stats {
+	//logger.Debug("buffer  nil ", buffer == nil)
 	return buffer.stats
 }
 func (buffer *IDBuffer) IsUseOut() bool {
