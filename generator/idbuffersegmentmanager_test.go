@@ -10,15 +10,15 @@ import (
 func TestManager(t *testing.T) {
 	// Different allocations should not be equal.
 
-	m := NewIDBufferSegmentManager("uts", config.NewSeederConfig("../seeder.yaml"))
+	m := NewIDBufferSegmentManager(config.NewSeederConfig("../seeder.yaml"))
 
 	wait := make(chan int)
 	go func(){
 		i := 0
-		runTime := 2000;
+		runTime := 100;
 		for i <= runTime {
 			i++
-			id := m.GetId("uts")
+			id := m.GetId("test")
 			if id <= 0 {
 				logger.Debug("Do ChangeSlaveToMaster")
 				m.segment.ChangeSlaveToMaster()

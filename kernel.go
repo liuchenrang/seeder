@@ -38,11 +38,11 @@ func (s *Kernel) BootstrapWith() {
 	s.booted = true
 }
 
-const (
-	HOST = "0.0.0.0"
-	PORT = "8080"
+
+var (
+	manager generator2.IDBufferSegmentManager
+	seederConfig config.SeederConfig
 )
-var manager generator2.IDBufferSegmentManager
 type IdGeneratorServiceImpl struct {
 }
 
@@ -66,14 +66,16 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 	return fmt.Sprintf("%d", id), nil
 }
 func init()  {
-	manager = 	*generator2.NewIDBufferSegmentManager(config.NewSeederConfig("./seeder.yaml"))
+	manager = 	*generator2.NewIDBufferSegmentManager(seederConfig)
+	seederConfig = config.NewSeederConfig("./seeder.yaml")
+
 }
 func (*Kernel) Serve() {
 
 	handlers := &IdGeneratorServiceImpl{}
 
 	processor := generator.NewIdGeneratorServiceProcessor(handlers)
-	serverTransport, err := thrift.NewTServerSocket(HOST + ":" + PORT)
+	serverTransport, err := thrift.NewTServerSocket(seederConfig.Server.Host + ":" + fmt.Sprintf("%d",seederConfig.Server.Port))
 	if err != nil {
 		log.Fatalln("Error:", err)
 	}
@@ -81,6 +83,6 @@ func (*Kernel) Serve() {
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
-	fmt.Println("Running at:", HOST+":"+PORT + "\n")
+	fmt.Println("Running at:", seederConfig.Server.Host+":"+ fmt.Sprintf("%d",seederConfig.Server.Port) + "\n")
 	server.Serve()
 }
