@@ -5,7 +5,6 @@ import (
 	"seeder/config"
 	"seeder/logger"
 	"seeder/bootstrap"
-	"github.com/alecthomas/log4go"
 )
 
 type IDBufferSegment struct {
@@ -20,7 +19,7 @@ type IDBufferSegment struct {
 }
 
 func (segment *IDBufferSegment) GetId() uint64 {
-	segment.application.Get("globalLogger").(log4go.Logger).Debug( " segment nil ", segment == nil)
+	segment.application.GetLogger().Debug( " segment nil ", segment == nil)
 	idBuf := segment.masterIDBuffer
 
 	return idBuf.GetId();
@@ -35,7 +34,7 @@ func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 	go func() {
 		segment.masterIDBuffer.Flush(flushDB)
 	}()
-	segment.application.Get("globalLogger").(log4go.Logger).Debug(" Segment CreateMasterIDBuffer ",segment.masterIDBuffer)
+	segment.application.GetLogger().Debug(" Segment CreateMasterIDBuffer ",segment.masterIDBuffer)
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
@@ -54,7 +53,7 @@ func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
-	segment.application.Get("globalLogger").(log4go.Logger).Debug(segment.bizTag + " changeSlaveToMaster")
+	segment.application.GetLogger().Debug(segment.bizTag + " changeSlaveToMaster")
 	segment.changeLock.Lock()
 	if segment.slaveIdBuffer == nil {
 		segment.CreateSlaveIDBuffer(segment.bizTag)

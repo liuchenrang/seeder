@@ -4,7 +4,6 @@ import (
 	"sync"
 	"log"
 	"seeder/bootstrap"
-	"github.com/alecthomas/log4go"
 )
 
 
@@ -30,7 +29,7 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 }
 func (manager *IDBufferSegmentManager)getSegmentByBizTag(bizTag string)  *IDBufferSegment {
 	_, has := manager.tagPool[bizTag]
-	manager.application.Get("globalLogger").(log4go.Logger).Debug("init ", bizTag, has)
+	manager.application.GetLogger().Debug("init ", bizTag, has)
 	if !has  {
 		return manager.CreateBizTagSegment(bizTag)
 	}
@@ -40,14 +39,14 @@ func (manager *IDBufferSegmentManager)getSegmentByBizTag(bizTag string)  *IDBuff
 func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBufferSegment {
 
 	_, has := manager.tagPool[bizTag]
-	manager.application.Get("globalLogger").(log4go.Logger).Debug("init ", bizTag, has)
+	manager.application.GetLogger().Debug("init ", bizTag, has)
 
 	if  has == false {
 
 		segment := NewIDBufferSegment(bizTag, manager.application)
 		segment.CreateMasterIDBuffer(bizTag)
 
-		manager.application.Get("globalLogger").(log4go.Logger).Debug(" Segment Out CreateMasterIDBuffer ",segment.masterIDBuffer.GetId())
+		manager.application.GetLogger().Debug(" Segment Out CreateMasterIDBuffer ",segment.masterIDBuffer.GetId())
 		manager.tagPool[bizTag] = segment
 		go func() {
 			for {
@@ -55,7 +54,7 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 				monitor.SetVigilantValue(5)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant {
-					manager.application.Get("globalLogger").(log4go.Logger).Debug(" Over call CreateSlaveIDBuffer ", bizTag)
+					manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
 					segment.CreateSlaveIDBuffer(bizTag)
 					segment.GetMasterIdBuffer().GetStats().Clear()
 				}

@@ -5,9 +5,7 @@ import (
 	"seeder/stats"
 	"sync"
 	"seeder/generator/idgen"
-	"seeder/config"
 	"seeder/bootstrap"
-	"github.com/alecthomas/log4go"
 )
 type IDBuffer struct{
 	currentId uint64
@@ -49,15 +47,14 @@ func (buffer *IDBuffer) IsUseOut() bool {
  func (buffer *IDBuffer) Flush(tagChan chan string)  {
 	 buffer.db.UpdateStep(buffer.bizTag)
 	 tagChan <- "finish"
-	 buffer.application.Get("globalLogger").(log4go.Logger).Debug("Do IDBuffer Write"  , <-tagChan)
+	 buffer.application.GetLogger().Debug("Do IDBuffer Write"  , <-tagChan)
  }
 
 func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 
-	seederConfig := application.Get("globalSeederConfig").(config.SeederConfig)
 	IdChan := make(chan map[string]uint64)
 	typeIdMake := TypeIDMake{}
-	dbGen := typeIdMake.Make(bizTag, seederConfig)
+	dbGen := typeIdMake.Make(bizTag, application)
 	go func(){
 		maxId, cacheStep, _ := dbGen.GenerateSegment(bizTag)
 		find := make(map[string]uint64)

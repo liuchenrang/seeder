@@ -5,9 +5,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"sync"
-	"seeder/config"
 	"fmt"
-	"seeder/logger"
+	"seeder/bootstrap"
+	"github.com/alecthomas/log4go"
 )
 
 type DBGen struct {
@@ -16,9 +16,9 @@ type DBGen struct {
 	cacheStep uint64
 	lock      *sync.Mutex
 	Fin       chan<- int
-	config    config.SeederConfig
 
-	SeederLogger.Logger
+	application *bootstrap.Application
+	 
 }
 
 var (
@@ -29,7 +29,7 @@ func (dbgen *DBGen) GenerateSegment(bizTag string) (uint64, uint64, error) {
 	dbgen.lock.Lock()
 	defer dbgen.lock.Unlock()
 	dbgen.flush(bizTag)
-	dbgen.Debug("DBGen GenerateSegment %+v", dbgen)
+	dbgen.getLogger().Debug("DBGen GenerateSegment %+v", dbgen)
 
 	return dbgen.maxId, dbgen.cacheStep, nil
 }
@@ -37,14 +37,17 @@ func (dbgen *DBGen) flush(bizTag string) {
 	dbgen.find(bizTag)
 	dbgen.UpdateStep(bizTag)
 }
+func (dbgen *DBGen)  getLogger() log4go.Logger {
+	return dbgen.application.Get("globalLogger").(log4go.Logger)
+}
 func (dbgen *DBGen) find(bizTag string) {
-	dbgen.Debug("DBGen Find %+v", *dbgen)
+	dbgen.getLogger().Debug("DBGen Find %+v", *dbgen)
 
 	tx, errBegin := dbgen.db.Begin()
-	dbgen.Debug("DBGen find concif %+v ", dbgen.config)
+	dbgen.getLogger().Debug("DBGen find concif %+v ", dbgen.application.GetConfig())
 
-	sqlSelect := "SELECT currentId,cacheStep from " + dbgen.config.Database.Account.Table + " where keyName= ? FOR UPDATE"
-	dbgen.Debug("DBGen find ", sqlSelect)
+	sqlSelect := "SELECT currentId,cacheStep from " + dbgen.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
+	dbgen.getLogger().Debug("DBGen find ", sqlSelect)
 	stmt, errPrepare := dbgen.db.Prepare(sqlSelect)
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -64,9 +67,9 @@ func (dbgen *DBGen) find(bizTag string) {
 	dbgen.maxId = currentId + 1
 }
 func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
-	dbgen.Debug("DBGen UpdateStep %+v", dbgen)
+	dbgen.getLogger().Debug("DBGen UpdateStep %+v", dbgen)
 
-	stmt, errPrepare := dbgen.db.Prepare("UPDATE " + dbgen.config.Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
+	stmt, errPrepare := dbgen.db.Prepare("UPDATE " + dbgen.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
 	var errorUpdate error
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -86,19 +89,20 @@ func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
 func init() {
 
 }
-func NewDBGen(bizTag string, config config.SeederConfig) IDGen {
+func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
 	if db == nil {
 		var errOpen error;
 		//
-		//dsn := fmt.Sprintf(
-		//	"%s:%s@tcp(%s:%d)/%s?charset=utf8",
-		//	config.Database.Account.Name,
-		//	config.Database.Account.Password,
-		//	config.Database.Master[0].Host,
-		//	config.Database.Master[0].Port,
-		//	config.Database.Account.DBName,
-		//)
-		dsn := "root:tortdh_gogo888!@tcp(10.10.106.218:3306)/maindb?charset=utf8"
+		config := application.GetConfig()
+		dsn := fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?charset=utf8",
+			config.Database.Account.Name,
+			config.Database.Account.Password,
+			config.Database.Master[0].Host,
+			config.Database.Master[0].Port,
+			config.Database.Account.DBName,
+		)
+		//dsn := "root:tortdh_gogo888!@tcp(10.10.106.218:3306)/maindb?charset=utf8"
 		fmt.Printf(dsn)
 		db, errOpen = sql.Open("mysql", dsn) //
 		if db == nil {
@@ -110,6 +114,6 @@ func NewDBGen(bizTag string, config config.SeederConfig) IDGen {
 		db.SetMaxOpenConns(10)
 		db.SetMaxIdleConns(5)
 	}
-	dbGen := &DBGen{db: db, lock: &sync.Mutex{}, config: config}
+	dbGen := &DBGen{db: db, lock: &sync.Mutex{}, application: application}
 	return dbGen
 }
