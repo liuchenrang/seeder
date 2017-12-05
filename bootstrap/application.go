@@ -2,11 +2,15 @@ package bootstrap
 
 
 type Application struct {
-
+	mapObj map[string]interface{}
 }
-func (*Application) Get(){
-
+func (app *Application) Get(key string ) interface{} {
+	return app.mapObj[key]
 }
-func (*Application) Set()  {
-
+func (app *Application) Set(key string , object interface{})  {
+	app.mapObj[key] = object
+}
+func NewApplication() *Application{
+	app := &Application{mapObj:make(map[string]interface{})}
+	return app
 }

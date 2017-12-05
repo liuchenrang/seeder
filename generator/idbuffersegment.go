@@ -4,6 +4,7 @@ import (
 	"sync"
 	"seeder/config"
 	"seeder/logger"
+	"seeder/bootstrap"
 )
 
 type IDBufferSegment struct {
@@ -14,6 +15,7 @@ type IDBufferSegment struct {
 	config config.SeederConfig
 	
 	SeederLogger.Logger
+	application *bootstrap.Application
 }
 
 func (segment *IDBufferSegment) GetId() uint64 {
@@ -27,7 +29,7 @@ func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 	segment.changeLock.Lock()
 	defer segment.changeLock.Unlock()
 
-	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.config)
+	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.application)
 	flushDB := make(chan string)
 	go func() {
 		segment.masterIDBuffer.Flush(flushDB)
@@ -36,7 +38,7 @@ func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
-	segment.slaveIdBuffer = NewIDBuffer(bizTag, segment.config)
+	segment.slaveIdBuffer = NewIDBuffer(bizTag, segment.application)
 	return segment.slaveIdBuffer
 }
 func (segment *IDBufferSegment) SetBizTag(bizTag string) {
@@ -48,13 +50,7 @@ func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer {
 func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 	return segment.slaveIdBuffer
 }
-func NewIDBufferSegment(bizTag string,  config config.SeederConfig) (*IDBufferSegment) {
 
-	segment := &IDBufferSegment{config: config}
-
-	segment.SetBizTag(bizTag)
-	return segment
-}
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.Debug(segment.bizTag + " changeSlaveToMaster")
@@ -69,6 +65,16 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	}()
 	<-flushDB
 	segment.masterIDBuffer = segment.slaveIdBuffer
-	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.config)
+
+	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
 	segment.changeLock.Unlock()
+}
+
+
+func NewIDBufferSegment(bizTag string,   application *bootstrap.Application) (*IDBufferSegment) {
+
+	segment := &IDBufferSegment{application: application}
+
+	segment.SetBizTag(bizTag)
+	return segment
 }

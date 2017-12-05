@@ -69,7 +69,11 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 }
 func init()  {
 	seederConfig = config.NewSeederConfig("./seeder.yaml")
-	manager = 	*generator2.NewIDBufferSegmentManager(seederConfig)
+
+	applicaton := bootstrap.NewApplication()
+	applicaton.Set("globalSeederConfig", seederConfig)
+
+	manager = 	*generator2.NewIDBufferSegmentManager(applicaton)
 	logger = SeederLogger.NewLogger(seederConfig)
 }
 func (kernel *Kernel) Serve() {

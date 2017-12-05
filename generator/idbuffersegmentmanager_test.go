@@ -4,13 +4,18 @@ import (
 	"testing"
 	"fmt"
 	"seeder/config"
+	"seeder/bootstrap"
 )
 
 
 func TestManager(t *testing.T) {
 	// Different allocations should not be equal.
 
-	m := NewIDBufferSegmentManager(config.NewSeederConfig("../seeder.yaml"))
+	Application := bootstrap.NewApplication()
+	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+
+	m := NewIDBufferSegmentManager(Application)
 	wait := make(chan int)
 	go func(){
 		i := 0
@@ -19,7 +24,6 @@ func TestManager(t *testing.T) {
 			i++
 			id := m.GetId("uts")
 			if id <= 0 {
-				logger.Debug("Do ChangeSlaveToMaster")
 				m.getSegmentByBizTag("uts").ChangeSlaveToMaster()
 			}
 			fmt.Println("id ", id)

@@ -6,16 +6,19 @@ import (
 	"fmt"
 	"log"
 	"seeder/logger"
+	"seeder/bootstrap"
 )
 
 
 type IDBufferSegmentManager struct {
 	bizTag  string
 	config  config.SeederConfig
-	SeederLogger.Logger
 
+	SeederLogger.Logger
 	lock *sync.Mutex
 	tagPool map[string] *IDBufferSegment
+
+	application *bootstrap.Application
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
@@ -43,7 +46,8 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 	manager.Debug("init ", bizTag, has)
 
 	if  has == false {
-		segment := NewIDBufferSegment(bizTag, manager.config)
+
+		segment := NewIDBufferSegment(bizTag, manager.application)
 		segment.CreateMasterIDBuffer(bizTag)
 		manager.Debug(" Segment Out CreateMasterIDBuffer ",segment.masterIDBuffer.GetId())
 		manager.tagPool[bizTag] = segment
@@ -65,8 +69,8 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 }
 
-func NewIDBufferSegmentManager(config config.SeederConfig) *IDBufferSegmentManager {
+func NewIDBufferSegmentManager(application *bootstrap.Application) *IDBufferSegmentManager {
 
-	manager := &IDBufferSegmentManager{config: config, tagPool: make(map[string] *IDBufferSegment), lock: &sync.Mutex{}}
+	manager := &IDBufferSegmentManager{application: application, tagPool: make(map[string] *IDBufferSegment), lock: &sync.Mutex{}}
 	return manager
 }

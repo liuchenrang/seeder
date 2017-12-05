@@ -7,6 +7,7 @@ import (
 	"seeder/generator/idgen"
 	"seeder/config"
 	"seeder/logger"
+	"seeder/bootstrap"
 )
 type IDBuffer struct{
 	currentId uint64
@@ -18,6 +19,9 @@ type IDBuffer struct{
 	db idgen.IDGen
 	
 	SeederLogger.Logger
+
+
+	application *bootstrap.Application
 
 }
 
@@ -41,7 +45,6 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	}
 	buffer.lck.Lock()
 	buffer.isUseOut = buffer.currentId > buffer.maxId
-	buffer.Debug("currentId ", buffer.currentId, "maxId", buffer.maxId,"isUseOut",  buffer.isUseOut)
 	buffer.lck.Unlock()
 	return buffer.isUseOut
 }
@@ -51,7 +54,9 @@ func (buffer *IDBuffer) IsUseOut() bool {
 	 buffer.Debug("Do IDBuffer Write"  , <-tagChan)
  }
 
-func NewIDBuffer(bizTag string, seederConfig config.SeederConfig) *IDBuffer {
+func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
+
+	seederConfig := application.Get("globalSeederConfig").(config.SeederConfig)
 	IdChan := make(chan map[string]uint64)
 	typeIdMake := TypeIDMake{}
 	dbGen := typeIdMake.Make(bizTag, seederConfig)
@@ -64,7 +69,10 @@ func NewIDBuffer(bizTag string, seederConfig config.SeederConfig) *IDBuffer {
 	}()
 	row := make(map[string]uint64)
 	row = <-IdChan
-	buffer := &IDBuffer{bizTag:bizTag, currentId: row["maxId"], maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}, lck:&sync.Mutex{}, db: dbGen, isUseOut:false}  //
+	buffer := &IDBuffer{
+		bizTag:bizTag, currentId: row["maxId"], maxId: row["maxId"]  +  row["cacheStep"] , stats: &stats.Stats{}, lck:&sync.Mutex{}, db: dbGen, isUseOut:false,
+		application:application,
+	}  //
 
 	return buffer
 }

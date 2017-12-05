@@ -7,10 +7,15 @@ import (
 	"seeder/generator"
 	"fmt"
 	"seeder/config"
+	"seeder/bootstrap"
 )
 func TestIdBuffer(t *testing.T) {
 	// Different allocations should not be equal.
-	idBuf := generator.NewIDBuffer("test", config.NewSeederConfig("../seeder.yaml"))
+	Application := bootstrap.NewApplication()
+	config :=  config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", config)
+
+	idBuf := generator.NewIDBuffer("test", Application)
 	idBuf.GetId()
 	i := 1
 	var id uint64;
@@ -30,7 +35,11 @@ func TestIdBuffer(t *testing.T) {
 
 func TestNewIDBuffer(t *testing.T) {
 	// Different allocations should not be equal.
-	idBuf := generator.NewIDBuffer("photo", config.NewSeederConfig("../seeder.yaml"))
+	Application := bootstrap.NewApplication()
+	config :=  config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", config)
+
+	idBuf := generator.NewIDBuffer("photo", Application)
 	fmt.Println(idBuf)
 	fmt.Println(idBuf.GetId())
 

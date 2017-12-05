@@ -39,7 +39,6 @@ type SeederConfig struct{
 
 func NewSeederConfig(yamlfile string) SeederConfig{
 
-
 	seederConfig := SeederConfig{}
 	content, err := ioutil.ReadFile(yamlfile)
 	if err != nil {
