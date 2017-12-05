@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"seeder/bootstrap"
+	"runtime"
 )
 const VERSION = "1.0.0"
 
@@ -19,7 +20,7 @@ var debug = flag.Bool("debug", false, "run in debug model")
 var help = flag.Bool("help", false, "show tips")
 
 func main() {
-
+	runtime.GOMAXPROCS(1)
 	flag.Parse()
 
 	if *help {

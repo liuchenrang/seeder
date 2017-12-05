@@ -28,26 +28,22 @@ var (
 func (dbgen *DBGen) GenerateSegment(bizTag string) (uint64, uint64, error) {
 	dbgen.lock.Lock()
 	defer dbgen.lock.Unlock()
-	dbgen.flush(bizTag)
+	dbgen.find(bizTag)
 	dbgen.getLogger().Debug("DBGen GenerateSegment %+v", dbgen)
 
 	return dbgen.maxId, dbgen.cacheStep, nil
 }
 func (dbgen *DBGen) flush(bizTag string) {
-	dbgen.find(bizTag)
 	dbgen.UpdateStep(bizTag)
 }
 func (dbgen *DBGen)  getLogger() log4go.Logger {
 	return dbgen.application.Get("globalLogger").(log4go.Logger)
 }
 func (dbgen *DBGen) find(bizTag string) {
-	dbgen.getLogger().Debug("DBGen Find %+v", *dbgen)
 
 	tx, errBegin := dbgen.db.Begin()
-	dbgen.getLogger().Debug("DBGen find concif %+v ", dbgen.application.GetConfig())
 
 	sqlSelect := "SELECT currentId,cacheStep from " + dbgen.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
-	dbgen.getLogger().Debug("DBGen find ", sqlSelect)
 	stmt, errPrepare := dbgen.db.Prepare(sqlSelect)
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -63,11 +59,12 @@ func (dbgen *DBGen) find(bizTag string) {
 		panic(errQuery.Error()) // proper error handling instead of panic in your app
 	}
 	tx.Commit()
+	dbgen.getLogger().Debug("DBGen find ", sqlSelect,"currentId", currentId, "cacheStep", cacheStep)
+
 	dbgen.cacheStep = cacheStep
 	dbgen.maxId = currentId + 1
 }
 func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
-	dbgen.getLogger().Debug("DBGen UpdateStep %+v", dbgen)
 
 	stmt, errPrepare := dbgen.db.Prepare("UPDATE " + dbgen.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
 	var errorUpdate error

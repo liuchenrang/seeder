@@ -19,11 +19,8 @@ type IDBufferSegment struct {
 }
 
 func (segment *IDBufferSegment) GetId() uint64 {
-	segment.application.GetLogger().Debug( " segment nil ", segment == nil)
 	idBuf := segment.masterIDBuffer
-
 	id := idBuf.GetId();
-
 	return id
 }
 
@@ -62,7 +59,6 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.changeLock.Lock()
 	if segment.slaveIdBuffer == nil {
 		segment.CreateSlaveIDBuffer(segment.bizTag)
-
 	}
 	flushDB := make(chan string)
 	go func() {

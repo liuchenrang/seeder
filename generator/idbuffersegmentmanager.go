@@ -18,27 +18,32 @@ type IDBufferSegmentManager struct {
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
-	bizTag = bizTag
 	manager.lock.Lock()
 	defer manager.lock.Unlock()
-	manager.CreateBizTagSegment(bizTag)
-	segment := manager.tagPool[bizTag]
+	segment := manager.getSegmentByBizTag(bizTag)
 	if  segment == nil{
 		log.Fatal("bizTag " , bizTag, " not create")
 	}
 	var id uint64;
+
+
 	for  {
 		id = segment.GetId()
-		if id > 0 {
+		if id <= 0 {
 			segment.ChangeSlaveToMaster()
+			manager.application.GetLogger().Debug("ChangeSlaveToMaster ", id)
+
+			id = segment.GetId()
+			manager.application.GetLogger().Debug("ChangeSlaveToMasterId ", id)
+		}else{
 			break
 		}
 	}
+
 	return id
 }
-func (manager *IDBufferSegmentManager)getSegmentByBizTag(bizTag string)  *IDBufferSegment {
+func (manager *IDBufferSegmentManager) getSegmentByBizTag(bizTag string)  *IDBufferSegment {
 	_, has := manager.tagPool[bizTag]
-	manager.application.GetLogger().Debug("init ", bizTag, has)
 	if !has  {
 		return manager.CreateBizTagSegment(bizTag)
 	}
@@ -53,9 +58,10 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 	if  has == false {
 
 		segment := NewIDBufferSegment(bizTag, manager.application)
+		manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
+
 		segment.CreateMasterIDBuffer(bizTag)
 
-		manager.application.GetLogger().Debug(" Segment Out CreateMasterIDBuffer ",segment.masterIDBuffer.GetId())
 		manager.tagPool[bizTag] = segment
 		go func() {
 			for {

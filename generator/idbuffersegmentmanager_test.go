@@ -6,6 +6,7 @@ import (
 	"seeder/config"
 	"seeder/bootstrap"
 	"seeder/logger"
+	"github.com/alecthomas/log4go"
 )
 
 
@@ -16,24 +17,21 @@ func TestManager(t *testing.T) {
 	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 
-	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
 	m := NewIDBufferSegmentManager(Application)
+
 	wait := make(chan int)
 	go func(){
 		i := 0
-		runTime := 10;
+		runTime := 30;
 		for i <= runTime {
 			i++
 			id := m.GetId("uts")
-			if id <= 0 {
-				m.getSegmentByBizTag("uts").ChangeSlaveToMaster()
-			}
-			fmt.Println("id ", id)
-
-			id = m.GetId("eyas")
 
 			fmt.Println("id ", id)
+
+
 		}
 		if i == runTime {
 			wait<- runTime
