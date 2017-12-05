@@ -9,6 +9,7 @@ import (
 	generator2 "seeder/generator"
 	"seeder/config"
 	"seeder/logger"
+	"github.com/alecthomas/log4go"
 )
 
 type strapper bootstrap.Strapper
@@ -66,8 +67,11 @@ func init()  {
 
 	applicaton := bootstrap.NewApplication()
 	applicaton.Set("globalSeederConfig", seederConfig)
-
-	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
+	var level log4go.Level
+	if seederConfig.Logger.Level == "debug" {
+		level = log4go.DEBUG
+	}
+	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(level, seederConfig))
 
 	manager = 	*generator2.NewIDBufferSegmentManager(applicaton)
 	logger = SeederLogger.NewLogger(seederConfig)
