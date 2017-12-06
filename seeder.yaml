@@ -13,7 +13,7 @@ database:
         max: 5
         idle: 3
 logger:
-     path: "/usr/local/Cellar/go/gopath/src/seeder/logs"
+     path: "/Users/sunlili/work/src/seeder/logs"
      level: "debug"
      file: "seeder.log"
 
