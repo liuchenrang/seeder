@@ -20,3 +20,6 @@ logger:
 server:
      port: 8080
      host: 0.0.0.0
+
+monitior:
+     vigilant_value: 10

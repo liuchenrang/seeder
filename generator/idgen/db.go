@@ -29,7 +29,6 @@ func (dbgen *DBGen) GenerateSegment(bizTag string) (uint64, uint64, error) {
 	dbgen.lock.Lock()
 	defer dbgen.lock.Unlock()
 	dbgen.find(bizTag)
-	dbgen.getLogger().Debug("DBGen GenerateSegment %+v", dbgen)
 
 	return dbgen.maxId, dbgen.cacheStep, nil
 }

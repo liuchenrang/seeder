@@ -35,6 +35,10 @@ type SeederConfig struct{
 	Database Database
 	Logger Logger
 	Server Server
+	Monitior Monitior
+}
+type Monitior struct {
+	VigilantValue uint64 `yaml:"vigilant_value"`
 }
 
 func NewSeederConfig(yamlfile string) SeederConfig{

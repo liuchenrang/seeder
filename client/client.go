@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"os"
 	"git.apache.org/thrift.git/lib/go/thrift"
-	"seeder/config"
 	"seeder/thrift/packages/generator"
+	"seeder/bootstrap"
 )
 
-func NewClient() *generator.IdGeneratorServiceClient {
-	config := config.NewSeederConfig("../seeder.yaml")
+func NewClient(application *bootstrap.Application) *generator.IdGeneratorServiceClient {
+	config := application.GetConfig()
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 	fmt.Println("connect", config.Server.Host, config.Server.Port)
 	tsocket, err := thrift.NewTSocket(net.JoinHostPort(config.Server.Host, fmt.Sprintf("%d", config.Server.Port)))
