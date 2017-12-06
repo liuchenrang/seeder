@@ -19,11 +19,11 @@ type IDBufferSegmentManager struct {
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 	manager.lock.RLock()
-	segment := manager.getSegmentByBizTag(bizTag)
+	segment := manager.GetSegmentByBizTag(bizTag)
 	manager.lock.RUnlock()
 	if segment == nil  {
 		manager.lock.Lock()
-		segment = manager.getSegmentByBizTag(bizTag)
+		segment = manager.GetSegmentByBizTag(bizTag)
 		if segment == nil{
 			segment = manager.CreateBizTagSegment(bizTag)
 			if segment == nil {
@@ -52,7 +52,7 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment)  {
 	manager.tagPool[bizTag] = segment
 }
-func (manager *IDBufferSegmentManager) getSegmentByBizTag(bizTag string) *IDBufferSegment {
+func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBufferSegment {
 	
 	return manager.tagPool[bizTag]
 }
