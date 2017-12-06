@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 	"log"
-	"golang.org/x/tools/cmd/guru/testdata/src/alias"
 )
 
 type IDBufferSegmentManager struct {
