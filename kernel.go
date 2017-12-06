@@ -59,7 +59,6 @@ func (*IdGeneratorServiceImpl)  Ping() (r string, err error){
 func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, err error){
 
 	id := manager.GetId(params.GetTag())
-	fmt.Println("id", id)
 	return fmt.Sprintf("%d", id), nil
 }
 func init()  {

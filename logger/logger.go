@@ -40,7 +40,6 @@ func NewLogger(seederConfig config.SeederConfig) Logger {
 func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger{
 	log := log4go.NewDefaultLogger(level)
 	s := seederConfig.Logger.Path + "/" + seederConfig.Logger.File
-	fmt.Println("log path ", s)
 	flw := log4go.NewFileLogWriter(s, false)
 	flw.SetFormat("[%D %T] [%L] (%S) %M")
 	flw.SetRotate(true)
