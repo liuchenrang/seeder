@@ -39,13 +39,13 @@ func NewLogger(seederConfig config.SeederConfig) Logger {
 
 func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger{
 	log := log4go.NewDefaultLogger(level)
-	s := seederConfig.Logger.Path + "/" + seederConfig.Logger.File
-	flw := log4go.NewFileLogWriter(s, false)
-	flw.SetFormat("[%D %T] [%L] (%S) %M")
-	flw.SetRotate(true)
-	flw.SetRotateSize(1024*1024*100)
-	flw.SetRotateLines(0)
-	flw.SetRotateDaily(true)
-	log.AddFilter("file", level, flw)
+	//s := seederConfig.Logger.Path + "/" + seederConfig.Logger.File
+	//flw := log4go.NewFileLogWriter(s, false)
+	//flw.SetFormat("[%D %T] [%L] (%S) %M")
+	//flw.SetRotate(true)
+	//flw.SetRotateSize(1024*1024*100)
+	//flw.SetRotateLines(0)
+	//flw.SetRotateDaily(true)
+	//log.AddFilter("file", level, flw)
 	return log
 }
