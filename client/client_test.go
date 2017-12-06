@@ -5,11 +5,22 @@ import (
 	thriftGenerator "seeder/thrift/packages/generator"
 	"fmt"
 	"log"
+	"seeder/bootstrap"
+	"seeder/config"
+	"seeder/logger"
+	"github.com/alecthomas/log4go"
+	
 )
 
 func TestNewClient(t *testing.T) {
 
-	client := NewClient()
+	Application := bootstrap.NewApplication()
+	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+
+	client := NewClient(Application)
 
 	idp, _  := client.Ping()
 	i := 0

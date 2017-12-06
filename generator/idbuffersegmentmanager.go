@@ -1,33 +1,41 @@
 package generator
 
 import (
-	"sync"
-	"log"
 	"seeder/bootstrap"
+	"sync"
 	"time"
+	"log"
+	"golang.org/x/tools/cmd/guru/testdata/src/alias"
 )
 
-
 type IDBufferSegmentManager struct {
-	bizTag  string
+	bizTag string
 
-	lock *sync.Mutex
-	tagPool map[string] *IDBufferSegment
+	lock    sync.RWMutex
+	tagPool map[string]*IDBufferSegment
+
 
 	application *bootstrap.Application
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
-	manager.lock.Lock()
-	defer manager.lock.Unlock()
+	manager.lock.RLock()
 	segment := manager.getSegmentByBizTag(bizTag)
-	if  segment == nil{
-		log.Fatal("bizTag " , bizTag, " not create")
+	manager.lock.RUnlock()
+	if segment == nil  {
+		manager.lock.Lock()
+		segment = manager.getSegmentByBizTag(bizTag)
+		if segment == nil{
+			segment = manager.CreateBizTagSegment(bizTag)
+			if segment == nil {
+				log.Fatal("segment nil")
+			}
+			manager.AddSegmentToPool(bizTag, segment)
+		}
+		manager.lock.Unlock()
 	}
-	var id uint64;
-
-
-	for  {
+	var id uint64
+	for {
 		id = segment.GetId()
 		if id <= 0 {
 			segment.ChangeSlaveToMaster()
@@ -35,56 +43,50 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 
 			id = segment.GetId()
 			manager.application.GetLogger().Debug("ChangeSlaveToMasterId ", id)
-		}else{
+		} else {
 			break
 		}
 	}
 
 	return id
 }
-func (manager *IDBufferSegmentManager) getSegmentByBizTag(bizTag string)  *IDBufferSegment {
-	_, has := manager.tagPool[bizTag]
-	if !has  {
-		return manager.CreateBizTagSegment(bizTag)
-	}
+func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment)  {
+	manager.tagPool[bizTag] = segment
+}
+func (manager *IDBufferSegmentManager) getSegmentByBizTag(bizTag string) *IDBufferSegment {
+	
 	return manager.tagPool[bizTag]
 }
 
 func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBufferSegment {
 
-	_, has := manager.tagPool[bizTag]
-	manager.application.GetLogger().Debug("init ", bizTag, has)
+	segment := NewIDBufferSegment(bizTag, manager.application)
 
-	if  has == false {
+	manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
 
-		segment := NewIDBufferSegment(bizTag, manager.application)
-		manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
+	segment.CreateMasterIDBuffer(bizTag)
 
-		segment.CreateMasterIDBuffer(bizTag)
-
-		manager.tagPool[bizTag] = segment
-		go func() {
-			monitor := NewMonitor(segment,  manager.application)
-			for {
-				time.Sleep(time.Millisecond*100)
-				manager.application.GetLogger().Debug("NewMonitor timer ", bizTag)
-				monitor.SetVigilantValue(5)
-				vigilant := monitor.IsOutVigilantValue()
-				if vigilant {
-					manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
-					segment.CreateSlaveIDBuffer(bizTag)
-					segment.GetMasterIdBuffer().GetStats().Clear()
-				}
-
+	go func() {
+		monitor := NewMonitor(segment, manager.application)
+		for {
+			time.Sleep(time.Millisecond * 100)
+			manager.application.GetLogger().Debug("NewMonitor timer ", bizTag , "Vigilant" , manager.application.GetConfig().Monitior.VigilantValue)
+			monitor.SetVigilantValue(manager.application.GetConfig().Monitior.VigilantValue)
+			vigilant := monitor.IsOutVigilantValue()
+			if vigilant {
+				manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
+				segment.CreateSlaveIDBuffer(bizTag)
+				segment.GetMasterIdBuffer().GetStats().Clear()
 			}
-		}()
-	}
-	return  manager.tagPool[bizTag]
+
+		}
+	}()
+	return segment
 
 }
 
 func NewIDBufferSegmentManager(application *bootstrap.Application) *IDBufferSegmentManager {
 
-	manager := &IDBufferSegmentManager{application: application, tagPool: make(map[string] *IDBufferSegment), lock: &sync.Mutex{}}
+	manager := &IDBufferSegmentManager{application: application, tagPool: make(map[string]*IDBufferSegment)}
 	return manager
 }

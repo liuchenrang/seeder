@@ -21,6 +21,8 @@ func TestManager(t *testing.T) {
 
 	m := NewIDBufferSegmentManager(Application)
 
+	m.GetId("uts")
+	return
 	wait := make(chan int)
 	go func(){
 		i := 0
