@@ -1,10 +1,10 @@
 package generator
 
 import (
+	"log"
 	"seeder/bootstrap"
 	"sync"
 	"time"
-	"log"
 )
 
 type IDBufferSegmentManager struct {
@@ -13,18 +13,17 @@ type IDBufferSegmentManager struct {
 	lock    sync.RWMutex
 	tagPool map[string]*IDBufferSegment
 
-
 	application *bootstrap.Application
 }
 
-func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
+func (manager *IDBufferSegmentManager) GetId(bizTag string) (uint64, error) {
 	manager.lock.RLock()
 	segment := manager.GetSegmentByBizTag(bizTag)
 	manager.lock.RUnlock()
-	if segment == nil  {
+	if segment == nil {
 		manager.lock.Lock()
 		segment = manager.GetSegmentByBizTag(bizTag)
-		if segment == nil{
+		if segment == nil {
 			segment = manager.CreateBizTagSegment(bizTag)
 			if segment == nil {
 				log.Fatal("segment nil")
@@ -47,13 +46,14 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) uint64 {
 		}
 	}
 
-	return id
+	return id, nil
 }
-func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment)  {
+func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment) {
 	manager.tagPool[bizTag] = segment
 }
+
 func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBufferSegment {
-	
+
 	return manager.tagPool[bizTag]
 }
 
@@ -69,7 +69,7 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 		monitor := NewMonitor(segment, manager.application)
 		for {
 			time.Sleep(time.Millisecond * 100)
-			manager.application.GetLogger().Debug("NewMonitor timer ", bizTag , "Vigilant" , manager.application.GetConfig().Monitior.VigilantValue)
+			manager.application.GetLogger().Debug("NewMonitor timer ", bizTag, "Vigilant", manager.application.GetConfig().Monitior.VigilantValue)
 			monitor.SetVigilantValue(manager.application.GetConfig().Monitior.VigilantValue)
 			vigilant := monitor.IsOutVigilantValue()
 			if vigilant {
