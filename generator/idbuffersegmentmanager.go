@@ -64,11 +64,10 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 		manager.tagPool[bizTag] = segment
 		go func() {
+			monitor := NewMonitor(segment,  manager.application)
 			for {
 				time.Sleep(time.Millisecond*100)
 				manager.application.GetLogger().Debug("NewMonitor timer ", bizTag)
-
-				monitor := NewMonitor(segment,  manager.application)
 				monitor.SetVigilantValue(5)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant {
