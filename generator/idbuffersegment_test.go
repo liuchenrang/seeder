@@ -3,53 +3,50 @@ package generator_test
 import (
 	//"errors"
 	//"fmt"
-	"testing"
+	"fmt"
+	"seeder/bootstrap"
+	"seeder/config"
 	"seeder/generator"
 	"seeder/logger"
-	"fmt"
-	"seeder/config"
-	"seeder/bootstrap"
+	"testing"
 )
 
-func TestNewEqual(t *testing.T) {
+func TestMasterChange(t *testing.T) {
 	// Different allocations should not be equal.
-
 	Application := bootstrap.NewApplication()
-	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
-
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
-
-
-	segment := generator.NewIDBufferSegment("test", Application)
-
-
-	segment.CreateMasterIDBuffer("test")
-	segment.CreateSlaveIDBuffer("test")
-	id := segment.GetId()
+	segment := generator.NewIDBufferSegment("uts", Application)
+	segment.CreateMasterIDBuffer("uts")
+	segment.CreateSlaveIDBuffer("uts")
+	var id uint64
 	logger := SeederLogger.NewLogger(seederConfig)
 	var i uint64
 	for i < 40 {
+		if segment.IsMasterUserOut() {
+			segment.ChangeSlaveToMaster()
+		}
 		id = segment.GetId()
 		nextId := segment.GetId()
 		logger.Debug("id ", id, "nextId", nextId)
 		fmt.Printf("xxxx")
 		if id+1 != nextId {
 			t.Error("id error")
-			break;
+			break
 		}
 		fmt.Println()
-		i++;
+		i++
 	}
 }
 
 func TestStats(t *testing.T) {
 	// Different allocations should not be equal.
 	Application := bootstrap.NewApplication()
-	seederConfig :=  config.NewSeederConfig("../seeder.yaml")
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 
-	segment := generator.NewIDBufferSegment("test" , Application)
+	segment := generator.NewIDBufferSegment("test", Application)
 	segment.CreateMasterIDBuffer("test")
 	segment.ChangeSlaveToMaster()
 	segment.GetMasterIdBuffer().GetStats()

@@ -79,7 +79,6 @@ func (*IdGeneratorServiceImpl) Ping() (r string, err error) {
 }
 
 func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, err error) {
-
 	id, err := manager.GetId(params.GetTag())
 
 	if err != nil {
@@ -99,9 +98,7 @@ func init() {
 		level = log4go.DEBUG
 	}
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(level, seederConfig))
-
 	manager = *generator2.NewIDBufferSegmentManager(applicaton)
-	logger = SeederLogger.NewLogger(seederConfig)
 }
 func (kernel *Kernel) Serve() {
 	handlers := &IdGeneratorServiceImpl{}

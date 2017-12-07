@@ -1,3 +1,5 @@
 {
-    "go.gopath": "/usr/local/Cellar/go/gopath/:/usr/local/Cellar/go/gopath/src/IdFacotry/src"
+    "go.gopath": "/usr/local/Cellar/go/gopath/:/usr/local/Cellar/go/gopath/src/IdFacotry/src",
+    "go.formatOnSave": true,
+    "git.ignoreLimitWarning": true
 }

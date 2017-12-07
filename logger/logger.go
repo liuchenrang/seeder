@@ -2,34 +2,37 @@ package SeederLogger
 
 import (
 	//"time"
-	"time"
 	"fmt"
 	"seeder/config"
+	"time"
+
 	"github.com/alecthomas/log4go"
 )
+
 var (
 	seederCconfig config.SeederConfig
 	//globalLogger l4g.Logger
+	Author string
 )
 
-
-func init()  {
-
+func init() {
+	Author = "xinghuo"
 }
-type Logger struct{
-	level int
+
+type Logger struct {
+	level   int
 	message string
 	log4go.Logger
 }
 
-func (logger Logger) Debug(a ...interface{}){
+func (logger Logger) Debug(a ...interface{}) {
 	now := time.Now()
-	fmt.Sprintf("%s-%s-%s %s:%s:%s",now.Year(), now.Month(),now.Day(),now.Hour(), now.Minute(),now.Second())
+	fmt.Sprintf("%s-%s-%s %s:%s:%s", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
 	fmt.Println(a)
 }
-func (logger Logger) Info(a ...interface{}){
+func (logger Logger) Info(a ...interface{}) {
 	now := time.Now()
-	fmt.Println(now.Year(), now.Month(),now.Day(),now.Hour(), now.Minute(),now.Second(), a)
+	fmt.Println(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), a)
 }
 func NewLogger(seederConfig config.SeederConfig) Logger {
 	lg := Logger{}
@@ -37,15 +40,15 @@ func NewLogger(seederConfig config.SeederConfig) Logger {
 	return lg
 }
 
-func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger{
+func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger {
 	log := log4go.NewDefaultLogger(level)
-	//s := seederConfig.Logger.Path + "/" + seederConfig.Logger.File
-	//flw := log4go.NewFileLogWriter(s, false)
-	//flw.SetFormat("[%D %T] [%L] (%S) %M")
-	//flw.SetRotate(true)
-	//flw.SetRotateSize(1024*1024*100)
-	//flw.SetRotateLines(0)
-	//flw.SetRotateDaily(true)
-	//log.AddFilter("file", level, flw)
+	fname := seederConfig.Logger.Path + "/" + seederConfig.Logger.File
+	flw := log4go.NewFileLogWriter(fname, false)
+	flw.SetFormat("[%D %T] [%L] (%S) %M")
+	flw.SetRotate(true)
+	flw.SetRotateSize(1024 * 1024 * 100)
+	flw.SetRotateLines(0)
+	flw.SetRotateDaily(true)
+	log.AddFilter("file", level, flw)
 	return log
 }

@@ -2,48 +2,45 @@ package idgen
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"log"
-	"sync"
 	"fmt"
+	"log"
 	"seeder/bootstrap"
+	"sync"
+
 	"github.com/alecthomas/log4go"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type DBGen struct {
-	maxId     uint64
-	db        *sql.DB
-	cacheStep uint64
-	lock      *sync.Mutex
-	Fin       chan<- int
+	db   *sql.DB
+	lock *sync.Mutex
+	Fin  chan<- int
 
 	application *bootstrap.Application
-	 
 }
 
 var (
 	db *sql.DB
 )
 
-func (dbgen *DBGen) GenerateSegment(bizTag string) (uint64, uint64, error) {
-	dbgen.lock.Lock()
-	defer dbgen.lock.Unlock()
-	dbgen.find(bizTag)
-
-	return dbgen.maxId, dbgen.cacheStep, nil
+func (this *DBGen) GenerateSegment(bizTag string) (currentId uint64, cacheSteop uint64, step uint64, e error) {
+	this.lock.Lock()
+	defer this.lock.Unlock()
+	currentId, cacheSteop, step, e = this.find(bizTag)
+	return currentId, cacheSteop, step, e
 }
-func (dbgen *DBGen) flush(bizTag string) {
-	dbgen.UpdateStep(bizTag)
+func (this *DBGen) flush(bizTag string) {
+	this.UpdateStep(bizTag)
 }
-func (dbgen *DBGen)  getLogger() log4go.Logger {
-	return dbgen.application.Get("globalLogger").(log4go.Logger)
+func (this *DBGen) getLogger() log4go.Logger {
+	return this.application.Get("globalLogger").(log4go.Logger)
 }
-func (dbgen *DBGen) find(bizTag string) {
+func (this *DBGen) find(bizTag string) (currentId uint64, cacheStep uint64, step uint64, e error) {
 
-	tx, errBegin := dbgen.db.Begin()
+	tx, errBegin := this.db.Begin()
 
-	sqlSelect := "SELECT currentId,cacheStep from " + dbgen.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
-	stmt, errPrepare := dbgen.db.Prepare(sqlSelect)
+	sqlSelect := "SELECT currentId,cacheStep,step from " + this.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
+	stmt, errPrepare := this.db.Prepare(sqlSelect)
 	defer stmt.Close()
 	if errPrepare != nil {
 		log.Fatal(errBegin.Error())
@@ -52,20 +49,17 @@ func (dbgen *DBGen) find(bizTag string) {
 	if errBegin != nil {
 		log.Fatal(errBegin.Error())
 	}
-	var currentId, cacheStep uint64
-	errQuery := stmt.QueryRow(bizTag).Scan(&currentId, &cacheStep)
+	errQuery := stmt.QueryRow(bizTag).Scan(&currentId, &cacheStep, &step)
 	if errQuery != nil {
 		panic(errQuery.Error()) // proper error handling instead of panic in your app
 	}
 	tx.Commit()
-	dbgen.getLogger().Debug("DBGen find ", sqlSelect,"currentId", currentId, "cacheStep", cacheStep)
-
-	dbgen.cacheStep = cacheStep
-	dbgen.maxId = currentId + 1
+	this.getLogger().Debug("DBGen find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep)
+	return currentId, cacheStep, step, errQuery
 }
-func (dbgen *DBGen) UpdateStep(bizTag string) (int64, error) {
+func (this *DBGen) UpdateStep(bizTag string) (int64, error) {
 
-	stmt, errPrepare := dbgen.db.Prepare("UPDATE " + dbgen.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
+	stmt, errPrepare := this.db.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
 	var errorUpdate error
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -87,7 +81,7 @@ func init() {
 }
 func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
 	if db == nil {
-		var errOpen error;
+		var errOpen error
 		//
 		config := application.GetConfig()
 		dsn := fmt.Sprintf(
