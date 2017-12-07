@@ -9,6 +9,7 @@ import (
 	"seeder/generator"
 	"seeder/logger"
 	"testing"
+	"github.com/alecthomas/log4go"
 )
 
 func TestIdBuffer(t *testing.T) {
@@ -16,7 +17,7 @@ func TestIdBuffer(t *testing.T) {
 	Application := bootstrap.NewApplication()
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
-	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
 	idBuf := generator.NewIDBuffer("test", Application)
 	idBuf.GetId()

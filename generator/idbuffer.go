@@ -10,9 +10,9 @@ import (
 	"sync/atomic"
 )
 
-var mu sync.Mutex
 
 type IDBuffer struct {
+	mu sync.Mutex
 	currentId   uint64
 	maxId       uint64
 	step        uint64
@@ -33,6 +33,7 @@ func (this *IDBuffer) GetMaxId() (id uint64) {
 	return this.maxId
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
+
 	out := this.IsUseOut()
 	if out {
 		return 0, errors.New("ID Use Out")
@@ -44,7 +45,6 @@ func (this *IDBuffer) GetId() (id uint64, e error) {
 	return this.currentId, nil
 }
 func (this *IDBuffer) GetStats() *stats.Stats {
-	//this.application.Get("globalLogger").(log4go.Logger).Debug("this  nil ", this == nil)
 	return this.stats
 }
 func (this *IDBuffer) IsUseOut() bool {
@@ -64,14 +64,14 @@ func (this *IDBuffer) Flush() {
 }
 
 func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
-	mu.Lock()
-	defer mu.Unlock()
 	typeIdMake := TypeIDMake{}
 	dbGen := typeIdMake.Make(bizTag, application)
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
+
 	this := &IDBuffer{
 		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, stats: &stats.Stats{}, lck: &sync.Mutex{}, db: dbGen, isUseOut: false,
 		application: application,
 	} //
+	go this.Flush()
 	return this
 }

@@ -46,6 +46,7 @@ var (
 	manager      generator2.IDBufferSegmentManager
 	seederConfig config.SeederConfig
 	logger       SeederLogger.Logger
+	applicaton   *bootstrap.Application
 )
 
 func NewUserException(code generator.ErrorCode, errorName string, message string) *generator.UserException {
@@ -80,6 +81,7 @@ func (*IdGeneratorServiceImpl) Ping() (r string, err error) {
 
 func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, err error) {
 	id, err := manager.GetId(params.GetTag())
+	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
 
 	if err != nil {
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
@@ -91,11 +93,14 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 func init() {
 	seederConfig = config.NewSeederConfig("./seeder.yaml")
 
-	applicaton := bootstrap.NewApplication()
+	applicaton = bootstrap.NewApplication()
 	applicaton.Set("globalSeederConfig", seederConfig)
 	var level log4go.Level
-	if seederConfig.Logger.Level == "debug" {
+	if seederConfig.Logger.Level == "DEBUG" {
 		level = log4go.DEBUG
+	}
+	if seederConfig.Logger.Level == "CRITICAL" {
+		level = log4go.CRITICAL
 	}
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(level, seederConfig))
 	manager = *generator2.NewIDBufferSegmentManager(applicaton)

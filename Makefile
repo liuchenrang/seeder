@@ -1,6 +1,7 @@
 build:
 	cd thrift && $(MAKE) build
 run:
-	go build -o sbin/seeder &&  ./sbin/seeder
+	rm -Rf ./logs/*
+	go build -o sbin/seeder &&  ./sbin/seeder | tee /tmp/seeder.log
 debug:
-	go build -gcflags "-N -l" -o sbin/seeder && sudo gdb ./sbin/seeder
+	go build -gcflags "-N -l" -o sbin/seeder && sudo gdb ./sbin/seeder | tee /tmp/seeder.log

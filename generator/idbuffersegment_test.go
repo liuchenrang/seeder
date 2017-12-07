@@ -9,6 +9,8 @@ import (
 	"seeder/generator"
 	"seeder/logger"
 	"testing"
+	"github.com/alecthomas/log4go"
+	"seeder/generator/idgen"
 )
 
 func TestMasterChange(t *testing.T) {
@@ -16,7 +18,9 @@ func TestMasterChange(t *testing.T) {
 	Application := bootstrap.NewApplication()
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
-	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+
+
 	segment := generator.NewIDBufferSegment("uts", Application)
 	segment.CreateMasterIDBuffer("uts")
 	segment.CreateSlaveIDBuffer("uts")
@@ -50,4 +54,20 @@ func TestStats(t *testing.T) {
 	segment.CreateMasterIDBuffer("test")
 	segment.ChangeSlaveToMaster()
 	segment.GetMasterIdBuffer().GetStats()
+}
+
+
+func TestDB(t *testing.T) {
+	// Different allocations should not be equal.
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+
+	bizTag := "test5"
+	segment := generator.NewIDBufferSegment(bizTag, Application)
+	segment.CreateMasterIDBuffer(bizTag)
+	db := idgen.NewDBGen(bizTag, Application)
+
+	fmt.Println(db.Find(bizTag))
 }

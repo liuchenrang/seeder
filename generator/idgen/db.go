@@ -7,7 +7,6 @@ import (
 	"seeder/bootstrap"
 	"sync"
 
-	"github.com/alecthomas/log4go"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -26,16 +25,14 @@ var (
 func (this *DBGen) GenerateSegment(bizTag string) (currentId uint64, cacheSteop uint64, step uint64, e error) {
 	this.lock.Lock()
 	defer this.lock.Unlock()
-	currentId, cacheSteop, step, e = this.find(bizTag)
+	currentId, cacheSteop, step, e = this.Find(bizTag)
 	return currentId, cacheSteop, step, e
 }
 func (this *DBGen) flush(bizTag string) {
 	this.UpdateStep(bizTag)
 }
-func (this *DBGen) getLogger() log4go.Logger {
-	return this.application.Get("globalLogger").(log4go.Logger)
-}
-func (this *DBGen) find(bizTag string) (currentId uint64, cacheStep uint64, step uint64, e error) {
+
+func (this *DBGen) Find(bizTag string)(currentId uint64, cacheStep uint64, step uint64, e error) {
 
 	tx, errBegin := this.db.Begin()
 
@@ -54,7 +51,7 @@ func (this *DBGen) find(bizTag string) (currentId uint64, cacheStep uint64, step
 		panic(errQuery.Error()) // proper error handling instead of panic in your app
 	}
 	tx.Commit()
-	this.getLogger().Debug("DBGen find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep)
+	this.application.GetLogger().Debug("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 	return currentId, cacheStep, step, errQuery
 }
 func (this *DBGen) UpdateStep(bizTag string) (int64, error) {

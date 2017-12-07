@@ -2,41 +2,61 @@ package generator
 
 import (
 	"seeder/bootstrap"
-	"seeder/config"
-	"seeder/logger"
 	"sync"
 )
 
 type IDBufferSegment struct {
-	changeLock     sync.Mutex
+	mu     sync.Mutex
 	masterIDBuffer *IDBuffer
 	slaveIdBuffer  *IDBuffer
-	bizTag         string
-	config         config.SeederConfig
 
-	SeederLogger.Logger
+	bizTag         string
 	application *bootstrap.Application
 }
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
-	idBuf := segment.masterIDBuffer
-	segment.application.GetLogger().Debug("SegmentAddress ", segment)
+	var idBuffer *IDBuffer
 	for {
-		id, _ = idBuf.GetId()
-		if id <= 0 {
-			segment.application.GetLogger().Debug(
-				"UserOut",
-				"currentid", segment.masterIDBuffer.GetCurrentId(),
-				"isUserOut", segment.masterIDBuffer.IsUseOut(),
-				"max", segment.masterIDBuffer.GetMaxId())
 
-			if segment.IsMasterUserOut() {
-				segment.application.GetLogger().Debug("ChangeSlaveToMaster", segment.IsMasterUserOut(), segment.masterIDBuffer.IsUseOut())
+		idBuffer = segment.GetMasterIdBuffer()
+		id, _ = idBuffer.GetId()
+		if id <= 0  {
+
+			//debug := fmt.Sprint(
+			//	" BeforeMasterIDBufferInfo",
+			//	" currentid", segment.masterIDBuffer.GetCurrentId(),
+			//	" isUserOut", segment.masterIDBuffer.IsUseOut(),
+			//	" max", segment.masterIDBuffer.GetMaxId())
+			//debug += fmt.Sprint(
+			//	" slaveIdBufferInfo",
+			//	" currentid", segment.slaveIdBuffer.GetCurrentId(),
+			//	" isUserOut", segment.slaveIdBuffer.IsUseOut(),
+			//	" max", segment.slaveIdBuffer.GetMaxId())
+			//
+			////segment.masterIDBuffer = segment.slaveIdBuffer
+			//
+			//debug += fmt.Sprint(
+			//	" AfterMasterIDBufferInfo",
+			//	" currentid", segment.masterIDBuffer.GetCurrentId(),
+			//	" isUserOut", segment.masterIDBuffer.IsUseOut(),
+			//	" max", segment.masterIDBuffer.GetMaxId())
+			//debug += fmt.Sprint(
+			//	" slaveIdBufferInfo",
+			//	" currentid", segment.slaveIdBuffer.GetCurrentId(),
+			//	" isUserOut", segment.slaveIdBuffer.IsUseOut(),
+			//	" max", segment.slaveIdBuffer.GetMaxId())
+			//segment.application.GetLogger().Debug(debug)
+			//
+			//continue
+
+			//if segment.IsMasterUserOut() {
+			//	segment.application.GetLogger().Debug("ChangeSlaveToMaster", segment.IsMasterUserOut(), segment.masterIDBuffer.IsUseOut())
 				segment.ChangeSlaveToMaster()
-			} else {
-				idBuf = segment.masterIDBuffer
+			//
+			//} else {
 				segment.application.GetLogger().Debug("IsMasterUserOut 0 ")
-			}
+			//}
+
 		} else {
 			break
 		}
@@ -47,15 +67,11 @@ func (segment *IDBufferSegment) IsMasterUserOut() bool {
 	return segment.masterIDBuffer.IsUseOut()
 }
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
-	segment.changeLock.Lock()
-	defer segment.changeLock.Unlock()
 	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.application)
-	segment.masterIDBuffer.Flush()
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
 	segment.slaveIdBuffer = NewIDBuffer(bizTag, segment.application)
-	segment.slaveIdBuffer.Flush()
 	return segment.slaveIdBuffer
 }
 func (segment *IDBufferSegment) SetBizTag(bizTag string) {
@@ -72,18 +88,22 @@ func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 }
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
-	segment.changeLock.Lock()
-	defer segment.changeLock.Unlock()
+	segment.mu.Lock()
+	defer segment.mu.Unlock()
 	segment.application.GetLogger().Debug(segment.bizTag + " changeSlaveToMaster")
-	if segment.slaveIdBuffer == nil {
-		segment.CreateSlaveIDBuffer(segment.bizTag)
+	if segment.IsMasterUserOut() {
+		if segment.slaveIdBuffer == nil {
+			segment.CreateSlaveIDBuffer(segment.bizTag)
+		} else {
+			segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
+		}
+		segment.masterIDBuffer = segment.slaveIdBuffer
 	}
-	segment.masterIDBuffer = segment.slaveIdBuffer
-	segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
 }
 
 func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBufferSegment {
 	segment := &IDBufferSegment{application: application}
 	segment.SetBizTag(bizTag)
+	segment.CreateMasterIDBuffer(segment.bizTag)
 	return segment
 }

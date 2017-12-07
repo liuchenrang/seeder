@@ -7,6 +7,7 @@ import (
 	"seeder/config"
 	"seeder/logger"
 	"testing"
+	"github.com/alecthomas/log4go"
 )
 
 func test(g IDGen) {
@@ -18,9 +19,10 @@ func TestNewEqual(t *testing.T) {
 	Application := bootstrap.NewApplication()
 	seederConfig := config.NewSeederConfig("../../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
-	Application.Set("globalLogger", SeederLogger.NewLogger4g(3, seederConfig))
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
 	idGen := NewDBGen("uts", Application)
 	test(idGen)
 	fmt.Println(seederConfig)
+	Application.GetLogger().Close()
 }
