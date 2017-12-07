@@ -17,46 +17,11 @@ type IDBufferSegment struct {
 func (segment *IDBufferSegment) GetId() (id uint64) {
 	var idBuffer *IDBuffer
 	for {
-
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
 		if id <= 0  {
-
-			//debug := fmt.Sprint(
-			//	" BeforeMasterIDBufferInfo",
-			//	" currentid", segment.masterIDBuffer.GetCurrentId(),
-			//	" isUserOut", segment.masterIDBuffer.IsUseOut(),
-			//	" max", segment.masterIDBuffer.GetMaxId())
-			//debug += fmt.Sprint(
-			//	" slaveIdBufferInfo",
-			//	" currentid", segment.slaveIdBuffer.GetCurrentId(),
-			//	" isUserOut", segment.slaveIdBuffer.IsUseOut(),
-			//	" max", segment.slaveIdBuffer.GetMaxId())
-			//
-			////segment.masterIDBuffer = segment.slaveIdBuffer
-			//
-			//debug += fmt.Sprint(
-			//	" AfterMasterIDBufferInfo",
-			//	" currentid", segment.masterIDBuffer.GetCurrentId(),
-			//	" isUserOut", segment.masterIDBuffer.IsUseOut(),
-			//	" max", segment.masterIDBuffer.GetMaxId())
-			//debug += fmt.Sprint(
-			//	" slaveIdBufferInfo",
-			//	" currentid", segment.slaveIdBuffer.GetCurrentId(),
-			//	" isUserOut", segment.slaveIdBuffer.IsUseOut(),
-			//	" max", segment.slaveIdBuffer.GetMaxId())
-			//segment.application.GetLogger().Debug(debug)
-			//
-			//continue
-
-			//if segment.IsMasterUserOut() {
-			//	segment.application.GetLogger().Debug("ChangeSlaveToMaster", segment.IsMasterUserOut(), segment.masterIDBuffer.IsUseOut())
-				segment.ChangeSlaveToMaster()
-			//
-			//} else {
-				segment.application.GetLogger().Debug("IsMasterUserOut 0 ")
-			//}
-
+			segment.ChangeSlaveToMaster()
+			segment.application.GetLogger().Debug("IsMasterUserOut 0 ")
 		} else {
 			break
 		}
