@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/log4go"
+	"os"
 )
 
 var (
@@ -41,14 +42,12 @@ func NewLogger(seederConfig config.SeederConfig) Logger {
 }
 
 func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger {
-	log := log4go.NewDefaultLogger(level)
-	fname := seederConfig.Logger.Path + "/" + seederConfig.Logger.File
-	flw := log4go.NewFileLogWriter(fname, false)
-	flw.SetFormat("[%D %T] [%L] (%S) %M")
-	flw.SetRotate(true)
-	flw.SetRotateSize(1024 * 1024 * 100)
-	flw.SetRotateLines(0)
-	flw.SetRotateDaily(true)
-	log.AddFilter("file", level, flw)
+	log := log4go.Global
+
+	if _, err := os.Stat("./log4go.xml"); err == nil {
+		log.LoadConfiguration("./log4go.xml")
+		fmt.Println("load log4go config")
+	}
+
 	return log
 }
