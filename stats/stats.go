@@ -4,6 +4,7 @@ import "sync/atomic"
 
 type Stats struct {
 	total uint64
+	Stop bool
 }
 
 //已分配数目

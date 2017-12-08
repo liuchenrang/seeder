@@ -63,10 +63,10 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 			if vigilanValue <= 100 {
 				monitor.SetVigilantValue(vigilanValue)
 				vigilant := monitor.IsOutVigilantValue()
-				if vigilant {
+				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop{
 					manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
 					segment.CreateSlaveIDBuffer(bizTag)
-					segment.GetMasterIdBuffer().GetStats().Clear()
+					segment.GetMasterIdBuffer().GetStats().Stop = true
 				}
 			}
 
