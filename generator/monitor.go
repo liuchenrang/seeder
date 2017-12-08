@@ -6,19 +6,24 @@ import (
 )
 
 type Monitor struct {
-	threshold uint64
+	threshold uint8
 	segment  *IDBufferSegment
 	application *bootstrap.Application
 }
 
-func (m *Monitor) SetVigilantValue(threshold uint64) {
+func (m *Monitor) SetVigilantValue(threshold uint8) {
 	m.threshold = threshold
 }
 func (m *Monitor) IsOutVigilantValue() bool {
-	i := m.segment.GetMasterIdBuffer().GetStats().GetTotal()
-	m.application.GetLogger().Debug(m.segment.GetBizTag() , "total", i)
+	idBuffer := m.segment.GetMasterIdBuffer()
+	total := idBuffer.GetCacheStep()
+	useTotal := idBuffer.GetStats().GetTotal()
 
-	return i >= m.threshold
+	usePercent := (useTotal*100 / total*100)/100
+
+	m.application.GetLogger().Debug(m.segment.GetBizTag() , " usePercent ",usePercent , "useTotal",useTotal, "total Step", total)
+
+	return uint8(usePercent) >= m.threshold
 }
 func (m *Monitor) Event(tag <-chan string) {
 

@@ -24,7 +24,7 @@ func TestNewClient(t *testing.T) {
 
 	idp, _ := client.Ping()
 	i := 0
-	for i < 5 {
+	for i < 3 {
 		id, error := client.GetId(&thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
 		if error != nil {
 			log.Fatal(error)

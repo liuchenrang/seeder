@@ -17,6 +17,7 @@ type IDBuffer struct {
 	currentId   uint64
 	maxId       uint64
 	step        uint64
+	cacheStep   uint64
 
 	stats       *stats.Stats
 	bizTag      string
@@ -32,6 +33,10 @@ func (this *IDBuffer) GetCurrentId() (id uint64) {
 func (this *IDBuffer) GetMaxId() (id uint64) {
 
 	return this.maxId
+}
+func (this *IDBuffer) GetCacheStep() (id uint64) {
+
+	return this.cacheStep
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
 
@@ -71,7 +76,7 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
 
 	this := &IDBuffer{
-		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, stats: &stats.Stats{}, db: dbGen, isUseOut: false,
+		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep,cacheStep: cacheStep, stats: &stats.Stats{}, db: dbGen, isUseOut: false,
 		application: application,
 	} //
 	this.Wg.Add(1)

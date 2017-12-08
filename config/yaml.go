@@ -38,7 +38,7 @@ type SeederConfig struct{
 	Monitior Monitior
 }
 type Monitior struct {
-	VigilantValue uint64 `yaml:"vigilant_value"`
+	VigilantValue uint8 `yaml:"vigilant_value"`
 }
 
 func NewSeederConfig(yamlfile string) SeederConfig{
