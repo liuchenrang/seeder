@@ -5,6 +5,7 @@ bench:
 	rm -Rf ./client_test
 	go test  -bench ^BenchmarkLoopsTest2 |tee -a /tmp/idtest2.log &
 	go test  -bench ^BenchmarkLoopsTest2 |tee -a /tmp/idtest2.log &
+	go test  -bench ^BenchmarkLoopsTest5 |tee -a /tmp/idtest5.log &
 	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log &
 	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log
 	echo total `cat /tmp/iduts.log|grep -v ping|grep id |awk '{print $2}'|wc -l`

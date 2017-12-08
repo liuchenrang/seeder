@@ -46,6 +46,9 @@ func NewApplication() *bootstrap.Application{
 	if seederConfig.Logger.Level == "CRITICAL" {
 		level = log4go.CRITICAL
 	}
+	if seederConfig.Logger.Level == "ERROR" {
+		level = log4go.ERROR
+	}
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(level, seederConfig))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
 	return applicaton
