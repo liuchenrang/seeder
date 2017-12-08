@@ -10,7 +10,7 @@ database:
            host: 10.10.106.218
            port: 3306
     connection_info:
-        max_open_conns: 5
+        max_open_conns: 20
         max_idle_conns: 3
 logger:
      path: "/usr/local/Cellar/go/gopath/src/seeder/logs"

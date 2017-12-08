@@ -12,8 +12,7 @@ import (
 
 
 type IDBuffer struct {
-	Wg     sync.WaitGroup
-	mu sync.Mutex
+	mu1 sync.Mutex
 	currentId   uint64
 	maxId       uint64
 	step        uint64
@@ -21,6 +20,8 @@ type IDBuffer struct {
 
 	stats       *stats.Stats
 	bizTag      string
+
+	mu sync.Mutex
 	isUseOut    bool
 	db          idgen.IDGen
 	application *bootstrap.Application
@@ -39,7 +40,8 @@ func (this *IDBuffer) GetCacheStep() (id uint64) {
 	return this.cacheStep
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
-
+	this.mu1.Lock()
+	defer this.mu1.Unlock()
 	out := this.IsUseOut()
 	if out {
 		return 0, errors.New("ID Use Out")
@@ -65,10 +67,7 @@ func (this *IDBuffer) IsUseOut() bool {
 
 	return this.isUseOut
 }
-func (this *IDBuffer) Flush() {
-	this.db.UpdateStep(this.bizTag)
-	this.Wg.Done()
-}
+
 
 func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	typeIdMake := TypeIDMake{}
@@ -79,7 +78,5 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep,cacheStep: cacheStep, stats: &stats.Stats{}, db: dbGen, isUseOut: false,
 		application: application,
 	} //
-	this.Wg.Add(1)
-	go this.Flush()
 	return this
 }

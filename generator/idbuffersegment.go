@@ -55,6 +55,8 @@ func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.mu.Lock()
 	defer segment.mu.Unlock()
+
+
 	segment.application.GetLogger().Debug(segment.bizTag + " changeSlaveToMaster")
 	if segment.IsMasterUserOut() {
 		if segment.slaveIdBuffer == nil {
@@ -68,10 +70,10 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 func (segment *IDBufferSegment) Close()  {
 
 	if segment.masterIDBuffer != nil {
-		segment.masterIDBuffer.Wg.Wait()
+		//segment.masterIDBuffer.Wg.Wait()
 	}
 	if segment.slaveIdBuffer != nil {
-		segment.slaveIdBuffer.Wg.Wait()
+		//segment.slaveIdBuffer.Wg.Wait()
 	}
 }
 func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBufferSegment {

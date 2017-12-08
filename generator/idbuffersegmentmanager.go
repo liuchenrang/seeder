@@ -4,7 +4,6 @@ import (
 	"log"
 	"seeder/bootstrap"
 	"sync"
-	"time"
 )
 
 type IDBufferSegmentManager struct {
@@ -54,24 +53,24 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 	manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
 
-	go func() {
-		monitor := NewMonitor(segment, manager.application)
-		for {
-			time.Sleep(time.Millisecond * 100)
-			vigilanValue := manager.application.GetConfig().Monitior.VigilantValue
-			manager.application.GetLogger().Debug("NewMonitor timer ", bizTag, "Vigilant", vigilanValue)
-			if vigilanValue <= 100 {
-				monitor.SetVigilantValue(vigilanValue)
-				vigilant := monitor.IsOutVigilantValue()
-				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop{
-					manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
-					segment.CreateSlaveIDBuffer(bizTag)
-					segment.GetMasterIdBuffer().GetStats().Stop = true
-				}
-			}
-
-		}
-	}()
+	//go func() {
+	//	monitor := NewMonitor(segment, manager.application)
+	//	for {
+	//		time.Sleep(time.Millisecond * 100)
+	//		vigilanValue := manager.application.GetConfig().Monitior.VigilantValue
+	//		manager.application.GetLogger().Debug("NewMonitor timer ", bizTag, "Vigilant", vigilanValue)
+	//		if vigilanValue <= 100 {
+	//			monitor.SetVigilantValue(vigilanValue)
+	//			vigilant := monitor.IsOutVigilantValue()
+	//			if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop{
+	//				manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
+	//				segment.CreateSlaveIDBuffer(bizTag)
+	//				segment.GetMasterIdBuffer().GetStats().Stop = true
+	//			}
+	//		}
+	//
+	//	}
+	//}()
 	return segment
 
 }

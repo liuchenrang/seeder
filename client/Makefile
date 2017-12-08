@@ -3,10 +3,11 @@ clt:
 	./client_test -test.v -test.run ^TestNewClient$
 bench:
 	rm -Rf ./client_test
-	go test  -bench ^BenchmarkLoopsTest2$ |tee /tmp/id.log &
-	go test  -bench ^BenchmarkLoopsTest5$ |tee /tmp/id.log &
-	go test  -bench ^BenchmarkLoopsUts$ |tee /tmp/iduts.log &
-
-	cat /tmp/iduts.log|grep -v ping|grep id |awk '{print $2}'| sort -k 1 |uniq -c
+	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log &
+	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log &
+	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log &
+	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log 
+	echo total `cat /tmp/iduts.log|grep -v ping|grep id |awk '{print $2}'|wc -l`
+	cat /tmp/iduts.log|grep -v ping|grep id |awk '{print $2}'| sort -k 1 |uniq -c| sort -k 1 -n -r|less
 
 

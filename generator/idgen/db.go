@@ -19,7 +19,7 @@ type DBGen struct {
 }
 
 var (
-	db *sql.DB
+	DB *sql.DB
 )
 
 func (this *DBGen) GenerateSegment(bizTag string) (currentId uint64, cacheSteop uint64, step uint64, e error) {
@@ -35,22 +35,28 @@ func (this *DBGen) flush(bizTag string) {
 func (this *DBGen) Find(bizTag string)(currentId uint64, cacheStep uint64, step uint64, e error) {
 
 	tx, errBegin := this.db.Begin()
+	defer tx.Commit()
 
 	sqlSelect := "SELECT currentId,cacheStep,step from " + this.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
 	stmt, errPrepare := this.db.Prepare(sqlSelect)
 	defer stmt.Close()
+
 	if errPrepare != nil {
+		this.application.GetLogger().Error(errBegin.Error())
 		log.Fatal(errBegin.Error())
 	}
 	stmt.Exec(bizTag)
 	if errBegin != nil {
+		this.application.GetLogger().Error(errBegin.Error())
+
 		log.Fatal(errBegin.Error())
 	}
 	errQuery := stmt.QueryRow(bizTag).Scan(&currentId, &cacheStep, &step)
 	if errQuery != nil {
+		this.application.GetLogger().Error(errQuery.Error())
 		panic(errQuery.Error()) // proper error handling instead of panic in your app
 	}
-	tx.Commit()
+	this.UpdateStep(bizTag)
 	this.application.GetLogger().Debug("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 	return currentId, cacheStep, step, errQuery
 }
@@ -77,7 +83,7 @@ func init() {
 
 }
 func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
-	if db == nil {
+	if DB == nil {
 		var errOpen error
 		//
 		config := application.GetConfig()
@@ -89,15 +95,15 @@ func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
 			config.Database.Master[0].Port,
 			config.Database.Account.DBName,
 		)
-		db, errOpen = sql.Open("mysql", dsn) //
-		if db == nil {
+		DB, errOpen = sql.Open("mysql", dsn) //
+		if DB == nil {
 			if errOpen != nil {
 				log.Fatal(errOpen)
 			}
 		}
-		db.SetMaxOpenConns(config.Database.ConnectionInfo.MaxOpenConns)
-		db.SetMaxIdleConns(config.Database.ConnectionInfo.MaxIdleConns)
+		DB.SetMaxOpenConns(config.Database.ConnectionInfo.MaxOpenConns)
+		DB.SetMaxIdleConns(config.Database.ConnectionInfo.MaxIdleConns)
 	}
-	dbGen := &DBGen{db: db, lock: &sync.Mutex{}, application: application}
+	dbGen := &DBGen{db: DB, lock: &sync.Mutex{}, application: application}
 	return dbGen
 }
