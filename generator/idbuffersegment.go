@@ -62,7 +62,9 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 		if segment.slaveIdBuffer == nil {
 			segment.CreateSlaveIDBuffer(segment.bizTag)
 		} else {
-			segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
+			if segment.slaveIdBuffer.IsUseOut() {
+				segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
+			}
 		}
 		segment.masterIDBuffer = segment.slaveIdBuffer
 	}
