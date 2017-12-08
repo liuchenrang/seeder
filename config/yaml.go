@@ -14,8 +14,8 @@ type Account struct{
 	DBName string `yaml:"dbname"`
 }
 type ConnectionInfo struct{
-	Max int
-	Idle int
+	MaxOpenConns int `yaml:"max_open_conns"`
+	MaxIdleConns int `yaml:"max_idle_conns"`
 }
 type Database struct{
 	Account Account

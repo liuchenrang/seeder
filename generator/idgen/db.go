@@ -97,8 +97,8 @@ func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
 				log.Fatal(errOpen)
 			}
 		}
-		db.SetMaxOpenConns(10)
-		db.SetMaxIdleConns(5)
+		db.SetMaxOpenConns(config.Database.ConnectionInfo.MaxOpenConns)
+		db.SetMaxIdleConns(config.Database.ConnectionInfo.MaxIdleConns)
 	}
 	dbGen := &DBGen{db: db, lock: &sync.Mutex{}, application: application}
 	return dbGen
