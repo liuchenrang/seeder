@@ -3,7 +3,9 @@ clt:
 	./client_test -test.v -test.run ^TestNewClient$
 bench:
 	rm -Rf ./client_test
-	go test  -bench ^BenchmarkLoopsParallel$ |tee /tmp/id.log
+	go test  -bench ^BenchmarkLoopsUts$ |tee /tmp/id.log &
+	go test  -bench ^BenchmarkLoopsTest2$ |tee /tmp/id.log &
+	go test  -bench ^BenchmarkLoopsTest5$ |tee /tmp/id.log &
 	cat /tmp/id.log|grep -v ping|grep id |awk '{print $2}'| sort -k 1 |uniq -c
 
 

@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"log"
 	"seeder/bootstrap"
-	"seeder/config"
-	generator2 "seeder/generator"
 	"seeder/logger"
 	"seeder/thrift/packages/generator"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
-	"github.com/alecthomas/log4go"
 )
 
 type strapper bootstrap.Strapper
@@ -19,6 +16,7 @@ type Kernel struct {
 	booted        bool
 	bootstrappers []strapper
 	SeederLogger.Logger
+	applicaton *bootstrap.Application
 }
 
 func NewKernel(debug bool) *Kernel {
@@ -28,7 +26,9 @@ func NewKernel(debug bool) *Kernel {
 func (s *Kernel) RegisterBootstrapper(b strapper) {
 	s.bootstrappers = append(s.bootstrappers, b)
 }
-
+func (s *Kernel) SetApplication(app *bootstrap.Application) {
+	s.applicaton  = app
+}
 func (s *Kernel) BootstrapWith() {
 
 	if s.booted {
@@ -41,13 +41,6 @@ func (s *Kernel) BootstrapWith() {
 
 	s.booted = true
 }
-
-var (
-	manager      generator2.IDBufferSegmentManager
-	seederConfig config.SeederConfig
-	logger       SeederLogger.Logger
-	applicaton   *bootstrap.Application
-)
 
 func NewUserException(code generator.ErrorCode, errorName string, message string) *generator.UserException {
 
@@ -90,21 +83,7 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 	return fmt.Sprintf("%d", id), nil
 }
 
-func init() {
-	seederConfig = config.NewSeederConfig("./seeder.yaml")
 
-	applicaton = bootstrap.NewApplication()
-	applicaton.Set("globalSeederConfig", seederConfig)
-	var level log4go.Level
-	if seederConfig.Logger.Level == "DEBUG" {
-		level = log4go.DEBUG
-	}
-	if seederConfig.Logger.Level == "CRITICAL" {
-		level = log4go.CRITICAL
-	}
-	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(level, seederConfig))
-	manager = *generator2.NewIDBufferSegmentManager(applicaton)
-}
 func (kernel *Kernel) Serve() {
 	handlers := &IdGeneratorServiceImpl{}
 	processor := generator.NewIdGeneratorServiceProcessor(handlers)
