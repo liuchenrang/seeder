@@ -71,6 +71,13 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 	return segment
 
 }
+func (manager *IDBufferSegmentManager) Stop()  {
+	for _, segment := range  manager.tagPool {
+		if segment.masterIDBuffer != nil {
+			segment.Close()
+		}
+	}
+}
 
 func NewIDBufferSegmentManager(application *bootstrap.Application) *IDBufferSegmentManager {
 

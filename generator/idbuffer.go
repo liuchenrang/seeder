@@ -12,13 +12,14 @@ import (
 
 
 type IDBuffer struct {
+	Wg     sync.WaitGroup
 	mu sync.Mutex
 	currentId   uint64
 	maxId       uint64
 	step        uint64
+
 	stats       *stats.Stats
 	bizTag      string
-	lck         *sync.Mutex
 	isUseOut    bool
 	db          idgen.IDGen
 	application *bootstrap.Application
@@ -51,8 +52,8 @@ func (this *IDBuffer) IsUseOut() bool {
 	if this.isUseOut {
 		return this.isUseOut
 	}
-	this.lck.Lock()
-	defer this.lck.Unlock()
+	this.mu.Lock()
+	defer this.mu.Unlock()
 
 	this.isUseOut = this.currentId >= this.maxId
 	this.application.GetLogger().Debug(" IDBuffer currentId", this.currentId, "max ", this.maxId, "out", this.isUseOut)
@@ -61,6 +62,7 @@ func (this *IDBuffer) IsUseOut() bool {
 }
 func (this *IDBuffer) Flush() {
 	this.db.UpdateStep(this.bizTag)
+	this.Wg.Done()
 }
 
 func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
@@ -69,9 +71,10 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
 
 	this := &IDBuffer{
-		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, stats: &stats.Stats{}, lck: &sync.Mutex{}, db: dbGen, isUseOut: false,
+		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, stats: &stats.Stats{}, db: dbGen, isUseOut: false,
 		application: application,
 	} //
+	this.Wg.Add(1)
 	go this.Flush()
 	return this
 }

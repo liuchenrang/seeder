@@ -89,11 +89,9 @@ func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
 			config.Database.Master[0].Port,
 			config.Database.Account.DBName,
 		)
-		//dsn := "root:tortdh_gogo888!@tcp(10.10.106.218:3306)/maindb?charset=utf8"
 		db, errOpen = sql.Open("mysql", dsn) //
 		if db == nil {
 			if errOpen != nil {
-				fmt.Println("error open")
 				log.Fatal(errOpen)
 			}
 		}

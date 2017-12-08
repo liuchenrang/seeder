@@ -65,7 +65,15 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 		segment.masterIDBuffer = segment.slaveIdBuffer
 	}
 }
+func (segment *IDBufferSegment) Close()  {
 
+	if segment.masterIDBuffer != nil {
+		segment.masterIDBuffer.Wg.Wait()
+	}
+	if segment.slaveIdBuffer != nil {
+		segment.slaveIdBuffer.Wg.Wait()
+	}
+}
 func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBufferSegment {
 	segment := &IDBufferSegment{application: application}
 	segment.SetBizTag(bizTag)

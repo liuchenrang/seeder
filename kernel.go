@@ -8,6 +8,9 @@ import (
 	"seeder/thrift/packages/generator"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
+	"os/signal"
+	"syscall"
+	"os"
 )
 
 type strapper bootstrap.Strapper
@@ -85,6 +88,10 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 
 
 func (kernel *Kernel) Serve() {
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
 	handlers := &IdGeneratorServiceImpl{}
 	processor := generator.NewIdGeneratorServiceProcessor(handlers)
 	serverTransport, err := thrift.NewTServerSocket(seederConfig.Server.Host + ":" + fmt.Sprintf("%d", seederConfig.Server.Port))
@@ -96,5 +103,14 @@ func (kernel *Kernel) Serve() {
 
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
 	fmt.Println("Running at:", seederConfig.Server.Host+":"+fmt.Sprintf("%d", seederConfig.Server.Port)+"\n")
+	go func() {
+		<-sigs
+		fmt.Println("stop servering ")
+		server.Stop()
+		manager.Stop()
+		fmt.Println("stop finish ")
+
+	}()
 	server.Serve()
+
 }
