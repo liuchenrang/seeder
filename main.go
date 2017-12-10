@@ -7,7 +7,6 @@ import (
 	seederGenerator "seeder/generator"
 
 	"seeder/logger"
-	"github.com/alecthomas/log4go"
 )
 
 const VERSION = "1.0.0"
@@ -39,20 +38,12 @@ func NewApplication() *bootstrap.Application{
 	applicaton = bootstrap.NewApplication()
 	seederConfig = config.NewSeederConfig(	*configFlag)
 	applicaton.Set("globalSeederConfig", seederConfig)
-	var level log4go.Level
-	if seederConfig.Logger.Level == "DEBUG" {
-		level = log4go.DEBUG
-	}
-	if seederConfig.Logger.Level == "CRITICAL" {
-		level = log4go.CRITICAL
-	}
-	if seederConfig.Logger.Level == "ERROR" {
-		level = log4go.ERROR
-	}
-	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(level, seederConfig))
+
+	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(0, seederConfig))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
 	return applicaton
 }
+
 func main() {
 	flag.Parse()
 	if *help && !*startFlag {

@@ -1,21 +1,20 @@
 database:
     account:
-         "name": "root"
-         "password": "tortdh_gogo888!"
-         "database": "maindb"
+         "name": "manager"
+         "password": "managermanager"
+         "database": "test"
          "table": "common_generator"
-         "dbname": "maindb"
+         "dbname": "test"
     master:
+#        -
+#          host: 10.10.106.218
+#          port: 3306
         -
-           host: 10.10.106.218
+           host: 127.0.0.1
            port: 3306
     connection_info:
         max_open_conns: 20
         max_idle_conns: 3
-logger:
-     path: "/usr/local/Cellar/go/gopath/src/seeder/logs"
-     level: "DEBUG"
-     file: "seeder.log"
 
 server:
      port: 8080

@@ -22,18 +22,13 @@ type Database struct{
 	Master  []Server
 	ConnectionInfo ConnectionInfo `yaml:"connection_info"`
 }
-type Logger struct{
-	Path string `yaml:"path"`
-	Level string `yaml:"level"`
-	File string `yaml:"file"`
-}
+
 type Server struct{
 	Port int `yaml:"port"`
 	Host string `yaml:"host"`
 }
 type SeederConfig struct{
 	Database Database
-	Logger Logger
 	Server Server
 	Monitior Monitior
 }

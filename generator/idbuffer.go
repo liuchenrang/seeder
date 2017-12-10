@@ -2,7 +2,6 @@ package generator
 
 import (
 	"errors"
-	"fmt"
 	"seeder/bootstrap"
 	"seeder/generator/idgen"
 	"seeder/stats"
@@ -47,7 +46,6 @@ func (this *IDBuffer) GetId() (id uint64, e error) {
 		return 0, errors.New("ID Use Out")
 	}
 	this.stats.Dig()
-	fmt.Println(" IDBuffer ", this.currentId)
 	pint := &this.currentId
 	atomic.AddUint64(pint, this.step)
 	return this.currentId, nil
@@ -78,5 +76,8 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep,cacheStep: cacheStep, stats: &stats.Stats{}, db: dbGen, isUseOut: false,
 		application: application,
 	} //
+
+	Stats[bizTag] <- true
+
 	return this
 }
