@@ -36,7 +36,7 @@ func (this *IDBuffer) GetMaxId() (id uint64) {
 }
 func (this *IDBuffer) GetCacheStep() (id uint64) {
 
-	return this.cacheStep
+	return atomic.LoadUint64(&this.cacheStep)
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
 	this.mu1.Lock()
@@ -46,19 +46,19 @@ func (this *IDBuffer) GetId() (id uint64, e error) {
 		return 0, errors.New("ID Use Out")
 	}
 	this.stats.Dig()
-	pint := &this.currentId
-	atomic.AddUint64(pint, this.step)
+	atomic.AddUint64(&this.currentId, this.step)
 	return this.currentId, nil
 }
 func (this *IDBuffer) GetStats() *stats.Stats {
 	return &this.stats
 }
 func (this *IDBuffer) IsUseOut() bool {
+	this.mu.Lock()
+	defer this.mu.Unlock()
 	if this.isUseOut {
 		return this.isUseOut
 	}
-	this.mu.Lock()
-	defer this.mu.Unlock()
+
 
 	cid := atomic.LoadUint64(&this.currentId)
 	this.isUseOut = cid >= this.maxId
@@ -74,7 +74,7 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
 
 	this := &IDBuffer{
-		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep,cacheStep: cacheStep, db: dbGen, isUseOut: false,
+		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep,cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen, isUseOut: false,
 		application: application,
 	} //
 

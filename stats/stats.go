@@ -5,11 +5,13 @@ import "sync/atomic"
 type Stats struct {
 	total uint64
 	Stop bool
+
 }
 
 //已分配数目
 func (stats *Stats) GetTotal() uint64 {
-	return stats.total
+	u := atomic.LoadUint64(&stats.total)
+	return u
 }
 
 //分配计数

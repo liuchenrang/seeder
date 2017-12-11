@@ -5,23 +5,31 @@ import (
 	"sync"
 )
 
+var (
+	SegmentBizTag        = make(chan string)
+	SegmentSlaveChangeBizTag        = make(chan string)
+	SegmentCreateMasterBizTag        = make(chan string)
+	SegmentCreateSlaveBizTag        = make(chan string)
+	SegmentBizTagIDBuffer = make(chan *IDBuffer)
+)
+
 type IDBufferSegment struct {
-	mu     sync.Mutex
+	mu             sync.Mutex
+	muM           sync.Mutex
 	masterIDBuffer *IDBuffer
 	slaveIdBuffer  *IDBuffer
 
-	bizTag         string
+	bizTag      string
 	application *bootstrap.Application
 }
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
-	segment.mu.Lock()
-	defer segment.mu.Unlock()
+
 	var idBuffer *IDBuffer
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
-		if id <= 0  {
+		if id <= 0 {
 			segment.ChangeSlaveToMaster()
 			segment.application.GetLogger().Debug("IsMasterUserOut 0 ")
 		} else {
@@ -31,14 +39,18 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 	return id
 }
 func (segment *IDBufferSegment) IsMasterUserOut() bool {
+	segment.mu.Lock()
+	defer segment.mu.Unlock()
 	return segment.masterIDBuffer.IsUseOut()
 }
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
-	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.application)
+	SegmentBizTag<-bizTag
+	segment.masterIDBuffer = <-SegmentBizTagIDBuffer
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
-	segment.slaveIdBuffer = NewIDBuffer(bizTag, segment.application)
+	SegmentBizTag<-segment.bizTag
+	segment.slaveIdBuffer = <-SegmentBizTagIDBuffer
 	return segment.slaveIdBuffer
 }
 func (segment *IDBufferSegment) SetBizTag(bizTag string) {
@@ -48,6 +60,13 @@ func (segment *IDBufferSegment) GetBizTag() string {
 	return segment.bizTag
 }
 func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer {
+	segment.mu.Lock()
+	defer segment.mu.Unlock()
+	if segment.masterIDBuffer != nil && !segment.masterIDBuffer.IsUseOut(){
+		return segment.masterIDBuffer
+	}
+	SegmentBizTag<-segment.bizTag
+	segment.masterIDBuffer = <-SegmentBizTagIDBuffer
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
@@ -55,22 +74,19 @@ func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 }
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
-
-
-
 	segment.application.GetLogger().Debug(segment.bizTag + " changeSlaveToMaster")
 	if segment.IsMasterUserOut() {
 		if segment.slaveIdBuffer == nil {
 			segment.CreateSlaveIDBuffer(segment.bizTag)
 		} else {
 			if segment.slaveIdBuffer.IsUseOut() {
-				segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
+				segment.CreateSlaveIDBuffer(segment.bizTag)
 			}
 		}
-		segment.masterIDBuffer = segment.slaveIdBuffer
+		SegmentSlaveChangeBizTag<-segment.bizTag
 	}
 }
-func (segment *IDBufferSegment) Close()  {
+func (segment *IDBufferSegment) Close() {
 
 	if segment.masterIDBuffer != nil {
 		//segment.masterIDBuffer.Wg.Wait()
@@ -79,9 +95,38 @@ func (segment *IDBufferSegment) Close()  {
 		//segment.slaveIdBuffer.Wg.Wait()
 	}
 }
+func (segment *IDBufferSegment) BufferManager() {
+	for{
+		<-SegmentBizTag
+		SegmentBizTagIDBuffer <- NewIDBuffer(segment.bizTag, segment.application)
+	}
+}
+func (segment *IDBufferSegment) ReceiveChangeSlave() {
+	for{
+		<-SegmentSlaveChangeBizTag
+		if segment.slaveIdBuffer == nil {
+			SegmentBizTag<-segment.bizTag
+			segment.slaveIdBuffer = <-SegmentBizTagIDBuffer
+		}
+		segment.masterIDBuffer = segment.slaveIdBuffer
+		SegmentCreateSlaveBizTag<-segment.bizTag
+	}
+}
+
+func (segment *IDBufferSegment) ReceiveCreateSlave() {
+	for{
+		<-SegmentSlaveChangeBizTag
+		segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
+	}
+}
+func (segment *IDBufferSegment) ReceiveCreateMaster() {
+	for{
+		<-SegmentCreateSlaveBizTag
+		segment.slaveIdBuffer = NewIDBuffer(segment.bizTag, segment.application)
+	}
+}
+
 func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBufferSegment {
-	segment := &IDBufferSegment{application: application}
-	segment.SetBizTag(bizTag)
-	segment.CreateMasterIDBuffer(segment.bizTag)
+	segment := &IDBufferSegment{application: application, bizTag:bizTag}
 	return segment
 }

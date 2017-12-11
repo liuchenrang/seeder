@@ -41,6 +41,8 @@ func NewApplication() *bootstrap.Application{
 
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(0, seederConfig))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
+	go manager.SegmentManager()
+
 	return applicaton
 }
 

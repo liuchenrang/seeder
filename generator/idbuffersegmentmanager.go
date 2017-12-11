@@ -15,9 +15,13 @@ type IDBufferSegmentManager struct {
 
 	application *bootstrap.Application
 }
-
+var (
+	ReqestBizTag = make(chan string)
+	ReqestBizTagSegment = make(chan *IDBufferSegment)
+)
 func (manager *IDBufferSegmentManager) GetId(bizTag string) (id uint64, e error) {
-	segment := manager.GetSegmentByBizTag(bizTag)
+	ReqestBizTag<-bizTag
+	segment := <-ReqestBizTagSegment
 
 	id = segment.GetId()
 	return id, nil
@@ -46,13 +50,19 @@ func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBuff
 	return manager.tagPool[bizTag]
 
 }
-func (manager *IDBufferSegmentManager) SegmentManager(bizTag  string, seg chan *IDBufferSegment){
-	seg <- manager.CreateBizTagSegment(bizTag)
+func (manager *IDBufferSegmentManager) SegmentManager(){
+	for{
+		bizTag := <-ReqestBizTag
+		ReqestBizTagSegment <- manager.GetSegmentByBizTag(bizTag)
+	}
 }
 func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBufferSegment {
 
 	segment := NewIDBufferSegment(bizTag, manager.application)
-
+	go segment.BufferManager()
+	go segment.ReceiveChangeSlave()
+	go segment.ReceiveCreateMaster()
+	go segment.ReceiveCreateSlave()
 	manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
 
 	go func() {
@@ -66,7 +76,7 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop{
 					manager.application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", bizTag)
-					segment.CreateSlaveIDBuffer(bizTag)
+					SegmentCreateSlaveBizTag<-bizTag
 					segment.GetMasterIdBuffer().GetStats().Stop = true
 				}
 			}

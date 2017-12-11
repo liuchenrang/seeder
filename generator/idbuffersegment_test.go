@@ -22,15 +22,13 @@ func TestMasterChange(t *testing.T) {
 
 
 	segment := generator.NewIDBufferSegment("uts", Application)
-	segment.CreateMasterIDBuffer("uts")
-	segment.CreateSlaveIDBuffer("uts")
+	go segment.BufferManager()
+
 	var id uint64
 	logger := SeederLogger.NewLogger(seederConfig)
 	var i uint64
 	for i < 40 {
-		if segment.IsMasterUserOut() {
-			segment.ChangeSlaveToMaster()
-		}
+
 		id = segment.GetId()
 		nextId := segment.GetId()
 		logger.Debug("id ", id, "nextId", nextId)
