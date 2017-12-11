@@ -28,7 +28,7 @@ func (m *Monitor) IsOutVigilantValue() bool {
 func (m *Monitor) Event(tag <-chan string) {
 
 }
-func (m *Monitor) GetStats() *stats.Stats {
+func (m *Monitor) GetStats() stats.Stats {
 	return m.segment.GetMasterIdBuffer().GetStats()
 }
 
