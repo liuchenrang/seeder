@@ -10,7 +10,7 @@ import (
 type IDBufferSegmentManager struct {
 	bizTag string
 
-	lock    sync.Mutex
+	muTagPool    sync.Mutex
 	tagPool map[string]*IDBufferSegment
 
 	application *bootstrap.Application
@@ -23,28 +23,28 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string) (id uint64, e error)
 	return id, nil
 }
 func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment) {
+	manager.muTagPool.Lock()
+	defer manager.muTagPool.Unlock()
 	manager.tagPool[bizTag] = segment
 }
 
 func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBufferSegment {
-	_, has := manager.tagPool[bizTag]
+	seg , has := manager.GetSegmentFromPool(bizTag)
 
 	if !has {
-		// 仅有一个人可以申请创建BizTagSegment
-		manager.lock.Lock()
-		defer manager.lock.Unlock()
-
-		_, has = manager.tagPool[bizTag]
-		if !has {
-			segment := manager.CreateBizTagSegment(bizTag)
-			if segment == nil {
+			seg = manager.CreateBizTagSegment(bizTag)
+			if seg == nil {
 				log.Fatal("segment nil")
 			}
-		}
-
 	}
-	return manager.tagPool[bizTag]
+	return seg
 
+}
+func (manager *IDBufferSegmentManager) GetSegmentFromPool(bizTag string)(seg *IDBufferSegment ,has bool) {
+	manager.muTagPool.Lock()
+	defer manager.muTagPool.Unlock()
+	seg , has = manager.tagPool[bizTag]
+	return
 }
 func (manager *IDBufferSegmentManager) SegmentManager(bizTag  string, seg chan *IDBufferSegment){
 	seg <- manager.CreateBizTagSegment(bizTag)

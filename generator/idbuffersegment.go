@@ -6,8 +6,9 @@ import (
 )
 
 type IDBufferSegment struct {
-	mu     sync.Mutex
+	muSlave     sync.Mutex
 	masterIDBuffer *IDBuffer
+	muMaster sync.Mutex
 	slaveIdBuffer  *IDBuffer
 
 	bizTag         string
@@ -15,8 +16,6 @@ type IDBufferSegment struct {
 }
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
-	segment.mu.Lock()
-	defer segment.mu.Unlock()
 	var idBuffer *IDBuffer
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
@@ -34,10 +33,14 @@ func (segment *IDBufferSegment) IsMasterUserOut() bool {
 	return segment.masterIDBuffer.IsUseOut()
 }
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
+	segment.muMaster.Lock()
+	defer segment.muMaster.Unlock()
 	segment.masterIDBuffer = NewIDBuffer(bizTag, segment.application)
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
+	segment.muSlave.Lock()
+	defer segment.muSlave.Unlock()
 	segment.slaveIdBuffer = NewIDBuffer(bizTag, segment.application)
 	return segment.slaveIdBuffer
 }
