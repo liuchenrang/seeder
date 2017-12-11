@@ -60,8 +60,9 @@ func (this *IDBuffer) IsUseOut() bool {
 	this.mu.Lock()
 	defer this.mu.Unlock()
 
-	this.isUseOut = this.currentId >= this.maxId
-	this.application.GetLogger().Debug(" IDBuffer currentId", this.currentId, "max ", this.maxId, "out", this.isUseOut)
+	cid := atomic.LoadUint64(&this.currentId)
+	this.isUseOut = cid >= this.maxId
+	this.application.GetLogger().Debug(" IDBuffer currentId", cid, "max ", this.maxId, "out", this.isUseOut)
 
 	return this.isUseOut
 }
@@ -77,7 +78,6 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 		application: application,
 	} //
 
-	Stats[bizTag] <- true
 
 	return this
 }
