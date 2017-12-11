@@ -2,3 +2,4 @@
 logs/*.log
 example
 thrift/packages
+../sbin/seeder

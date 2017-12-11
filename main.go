@@ -18,8 +18,7 @@ var (
 	applicaton   *bootstrap.Application
 )
 
-var helpstr =
-"seeder " + VERSION + `
+var helpstr = "seeder " + VERSION + `
 Options:
 -start
         start service
@@ -34,14 +33,13 @@ var help = flag.Bool("h", true, "show tips")
 var configFlag = flag.String("c", "./seeder.yaml", "config path")
 var startFlag = flag.Bool("start", false, "start server")
 
-func NewApplication() *bootstrap.Application{
+func NewApplication() *bootstrap.Application {
 	applicaton = bootstrap.NewApplication()
-	seederConfig = config.NewSeederConfig(	*configFlag)
+	seederConfig = config.NewSeederConfig(*configFlag)
 	applicaton.Set("globalSeederConfig", seederConfig)
 
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(0, seederConfig))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
-	go manager.SegmentManager()
 
 	return applicaton
 }

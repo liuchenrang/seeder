@@ -49,8 +49,8 @@ func (this *IDBuffer) GetId() (id uint64, e error) {
 	atomic.AddUint64(&this.currentId, this.step)
 	return this.currentId, nil
 }
-func (this *IDBuffer) GetStats() *stats.Stats {
-	return &this.stats
+func (this *IDBuffer) GetStats() stats.Stats {
+	return this.stats
 }
 func (this *IDBuffer) IsUseOut() bool {
 	this.mu.Lock()
