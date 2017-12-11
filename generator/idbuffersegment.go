@@ -64,6 +64,8 @@ func (segment *IDBufferSegment) GetBizTag() string {
 	return segment.bizTag
 }
 func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer {
+	segment.muMaster.Lock()
+	defer segment.muMaster.Unlock()
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
