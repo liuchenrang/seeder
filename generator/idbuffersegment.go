@@ -15,6 +15,8 @@ type IDBufferSegment struct {
 }
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
+	segment.mu.Lock()
+	defer segment.mu.Unlock()
 	var idBuffer *IDBuffer
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
@@ -53,8 +55,7 @@ func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
 }
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
-	segment.mu.Lock()
-	defer segment.mu.Unlock()
+
 
 
 	segment.application.GetLogger().Debug(segment.bizTag + " changeSlaveToMaster")

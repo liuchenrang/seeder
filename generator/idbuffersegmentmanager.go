@@ -40,14 +40,15 @@ func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBuff
 			if segment == nil {
 				log.Fatal("segment nil")
 			}
-			manager.AddSegmentToPool(bizTag, segment)
 		}
 
 	}
 	return manager.tagPool[bizTag]
 
 }
-
+func (manager *IDBufferSegmentManager) SegmentManager(bizTag  string, seg chan *IDBufferSegment){
+	seg <- manager.CreateBizTagSegment(bizTag)
+}
 func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBufferSegment {
 
 	segment := NewIDBufferSegment(bizTag, manager.application)
@@ -72,6 +73,8 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 		}
 	}()
+	manager.AddSegmentToPool(bizTag, segment)
+
 	return segment
 
 }
