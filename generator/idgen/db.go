@@ -20,8 +20,50 @@ type DBGen struct {
 
 var (
 	DB *sql.DB
+	muDB sync.Mutex
 )
 
+func getDB(application *bootstrap.Application) *sql.DB {
+	muDB.Lock()
+	defer muDB.Unlock()
+	config := application.GetConfig()
+	ll := len(config.Database.Master)
+	fmt.Println(ll)
+	if DB != nil {
+		error := DB.Ping()
+		if error != nil {
+			DB = nil
+		}
+	}
+	if DB == nil  {
+		var errOpen error
+		for _, mst := range config.Database.Master  {
+			dsn := fmt.Sprintf(
+				"%s:%s@tcp(%s:%d)/%s?charset=utf8",
+				config.Database.Account.Name,
+				config.Database.Account.Password,
+				mst.Host,
+				mst.Port,
+				config.Database.Account.DBName,
+			)
+			DB, errOpen = sql.Open("mysql", dsn) //
+			error := DB.Ping()
+			if error == nil {
+				break
+			}
+			if DB == nil {
+				if errOpen != nil {
+					log.Fatal(errOpen)
+				}
+			}
+		}
+
+
+		DB.SetMaxOpenConns(config.Database.ConnectionInfo.MaxOpenConns)
+		DB.SetMaxIdleConns(config.Database.ConnectionInfo.MaxIdleConns)
+	}
+	return DB
+}
 func (this *DBGen) GenerateSegment(bizTag string) (currentId uint64, cacheSteop uint64, step uint64, e error) {
 	this.lock.Lock()
 	defer this.lock.Unlock()
@@ -83,27 +125,7 @@ func init() {
 
 }
 func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
-	if DB == nil {
-		var errOpen error
-		//
-		config := application.GetConfig()
-		dsn := fmt.Sprintf(
-			"%s:%s@tcp(%s:%d)/%s?charset=utf8",
-			config.Database.Account.Name,
-			config.Database.Account.Password,
-			config.Database.Master[0].Host,
-			config.Database.Master[0].Port,
-			config.Database.Account.DBName,
-		)
-		DB, errOpen = sql.Open("mysql", dsn) //
-		if DB == nil {
-			if errOpen != nil {
-				log.Fatal(errOpen)
-			}
-		}
-		DB.SetMaxOpenConns(config.Database.ConnectionInfo.MaxOpenConns)
-		DB.SetMaxIdleConns(config.Database.ConnectionInfo.MaxIdleConns)
-	}
-	dbGen := &DBGen{db: DB, lock: &sync.Mutex{}, application: application}
+
+	dbGen := &DBGen{db: getDB(application), lock: &sync.Mutex{}, application: application}
 	return dbGen
 }

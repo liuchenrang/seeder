@@ -11,7 +11,7 @@ import (
 
 
 type IDBuffer struct {
-	mu1 sync.Mutex
+	muCurrentId sync.Mutex
 	currentId   uint64
 	maxId       uint64
 	step        uint64
@@ -21,13 +21,16 @@ type IDBuffer struct {
 	bizTag      string
 
 	mu sync.Mutex
+
+	muUseOut sync.Mutex
 	isUseOut    bool
 	db          idgen.IDGen
 	application *bootstrap.Application
 }
 
 func (this *IDBuffer) GetCurrentId() (id uint64) {
-
+	this.muCurrentId.Lock()
+	defer this.muCurrentId.Unlock()
 	return this.currentId
 }
 func (this *IDBuffer) GetMaxId() (id uint64) {
@@ -39,8 +42,9 @@ func (this *IDBuffer) GetCacheStep() (id uint64) {
 	return atomic.LoadUint64(&this.cacheStep)
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
-	this.mu1.Lock()
-	defer this.mu1.Unlock()
+	this.muCurrentId.Lock()
+	defer this.muCurrentId.Unlock()
+
 	out := this.IsUseOut()
 	if out {
 		return 0, errors.New("ID Use Out")
@@ -53,8 +57,8 @@ func (this *IDBuffer) GetStats() stats.Stats {
 	return this.stats
 }
 func (this *IDBuffer) IsUseOut() bool {
-	this.mu.Lock()
-	defer this.mu.Unlock()
+	this.muUseOut.Lock()
+	defer this.muUseOut.Unlock()
 	if this.isUseOut {
 		return this.isUseOut
 	}

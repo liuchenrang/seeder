@@ -33,6 +33,9 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 }
 
 func (segment *IDBufferSegment) IsMasterUserOut() bool {
+	segment.muMaster.Lock()
+	defer segment.muMaster.Unlock()
+
 	return segment.masterIDBuffer.IsUseOut()
 }
 func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
