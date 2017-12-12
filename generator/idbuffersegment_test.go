@@ -4,7 +4,7 @@ import (
 	//"errors"
 	//"fmt"
 	"fmt"
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
 	"seeder/bootstrap"
 	"seeder/config"
 	"seeder/generator"
@@ -19,6 +19,7 @@ func TestMasterChange(t *testing.T) {
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+
 
 	segment := generator.NewIDBufferSegment("uts", Application)
 

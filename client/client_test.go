@@ -9,7 +9,8 @@ import (
 	thriftGenerator "seeder/thrift/packages/generator"
 	"testing"
 
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
+
 )
 
 func TestNewClient(t *testing.T) {
@@ -22,10 +23,10 @@ func TestNewClient(t *testing.T) {
 
 	client := NewClient(Application)
 
-	idp, _ := client.Ping()
+	idp, _ := client.Ping(nil)
 	i := 0
 	for i < 3 {
-		id, error := client.GetId(&thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
+		id, error := client.GetId(nil,&thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
 		if error != nil {
 			log.Fatal(error)
 		}
@@ -47,7 +48,7 @@ func BenchmarkLoopsUts(b *testing.B) {
 		client := NewClient(Application)
 
 		for pb.Next() {
-			id, error := client.GetId(&thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
 			if error != nil {
 				log.Fatal(error)
 			}
@@ -70,7 +71,7 @@ func BenchmarkLoopsTest2(b *testing.B) {
 		client := NewClient(Application)
 
 		for pb.Next() {
-			id, error := client.GetId(&thriftGenerator.TGetIdParams{Tag: "test2", GeneratorType: 1})
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "test2", GeneratorType: 1})
 			if error != nil {
 				log.Fatal(error)
 			}
@@ -93,7 +94,7 @@ func BenchmarkLoopsTest5(b *testing.B) {
 		client := NewClient(Application)
 
 		for pb.Next() {
-			id, error := client.GetId(&thriftGenerator.TGetIdParams{Tag: "test5", GeneratorType: 1})
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "test5", GeneratorType: 1})
 			if error != nil {
 				log.Fatal(error)
 			}

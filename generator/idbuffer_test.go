@@ -4,7 +4,8 @@ import (
 	//"errors"
 	//"fmt"
 	"fmt"
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
+
 	"seeder/bootstrap"
 	"seeder/config"
 	"seeder/generator"

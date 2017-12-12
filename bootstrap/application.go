@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"seeder/config"
 
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
 )
 
 type Application struct {

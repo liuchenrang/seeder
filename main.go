@@ -18,19 +18,11 @@ var (
 	applicaton   *bootstrap.Application
 )
 
-var helpstr = "seeder " + VERSION + `
-Options:
--start
-        start service
--config
-        config file
-`
 
 var debug = flag.Bool("d", false, "run in debug model")
 
-var help = flag.Bool("h", true, "show tips")
-
 var configFlag = flag.String("c", "./seeder.yaml", "config path")
+var versionFlat = flag.String("version", VERSION, "")
 var startFlag = flag.Bool("start", false, "start server")
 
 func NewApplication() *bootstrap.Application {
@@ -46,8 +38,8 @@ func NewApplication() *bootstrap.Application {
 
 func main() {
 	flag.Parse()
-	if *help && !*startFlag {
-		println(helpstr)
+	if  !*startFlag {
+		println("seeder version ", VERSION)
 		return
 	}
 

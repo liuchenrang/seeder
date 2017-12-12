@@ -3,7 +3,7 @@ package SeederLogger
 import (
 	//"time"
 	"fmt"
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
 	"os"
 	"seeder/config"
 	"time"

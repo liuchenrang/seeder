@@ -118,7 +118,7 @@ func (segment *IDBufferSegment) StartMonitor() {
 		for {
 			time.Sleep(time.Millisecond * 100)
 			vigilanValue := application.GetConfig().Monitior.VigilantValue
-			application.GetLogger().Debug("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
+			application.GetLogger().Info("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
 			if vigilanValue <= 100 {
 				monitor.SetVigilantValue(vigilanValue)
 				vigilant := monitor.IsOutVigilantValue()
@@ -136,7 +136,7 @@ func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBu
 	segment := &IDBufferSegment{application: application}
 	segment.SetBizTag(bizTag)
 	segment.CreateMasterIDBuffer(segment.bizTag)
-	segment.StartMonitor()
+	//segment.StartMonitor()
 
 	return segment
 }

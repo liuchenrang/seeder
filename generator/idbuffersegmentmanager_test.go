@@ -6,8 +6,7 @@ import (
 	"seeder/config"
 	"seeder/logger"
 	"testing"
-
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
 )
 
 func TestSegManager(t *testing.T) {

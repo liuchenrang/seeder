@@ -2,7 +2,8 @@ package idgen
 
 import (
 	"fmt"
-	"github.com/alecthomas/log4go"
+	"github.com/liuchenrang/log4go"
+
 	"runtime"
 	"seeder/bootstrap"
 	"seeder/config"

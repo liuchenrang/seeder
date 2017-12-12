@@ -115,7 +115,7 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 		panic(errQuery.Error()) // proper error handling instead of panic in your app
 	}
 	affected , e := this.UpdateStep(tx, bizTag)
-	this.application.GetLogger().Debug("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
+	this.application.GetLogger().Info("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 	if affected  > 0 {
 		return currentId, cacheStep, step, errQuery
 	}else{
