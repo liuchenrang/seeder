@@ -8,33 +8,52 @@ import (
 	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
+	"runtime"
+	"strings"
+	"strconv"
 )
 
 type DBGen struct {
+	muDB sync.Mutex
 	db   *sql.DB
-	lock *sync.Mutex
-	Fin  chan<- int
 
 	application *bootstrap.Application
 }
+func GoId() int {
+	defer func()  {
+		if err := recover(); err != nil {
+			fmt.Println("panic recover:panic info:%v", err)     }
+	}()
 
+	var buf [64]byte
+	n := runtime.Stack(buf[:], false)
+	idField := strings.Fields(strings.TrimPrefix(string(buf[:n]), "goroutine "))[0]
+	id, err := strconv.Atoi(idField)
+	if err != nil {
+		panic(fmt.Sprintf("cannot get goroutine id: %v", err))
+	}
+	return id
+}
 var (
 	DB   *sql.DB
 	muDB sync.Mutex
+
+	muDBGen sync.Mutex
+
+	dbGen *DBGen
 )
 
 func getDB(application *bootstrap.Application) *sql.DB {
 	muDB.Lock()
 	defer muDB.Unlock()
 	config := application.GetConfig()
-	ll := len(config.Database.Master)
-	fmt.Println(ll)
 	if DB != nil {
 		error := DB.Ping()
 		if error != nil {
 			DB = nil
 		}
 	}
+
 	if DB == nil {
 		var errOpen error
 		for _, mst := range config.Database.Master {
@@ -48,13 +67,14 @@ func getDB(application *bootstrap.Application) *sql.DB {
 			)
 			DB, errOpen = sql.Open("mysql", dsn) //
 			error := DB.Ping()
-			if error == nil {
-				break
-			}
+
 			if DB == nil {
 				if errOpen != nil {
 					log.Fatal(errOpen)
 				}
+			}
+			if error == nil {
+				break
 			}
 		}
 
@@ -64,14 +84,12 @@ func getDB(application *bootstrap.Application) *sql.DB {
 	return DB
 }
 func (this *DBGen) GenerateSegment(bizTag string) (currentId uint64, cacheSteop uint64, step uint64, e error) {
-	this.lock.Lock()
-	defer this.lock.Unlock()
+	this.muDB.Lock()
+	defer this.muDB.Unlock()
 	currentId, cacheSteop, step, e = this.Find(bizTag)
 	return currentId, cacheSteop, step, e
 }
-func (this *DBGen) flush(bizTag string) {
-	this.UpdateStep(bizTag)
-}
+
 
 func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step uint64, e error) {
 
@@ -79,9 +97,8 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 	defer tx.Commit()
 
 	sqlSelect := "SELECT currentId,cacheStep,step from " + this.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
-	stmt, errPrepare := this.db.Prepare(sqlSelect)
+	stmt, errPrepare := tx.Prepare(sqlSelect)
 	defer stmt.Close()
-
 	if errPrepare != nil {
 		this.application.GetLogger().Error(errBegin.Error())
 		log.Fatal(errBegin.Error())
@@ -97,13 +114,19 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 		this.application.GetLogger().Error(errQuery.Error())
 		panic(errQuery.Error()) // proper error handling instead of panic in your app
 	}
-	this.UpdateStep(bizTag)
+	affected , e := this.UpdateStep(tx, bizTag)
 	this.application.GetLogger().Debug("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
-	return currentId, cacheStep, step, errQuery
-}
-func (this *DBGen) UpdateStep(bizTag string) (int64, error) {
+	if affected  > 0 {
+		return currentId, cacheStep, step, errQuery
+	}else{
+		panic(e)
+	}
 
-	stmt, errPrepare := this.db.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
+
+}
+func (this *DBGen) UpdateStep(tx *sql.Tx, bizTag string) (int64, error) {
+
+	stmt, errPrepare := tx.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
 	var errorUpdate error
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -120,11 +143,8 @@ func (this *DBGen) UpdateStep(bizTag string) (int64, error) {
 	}
 	return affected, errorUpdate
 }
-func init() {
 
-}
 func NewDBGen(bizTag string, application *bootstrap.Application) IDGen {
 
-	dbGen := &DBGen{db: getDB(application), lock: &sync.Mutex{}, application: application}
-	return dbGen
+	return &DBGen{db: getDB(application), application: application}
 }

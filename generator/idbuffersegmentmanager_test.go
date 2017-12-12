@@ -39,13 +39,8 @@ func BenchmarkLoopsM(b *testing.B) {
 
 		for pb.Next() {
 
-			i := 0
-			runTime := 30
-			for i <= runTime {
-				i++
-				id, _ := m.GetId("uts")
-				fmt.Println("id====== ", id)
-			}
+			id, _ := m.GetId("uts")
+			fmt.Println("id====== ", id)
 
 		}
 	}
