@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"context"
 )
 
 type strapper bootstrap.Strapper
@@ -70,14 +71,16 @@ func NewSystemException(code generator.ErrorCode, errorName string, message stri
 type IdGeneratorServiceImpl struct {
 }
 
-func (*IdGeneratorServiceImpl) Ping() (r string, err error) {
+func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error){
 	return "idgen", nil
 
 }
 
-func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, err error) {
+func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGetIdParams) (r string, err error) {
 	id, err := manager.GetId(params.GetTag())
+
 	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
+
 
 	if err != nil {
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
@@ -85,6 +88,11 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 
 	return fmt.Sprintf("%d", id), nil
 }
+
+
+// Parameters:
+//  - Params
+
 
 func (kernel *Kernel) Serve() {
 
