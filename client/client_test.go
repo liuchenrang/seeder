@@ -58,6 +58,7 @@ func BenchmarkLoopsUts(b *testing.B) {
 	}
 	b.RunParallel(i)
 }
+
 // 测试并发效率
 func BenchmarkLoopsTest2(b *testing.B) {
 	Application := bootstrap.NewApplication()
@@ -103,4 +104,3 @@ func BenchmarkLoopsTest5(b *testing.B) {
 	}
 	b.RunParallel(i)
 }
-

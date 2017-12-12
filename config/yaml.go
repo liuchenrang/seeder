@@ -1,42 +1,42 @@
 package config
 
-
 import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 )
-type Account struct{
-	Name string
+
+type Account struct {
+	Name     string
 	Password string
 	Database string
-	Table string
-	DBName string `yaml:"dbname"`
+	Table    string
+	DBName   string `yaml:"dbname"`
 }
-type ConnectionInfo struct{
+type ConnectionInfo struct {
 	MaxOpenConns int `yaml:"max_open_conns"`
 	MaxIdleConns int `yaml:"max_idle_conns"`
 }
-type Database struct{
-	Account Account
-	Master  []Server
+type Database struct {
+	Account        Account
+	Master         []Server
 	ConnectionInfo ConnectionInfo `yaml:"connection_info"`
 }
 
-type Server struct{
-	Port int `yaml:"port"`
+type Server struct {
+	Port int    `yaml:"port"`
 	Host string `yaml:"host"`
 }
-type SeederConfig struct{
+type SeederConfig struct {
 	Database Database
-	Server Server
+	Server   Server
 	Monitior Monitior
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`
 }
 
-func NewSeederConfig(yamlfile string) SeederConfig{
+func NewSeederConfig(yamlfile string) SeederConfig {
 
 	seederConfig := SeederConfig{}
 	content, err := ioutil.ReadFile(yamlfile)
@@ -47,5 +47,5 @@ func NewSeederConfig(yamlfile string) SeederConfig{
 	if err != nil {
 		log.Fatal(err)
 	}
-	return  seederConfig
+	return seederConfig
 }

@@ -4,13 +4,13 @@ import (
 	//"errors"
 	//"fmt"
 	"fmt"
+	"github.com/alecthomas/log4go"
 	"seeder/bootstrap"
 	"seeder/config"
 	"seeder/generator"
+	"seeder/generator/idgen"
 	"seeder/logger"
 	"testing"
-	"github.com/alecthomas/log4go"
-	"seeder/generator/idgen"
 )
 
 func TestMasterChange(t *testing.T) {
@@ -20,9 +20,7 @@ func TestMasterChange(t *testing.T) {
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
-
 	segment := generator.NewIDBufferSegment("uts", Application)
-	go segment.BufferManager()
 
 	var id uint64
 	logger := SeederLogger.NewLogger(seederConfig)
@@ -53,7 +51,6 @@ func TestStats(t *testing.T) {
 	segment.ChangeSlaveToMaster()
 	segment.GetMasterIdBuffer().GetStats()
 }
-
 
 func TestDB(t *testing.T) {
 	// Different allocations should not be equal.

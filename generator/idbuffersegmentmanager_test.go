@@ -35,7 +35,6 @@ func BenchmarkLoopsM(b *testing.B) {
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.CRITICAL, seederConfig))
 	m := NewIDBufferSegmentManager(Application)
-	go m.SegmentManager()
 	i := func(pb *testing.PB) {
 
 		for pb.Next() {
@@ -47,7 +46,6 @@ func BenchmarkLoopsM(b *testing.B) {
 				id, _ := m.GetId("uts")
 				fmt.Println("id====== ", id)
 			}
-
 
 		}
 	}

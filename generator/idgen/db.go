@@ -19,7 +19,7 @@ type DBGen struct {
 }
 
 var (
-	DB *sql.DB
+	DB   *sql.DB
 	muDB sync.Mutex
 )
 
@@ -35,9 +35,9 @@ func getDB(application *bootstrap.Application) *sql.DB {
 			DB = nil
 		}
 	}
-	if DB == nil  {
+	if DB == nil {
 		var errOpen error
-		for _, mst := range config.Database.Master  {
+		for _, mst := range config.Database.Master {
 			dsn := fmt.Sprintf(
 				"%s:%s@tcp(%s:%d)/%s?charset=utf8",
 				config.Database.Account.Name,
@@ -58,7 +58,6 @@ func getDB(application *bootstrap.Application) *sql.DB {
 			}
 		}
 
-
 		DB.SetMaxOpenConns(config.Database.ConnectionInfo.MaxOpenConns)
 		DB.SetMaxIdleConns(config.Database.ConnectionInfo.MaxIdleConns)
 	}
@@ -74,7 +73,7 @@ func (this *DBGen) flush(bizTag string) {
 	this.UpdateStep(bizTag)
 }
 
-func (this *DBGen) Find(bizTag string)(currentId uint64, cacheStep uint64, step uint64, e error) {
+func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step uint64, e error) {
 
 	tx, errBegin := this.db.Begin()
 	defer tx.Commit()

@@ -1,14 +1,20 @@
-hash: c675d57bbea1f038887f500ba98bba080d0cbbd5b09d31d5887829c45f0ddd84
-updated: 2017-12-04T16:48:43.463172+08:00
+hash: 63b75e08ae90f8836e8e9021b5e56dcf1edb7c53757cb1e6aa28bad63c78cfd2
+updated: 2017-12-12T11:41:33.784893+08:00
 imports:
 - name: git.apache.org/thrift.git
-  version: 0dd823580c78a79ae9696eb9b3650e400fff140f
+  version: 327ebb6c2b6df8bf075da02ef45a2a034e9b79ba
   subpackages:
   - lib/go/thrift
 - name: github.com/alecthomas/log4go
   version: a9cdec6a8ef5b02d7e1b8dd0782d34c62648f07d
 - name: github.com/go-sql-driver/mysql
   version: a732e14c62dde3285440047bba97581bc472ae18
+- name: github.com/golang/glog
+  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: golang.org/x/net
+  version: d866cfc389cec985d6fda2859936a575a55a3ab6
+  subpackages:
+  - context
 - name: gopkg.in/yaml.v2
   version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
 testImports: []

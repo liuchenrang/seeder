@@ -1,6 +1,7 @@
 package: .
 ignore:
 - rpc
+- generator
 import:
 - package: git.apache.org/thrift.git
   version: ^0.10.0
@@ -10,3 +11,4 @@ import:
   version: v1.2
 - package: gopkg.in/yaml.v2
 - package: github.com/alecthomas/log4go
+- package: github.com/golang/glog

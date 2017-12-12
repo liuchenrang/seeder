@@ -2,12 +2,12 @@ package idgen
 
 import (
 	"fmt"
+	"github.com/alecthomas/log4go"
 	"runtime"
 	"seeder/bootstrap"
 	"seeder/config"
 	"seeder/logger"
 	"testing"
-	"github.com/alecthomas/log4go"
 )
 
 func test(g IDGen) {

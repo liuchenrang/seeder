@@ -3,16 +3,16 @@ package SeederLogger
 import (
 	//"time"
 	"fmt"
-	"seeder/config"
-	"time"
-
 	"github.com/alecthomas/log4go"
 	"os"
+	"seeder/config"
+	"time"
 )
 
 var (
 	seederCconfig config.SeederConfig
 	//globalLogger l4g.Logger
+
 	Author string
 )
 

@@ -9,7 +9,6 @@ import (
 	"sync/atomic"
 )
 
-
 type IDBuffer struct {
 	muCurrentId sync.Mutex
 	currentId   uint64
@@ -17,12 +16,12 @@ type IDBuffer struct {
 	step        uint64
 	cacheStep   uint64
 
-	stats       stats.Stats
-	bizTag      string
+	stats  stats.Stats
+	bizTag string
 
 	mu sync.Mutex
 
-	muUseOut sync.Mutex
+	muUseOut    sync.Mutex
 	isUseOut    bool
 	db          idgen.IDGen
 	application *bootstrap.Application
@@ -63,7 +62,6 @@ func (this *IDBuffer) IsUseOut() bool {
 		return this.isUseOut
 	}
 
-
 	cid := atomic.LoadUint64(&this.currentId)
 	this.isUseOut = cid >= this.maxId
 	this.application.GetLogger().Debug(" IDBuffer currentId", cid, "max ", this.maxId, "out", this.isUseOut)
@@ -71,17 +69,15 @@ func (this *IDBuffer) IsUseOut() bool {
 	return this.isUseOut
 }
 
-
 func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	typeIdMake := TypeIDMake{}
 	dbGen := typeIdMake.Make(bizTag, application)
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
 
 	this := &IDBuffer{
-		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep,cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen, isUseOut: false,
+		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen, isUseOut: false,
 		application: application,
 	} //
-
 
 	return this
 }

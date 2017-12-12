@@ -8,9 +8,9 @@ import (
 	"seeder/thrift/packages/generator"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
+	"os"
 	"os/signal"
 	"syscall"
-	"os"
 )
 
 type strapper bootstrap.Strapper
@@ -30,7 +30,7 @@ func (s *Kernel) RegisterBootstrapper(b strapper) {
 	s.bootstrappers = append(s.bootstrappers, b)
 }
 func (s *Kernel) SetApplication(app *bootstrap.Application) {
-	s.applicaton  = app
+	s.applicaton = app
 }
 func (s *Kernel) BootstrapWith() {
 
@@ -85,7 +85,6 @@ func (*IdGeneratorServiceImpl) GetId(params *generator.TGetIdParams) (r string, 
 
 	return fmt.Sprintf("%d", id), nil
 }
-
 
 func (kernel *Kernel) Serve() {
 

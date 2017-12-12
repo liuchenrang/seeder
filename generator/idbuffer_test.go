@@ -4,12 +4,12 @@ import (
 	//"errors"
 	//"fmt"
 	"fmt"
+	"github.com/alecthomas/log4go"
 	"seeder/bootstrap"
 	"seeder/config"
 	"seeder/generator"
 	"seeder/logger"
 	"testing"
-	"github.com/alecthomas/log4go"
 )
 
 func TestIdBuffer(t *testing.T) {

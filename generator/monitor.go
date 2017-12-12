@@ -1,13 +1,13 @@
 package generator
 
 import (
-	"seeder/stats"
 	"seeder/bootstrap"
+	"seeder/stats"
 )
 
 type Monitor struct {
-	threshold uint8
-	segment  *IDBufferSegment
+	threshold   uint8
+	segment     *IDBufferSegment
 	application *bootstrap.Application
 }
 
@@ -19,9 +19,9 @@ func (m *Monitor) IsOutVigilantValue() bool {
 	total := idBuffer.GetCacheStep()
 	useTotal := idBuffer.GetStats().GetTotal()
 
-	usePercent := (useTotal*100 / total*100)/100
+	usePercent := (useTotal * 100 / total * 100) / 100
 
-	m.application.GetLogger().Debug(m.segment.GetBizTag() , " usePercent ",usePercent , "useTotal",useTotal, "total Step", total)
+	m.application.GetLogger().Debug(m.segment.GetBizTag(), " usePercent ", usePercent, "useTotal", useTotal, "total Step", total)
 
 	return uint8(usePercent) >= m.threshold
 }
@@ -33,5 +33,5 @@ func (m *Monitor) GetStats() stats.Stats {
 }
 
 func NewMonitor(seg *IDBufferSegment, application *bootstrap.Application) *Monitor {
-	return &Monitor{segment: seg, application:application}
+	return &Monitor{segment: seg, application: application}
 }

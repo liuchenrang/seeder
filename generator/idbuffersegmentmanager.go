@@ -9,8 +9,8 @@ import (
 type IDBufferSegmentManager struct {
 	bizTag string
 
-	muTagPool    sync.Mutex
-	tagPool map[string]*IDBufferSegment
+	muTagPool sync.Mutex
+	tagPool   map[string]*IDBufferSegment
 
 	application *bootstrap.Application
 }
@@ -28,24 +28,24 @@ func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *
 }
 
 func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBufferSegment {
-	seg , has := manager.GetSegmentFromPool(bizTag)
+	seg, has := manager.GetSegmentFromPool(bizTag)
 
 	if !has {
-			seg = manager.CreateBizTagSegment(bizTag)
-			if seg == nil {
-				log.Fatal("segment nil")
-			}
+		seg = manager.CreateBizTagSegment(bizTag)
+		if seg == nil {
+			log.Fatal("segment nil")
+		}
 	}
 	return seg
 
 }
-func (manager *IDBufferSegmentManager) GetSegmentFromPool(bizTag string)(seg *IDBufferSegment ,has bool) {
+func (manager *IDBufferSegmentManager) GetSegmentFromPool(bizTag string) (seg *IDBufferSegment, has bool) {
 	manager.muTagPool.Lock()
 	defer manager.muTagPool.Unlock()
-	seg , has = manager.tagPool[bizTag]
+	seg, has = manager.tagPool[bizTag]
 	return
 }
-func (manager *IDBufferSegmentManager) SegmentManager(bizTag  string, seg chan *IDBufferSegment){
+func (manager *IDBufferSegmentManager) SegmentManager(bizTag string, seg chan *IDBufferSegment) {
 	seg <- manager.CreateBizTagSegment(bizTag)
 }
 func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBufferSegment {
@@ -53,7 +53,6 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 	segment := NewIDBufferSegment(bizTag, manager.application)
 
 	manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
-
 
 	manager.AddSegmentToPool(bizTag, segment)
 
