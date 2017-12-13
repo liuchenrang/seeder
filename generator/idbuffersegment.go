@@ -1,13 +1,14 @@
 package generator
 
 import (
+	"fmt"
 	"seeder/bootstrap"
 	"sync"
 	"time"
-	"fmt"
 )
 
 type IDBufferSegment struct {
+	muChage        sync.Mutex
 	muSlave        sync.Mutex
 	masterIDBuffer *IDBuffer
 	muMaster       sync.Mutex
@@ -23,8 +24,8 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
-		segment.application.GetLogger().Error("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p",idBuffer), fmt.Sprintf("segment %p",segment))
-		if id <= 0 && idBuffer.IsUseOut() {
+		segment.application.GetLogger().Error("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
+		if idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
 		} else {
 			break
@@ -48,6 +49,7 @@ func (segment *IDBufferSegment) CreateMasterIDBuffer(bizTag string) *IDBuffer {
 func (segment *IDBufferSegment) SetMasterIDBuffer(idBuf *IDBuffer) {
 	segment.muMaster.Lock()
 	defer segment.muMaster.Unlock()
+
 	segment.masterIDBuffer = idBuf
 }
 func (segment *IDBufferSegment) CreateSlaveIDBuffer(bizTag string) *IDBuffer {
@@ -84,8 +86,8 @@ func (segment *IDBufferSegment) SetSlaveIdBuffer(slave *IDBuffer) {
 }
 
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
-
-	segment.application.GetLogger().Debug(segment.bizTag + " changeSlaveToMaster")
+	segment.muChage.Lock()
+	defer segment.muChage.Unlock()
 	if segment.IsMasterUserOut() {
 		if segment.GetSlaveIdBuffer() == nil {
 			segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
@@ -94,6 +96,7 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 				segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
 			}
 		}
+		segment.application.GetLogger().Error("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
 		segment.SetMasterIDBuffer(segment.slaveIdBuffer)
 	}
 }
@@ -119,12 +122,12 @@ func (segment *IDBufferSegment) StartMonitor() {
 		for {
 			time.Sleep(time.Millisecond * 100)
 			vigilanValue := application.GetConfig().Monitior.VigilantValue
-			application.GetLogger().Info("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
+			application.GetLogger().Fine("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
 			if vigilanValue <= 100 {
 				monitor.SetVigilantValue(vigilanValue)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop {
-					application.GetLogger().Debug(" Over call CreateSlaveIDBuffer ", segment.bizTag)
+					application.GetLogger().Info(" Over call CreateSlaveIDBuffer ", segment.bizTag)
 					segment.CreateSlaveIDBuffer(segment.bizTag)
 					segment.GetMasterIdBuffer().GetStats().DoStop()
 				}
@@ -138,6 +141,7 @@ func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBu
 	segment.SetBizTag(bizTag)
 	segment.CreateMasterIDBuffer(segment.bizTag)
 	//segment.StartMonitor()
+	segment.application.GetLogger().Error("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
 
 	return segment
 }

@@ -31,11 +31,10 @@ type IDBuffer struct {
 func (this *IDBuffer) GetCurrentId() (id uint64) {
 	this.muCurrentId.Lock()
 	defer this.muCurrentId.Unlock()
-	return this.currentId
+	return atomic.LoadUint64(&this.currentId)
 }
 func (this *IDBuffer) GetMaxId() (id uint64) {
-
-	return this.maxId
+	return atomic.LoadUint64(&this.maxId)
 }
 func (this *IDBuffer) GetCacheStep() (id uint64) {
 
@@ -59,9 +58,7 @@ func (this *IDBuffer) GetStats() stats.Stats {
 func (this *IDBuffer) IsUseOut() bool {
 	this.muUseOut.Lock()
 	defer this.muUseOut.Unlock()
-	if this.isUseOut {
-		return this.isUseOut
-	}
+
 
 	cid := atomic.LoadUint64(&this.currentId)
 	this.isUseOut = cid >= this.maxId
@@ -76,7 +73,7 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
 
 	this := &IDBuffer{
-		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen, isUseOut: false,
+		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen,
 		application: application,
 	} //
 
