@@ -43,8 +43,9 @@ func NewLogger(seederConfig config.SeederConfig) Logger {
 
 func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger {
 	log := log4go.NewDefaultLogger(level)
-	if _, err := os.Stat("./log4go.xml"); err == nil {
-		log.LoadConfiguration("./log4go.xml")
+	logConfigFile := "/usr/local/Cellar/go/gopath/src/seeder/log4go.xml"
+	if _, err := os.Stat(logConfigFile); err == nil {
+		log.LoadConfiguration(logConfigFile)
 		fmt.Println("load log4go config")
 	}
 

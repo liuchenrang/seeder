@@ -13,20 +13,20 @@ import (
 	"testing"
 )
 
-func TestMasterChange(t *testing.T) {
+func TestGenID(t *testing.T) {
+
+
 	// Different allocations should not be equal.
 	Application := bootstrap.NewApplication()
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
-
-
 	segment := generator.NewIDBufferSegment("uts", Application)
 
 	var id uint64
 	logger := SeederLogger.NewLogger(seederConfig)
 	var i uint64
-	for i < 40 {
+	for i < 100 {
 
 		id = segment.GetId()
 		nextId := segment.GetId()
@@ -41,16 +41,25 @@ func TestMasterChange(t *testing.T) {
 	}
 }
 
-func TestStats(t *testing.T) {
-	// Different allocations should not be equal.
+func BenchmarkIDBufferSegment_GetId(b *testing.B) {
 	Application := bootstrap.NewApplication()
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.ERROR, seederConfig))
+	segment := generator.NewIDBufferSegment("uts", Application)
 
-	segment := generator.NewIDBufferSegment("test", Application)
-	segment.CreateMasterIDBuffer("test")
-	segment.ChangeSlaveToMaster()
-	segment.GetMasterIdBuffer().GetStats()
+	fmt.Printf("segment=%p\n", segment)
+	var id uint64
+
+	i := func(pb *testing.PB) {
+
+		for pb.Next() {
+			id = segment.GetId()
+			//fmt.Println("id", id)
+
+		}
+	}
+	b.RunParallel(i)
 }
 
 func TestDB(t *testing.T) {

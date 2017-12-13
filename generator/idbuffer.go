@@ -7,6 +7,7 @@ import (
 	"seeder/stats"
 	"sync"
 	"sync/atomic"
+	"fmt"
 )
 
 type IDBuffer struct {
@@ -64,7 +65,7 @@ func (this *IDBuffer) IsUseOut() bool {
 
 	cid := atomic.LoadUint64(&this.currentId)
 	this.isUseOut = cid >= this.maxId
-	this.application.GetLogger().Debug(" IDBuffer currentId", cid, "max ", this.maxId, "out", this.isUseOut)
+	this.application.GetLogger().Debug(" IDBuffer currentId", cid, "max ", this.maxId, "out", this.isUseOut, fmt.Sprintf("this %p",this) )
 
 	return this.isUseOut
 }

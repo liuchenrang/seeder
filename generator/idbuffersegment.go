@@ -4,6 +4,7 @@ import (
 	"seeder/bootstrap"
 	"sync"
 	"time"
+	"fmt"
 )
 
 type IDBufferSegment struct {
@@ -22,9 +23,9 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
-		if id <= 0 {
+		segment.application.GetLogger().Error("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p",idBuffer), fmt.Sprintf("segment %p",segment))
+		if id <= 0 && idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
-			segment.application.GetLogger().Debug("IsMasterUserOut 0 ")
 		} else {
 			break
 		}

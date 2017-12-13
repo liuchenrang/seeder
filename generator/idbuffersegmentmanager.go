@@ -4,11 +4,15 @@ import (
 	"log"
 	"seeder/bootstrap"
 	"sync"
+	"fmt"
 )
 
 type IDBufferSegmentManager struct {
+
+
 	bizTag string
 
+	muCreate sync.Mutex
 	muTagPool sync.Mutex
 	tagPool   map[string]*IDBufferSegment
 
@@ -29,13 +33,20 @@ func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *
 
 func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBufferSegment {
 	seg, has := manager.GetSegmentFromPool(bizTag)
-
 	if !has {
-		seg = manager.CreateBizTagSegment(bizTag)
-		if seg == nil {
-			log.Fatal("segment nil")
+		manager.muCreate.Lock()
+		defer manager.muCreate.Unlock()
+		seg, has = manager.GetSegmentFromPool(bizTag)
+		if !has {
+			seg = manager.CreateBizTagSegment(bizTag)
+			if seg == nil {
+				log.Fatal("segment nil")
+			}
 		}
+
 	}
+	manager.application.GetLogger().Error(fmt.Sprintf("manager segment %p", seg))
+
 	return seg
 
 }
