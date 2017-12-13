@@ -8,6 +8,7 @@ import (
 )
 
 type IDBufferSegment struct {
+	muGetId  sync.Mutex
 	muChage        sync.Mutex
 	muSlave        sync.Mutex
 	masterIDBuffer *IDBuffer
@@ -21,6 +22,8 @@ type IDBufferSegment struct {
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
 	var idBuffer *IDBuffer
+	segment.muGetId.Lock()
+	defer segment.muGetId.Unlock()
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
@@ -31,6 +34,7 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 			break
 		}
 	}
+	segment.application.GetLogger().Error("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 
 	return id
 }

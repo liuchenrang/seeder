@@ -11,8 +11,45 @@ import (
 	"seeder/generator/idgen"
 	"seeder/logger"
 	"testing"
+	"sync"
+	"sort"
 )
 
+func TestGenIDGo(t *testing.T) {
+
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	segment := generator.NewIDBufferSegment("test", Application)
+	wg := sync.WaitGroup{}
+	var ids []int
+	for j:=0; j < 5; j++ {
+		wg.Add(1)
+		go func() {
+			var i uint64
+			for i < 5 {
+				id := segment.GetId()
+				ids = append(ids, int(id))
+				i++
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+	sort.Ints(ids)
+	len := len(ids)
+	for k:=0; k< len; k++ {
+		if k + 1 < len {
+			if ids[k]+1 != ids[k+1] {
+
+				t.Errorf("id=%d, next=%d",ids[k], ids[k+1])
+				panic("exit")
+			}
+		}
+		 fmt.Printf("%d\n",ids[k])
+	}
+}
 func TestGenID(t *testing.T) {
 
 
@@ -21,24 +58,22 @@ func TestGenID(t *testing.T) {
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
-	segment := generator.NewIDBufferSegment("uts", Application)
+	segment := generator.NewIDBufferSegment("test", Application)
 
 	var id uint64
 	logger := SeederLogger.NewLogger(seederConfig)
 	var i uint64
 	for i < 1000 {
-
 		id = segment.GetId()
 		nextId := segment.GetId()
 		logger.Debug("id ", id, "nextId", nextId)
-		fmt.Printf("xxxx")
 		if id+1 != nextId {
 			t.Error("id error")
 			break
 		}
-		fmt.Println()
 		i++
 	}
+
 }
 
 func BenchmarkIDBufferSegment_GetId(b *testing.B) {
