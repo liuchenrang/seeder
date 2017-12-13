@@ -20,12 +20,13 @@ func TestIdBuffer(t *testing.T) {
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
-	idBuf := generator.NewIDBuffer("test", Application)
+	idBuf := generator.NewIDBuffer("uts", Application)
 
 	i := 1
 	var id uint64
-	for i < 102 {
+	for i < 100 {
 		id, _ = idBuf.GetId()
+
 		fmt.Println("id", id)
 		i++
 	}

@@ -26,7 +26,7 @@ func TestGenID(t *testing.T) {
 	var id uint64
 	logger := SeederLogger.NewLogger(seederConfig)
 	var i uint64
-	for i < 300 {
+	for i < 1000 {
 
 		id = segment.GetId()
 		nextId := segment.GetId()

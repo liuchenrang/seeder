@@ -11,6 +11,7 @@ import (
 )
 
 type IDBuffer struct {
+	muGetId sync.Mutex
 	muCurrentId sync.Mutex
 	currentId   uint64
 	maxId       uint64
@@ -41,16 +42,17 @@ func (this *IDBuffer) GetCacheStep() (id uint64) {
 	return atomic.LoadUint64(&this.cacheStep)
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
-	this.muCurrentId.Lock()
-	defer this.muCurrentId.Unlock()
+	this.muGetId.Lock()
+	defer this.muGetId.Unlock()
 
 	out := this.IsUseOut()
 	if out {
 		return 0, errors.New("ID Use Out")
 	}
 	this.stats.Dig()
-	atomic.AddUint64(&this.currentId, this.step)
-	return this.currentId, nil
+
+
+	return atomic.AddUint64(&this.currentId, this.step),nil
 }
 func (this *IDBuffer) GetStats() stats.Stats {
 	return this.stats
@@ -58,11 +60,8 @@ func (this *IDBuffer) GetStats() stats.Stats {
 func (this *IDBuffer) IsUseOut() bool {
 	this.muUseOut.Lock()
 	defer this.muUseOut.Unlock()
-
-
-	cid := atomic.LoadUint64(&this.currentId)
-	this.isUseOut = cid >= this.maxId
-	this.application.GetLogger().Debug(" IDBuffer currentId", cid, "max ", this.maxId, "out", this.isUseOut, fmt.Sprintf("this %p",this) )
+	this.isUseOut = this.GetCurrentId() > this.GetMaxId()
+	this.application.GetLogger().Debug(" IDBufferIsUseOut currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p",this) )
 
 	return this.isUseOut
 }

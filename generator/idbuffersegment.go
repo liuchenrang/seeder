@@ -31,6 +31,7 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 			break
 		}
 	}
+
 	return id
 }
 
@@ -88,7 +89,9 @@ func (segment *IDBufferSegment) SetSlaveIdBuffer(slave *IDBuffer) {
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.muChage.Lock()
 	defer segment.muChage.Unlock()
+
 	if segment.IsMasterUserOut() {
+
 		if segment.GetSlaveIdBuffer() == nil {
 			segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
 		} else {
@@ -96,7 +99,7 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 				segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
 			}
 		}
-		segment.application.GetLogger().Error("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
+		segment.application.GetLogger().Error("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.slaveIdBuffer))
 		segment.SetMasterIDBuffer(segment.slaveIdBuffer)
 	}
 }
