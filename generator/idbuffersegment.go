@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"seeder/bootstrap"
 	"sync"
-	"time"
 )
 
 type IDBufferSegment struct {
@@ -127,14 +126,14 @@ func (segment *IDBufferSegment) StartMonitor() {
 		application := segment.application
 		monitor := NewMonitor(segment, application)
 		for {
-			time.Sleep(time.Millisecond * 100)
+
 			vigilanValue := application.GetConfig().Monitior.VigilantValue
-			application.GetLogger().Fine("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
+			application.GetLogger().Debug("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
 			if vigilanValue <= 100 {
 				monitor.SetVigilantValue(vigilanValue)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop {
-					application.GetLogger().Info(" Over call CreateSlaveIDBuffer ", segment.bizTag)
+					application.GetLogger().Debug(" OverCallCreateSlaveIDBuffer ", segment.bizTag)
 					segment.CreateSlaveIDBuffer(segment.bizTag)
 					segment.GetMasterIdBuffer().GetStats().DoStop()
 				}
@@ -147,7 +146,7 @@ func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBu
 	segment := &IDBufferSegment{application: application}
 	segment.SetBizTag(bizTag)
 	segment.CreateMasterIDBuffer(segment.bizTag)
-	//segment.StartMonitor()
+	segment.StartMonitor()
 	segment.application.GetLogger().Error("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
 
 	return segment

@@ -21,14 +21,14 @@ func (m *Monitor) IsOutVigilantValue() bool {
 
 	usePercent := (useTotal * 100 / total * 100) / 100
 
-	m.application.GetLogger().Info(m.segment.GetBizTag(), " usePercent ", usePercent, "useTotal", useTotal, "total Step", total)
+	m.application.GetLogger().Debug(m.segment.GetBizTag(), " usePercent ", usePercent, "useTotal", useTotal, "total Step", total)
 
 	return uint8(usePercent) >= m.threshold
 }
 func (m *Monitor) Event(tag <-chan string) {
 
 }
-func (m *Monitor) GetStats() stats.Stats {
+func (m *Monitor) GetStats() *stats.Stats {
 	return m.segment.GetMasterIdBuffer().GetStats()
 }
 

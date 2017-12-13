@@ -18,7 +18,7 @@ type IDBuffer struct {
 	step        uint64
 	cacheStep   uint64
 
-	stats  stats.Stats
+	stats  *stats.Stats
 	bizTag string
 
 	mu sync.Mutex
@@ -51,10 +51,9 @@ func (this *IDBuffer) GetId() (id uint64, e error) {
 	}
 	this.stats.Dig()
 
-
 	return atomic.AddUint64(&this.currentId, this.step),nil
 }
-func (this *IDBuffer) GetStats() stats.Stats {
+func (this *IDBuffer) GetStats() *stats.Stats {
 	return this.stats
 }
 func (this *IDBuffer) IsUseOut() bool {
@@ -75,6 +74,7 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	this := &IDBuffer{
 		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen,
 		application: application,
+		stats: &stats.Stats{},
 	} //
 	application.GetLogger().Error(" InitNewIDBuffer currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p",this) )
 
