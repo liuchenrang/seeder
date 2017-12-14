@@ -18,11 +18,11 @@ func (m *Monitor) IsOutVigilantValue() bool {
 	idBuffer := m.segment.GetMasterIdBuffer()
 	total := idBuffer.GetCacheStep()
 	useTotal := idBuffer.GetStats().GetTotal()
-
-	usePercent := (useTotal * 100 / total * 100) / 100
-
-	m.application.GetLogger().Debug(m.segment.GetBizTag(), " usePercent ", usePercent, "useTotal", useTotal, "total Step", total)
-
+	var usePercent uint64
+	if total > 0 {
+		usePercent = (useTotal * 100 / total * 100) / 100
+		m.application.GetLogger().Debug(m.segment.GetBizTag(), " usePercent ", usePercent, "useTotal", useTotal, "total Step", total)
+	}
 	return uint8(usePercent) >= m.threshold
 }
 func (m *Monitor) Event(tag <-chan string) {

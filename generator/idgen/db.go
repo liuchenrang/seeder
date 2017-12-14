@@ -100,19 +100,17 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 	stmt, errPrepare := tx.Prepare(sqlSelect)
 	defer stmt.Close()
 	if errPrepare != nil {
-		this.application.GetLogger().Error(errBegin.Error())
+		this.application.GetLogger().Error("DBGEN", errBegin.Error())
 		log.Fatal(errBegin.Error())
 	}
 	stmt.Exec(bizTag)
 	if errBegin != nil {
-		this.application.GetLogger().Error(errBegin.Error())
-
-		log.Fatal(errBegin.Error())
+		this.application.GetLogger().Error("DBGEN",errBegin.Error())
 	}
 	errQuery := stmt.QueryRow(bizTag).Scan(&currentId, &cacheStep, &step)
 	if errQuery != nil {
-		this.application.GetLogger().Error(errQuery.Error())
-		panic(errQuery.Error()) // proper error handling instead of panic in your app
+		this.application.GetLogger().Warn("DBGEN",errQuery.Error())
+		return 0,0,0,nil
 	}
 	affected , e := this.UpdateStep(tx, bizTag)
 	this.application.GetLogger().Info("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)

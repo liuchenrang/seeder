@@ -17,6 +17,8 @@ type IDBufferSegment struct {
 	muCreateBuffer sync.Mutex
 	bizTag         string
 	application    *bootstrap.Application
+
+	monitorCheck chan interface{}
 }
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
@@ -26,6 +28,7 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
+		segment.monitorCheck <- nil
 		segment.application.GetLogger().Error("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 		if idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
@@ -100,6 +103,8 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 		} else {
 			if segment.GetSlaveIdBufferIsUseOut() {
 				segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
+			}else{
+				segment.application.GetLogger().Debug(" UseMonitorSlave ", segment.bizTag)
 			}
 		}
 		segment.application.GetLogger().Error("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.slaveIdBuffer))
@@ -121,12 +126,12 @@ func (segment *IDBufferSegment) Close() {
 	}
 }
 func (segment *IDBufferSegment) StartMonitor() {
-
-	go func() {
+	segment.monitorCheck = make(chan interface{}, 10)
+	go func(check chan interface{}) {
 		application := segment.application
 		monitor := NewMonitor(segment, application)
 		for {
-
+			<-segment.monitorCheck
 			vigilanValue := application.GetConfig().Monitior.VigilantValue
 			application.GetLogger().Debug("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
 			if vigilanValue <= 100 {
@@ -140,7 +145,7 @@ func (segment *IDBufferSegment) StartMonitor() {
 			}
 
 		}
-	}()
+	}(segment.monitorCheck)
 }
 func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBufferSegment {
 	segment := &IDBufferSegment{application: application}
