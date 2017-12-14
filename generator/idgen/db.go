@@ -114,14 +114,20 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 	}
 	affected , e := this.UpdateStep(tx, bizTag)
 	this.application.GetLogger().Info("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
-	if affected  > 0 {
-		return currentId, cacheStep, step, errQuery
+	if cacheStep > 0 {
+		if affected  > 0 {
+			return currentId, cacheStep, step, errQuery
+		}else{
+			panic(e)
+		}
 	}else{
-		panic(e)
+		this.application.GetLogger().Error("DBGen UpdateStep Fail ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
+		return currentId, cacheStep, step, errQuery
 	}
 
 
 }
+
 func (this *DBGen) UpdateStep(tx *sql.Tx, bizTag string) (int64, error) {
 
 	stmt, errPrepare := tx.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")

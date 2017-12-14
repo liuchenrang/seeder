@@ -29,14 +29,14 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
 		segment.monitorCheck <- nil
-		segment.application.GetLogger().Error("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
+		segment.application.GetLogger().Debug("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 		if idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
 		} else {
 			break
 		}
 	}
-	segment.application.GetLogger().Error("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
+	segment.application.GetLogger().Debug("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 
 	return id
 }

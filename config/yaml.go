@@ -31,6 +31,7 @@ type SeederConfig struct {
 	Database Database
 	Server   Server
 	Monitior Monitior
+	Preload []string  `yaml:"preload"`
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`

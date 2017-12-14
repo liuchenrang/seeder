@@ -22,7 +22,7 @@ func TestSegManager(t *testing.T) {
 	runTime := 30
 	for i <= runTime {
 		i++
-		id, _ := m.GetId("uts")
+		id, _ := m.GetId("uts", 1)
 		fmt.Println("id====== ", id)
 	}
 
@@ -38,7 +38,7 @@ func BenchmarkLoopsM(b *testing.B) {
 
 		for pb.Next() {
 
-			id, _ := m.GetId("uts")
+			id, _ := m.GetId("uts", 1)
 			fmt.Println("id====== ", id)
 
 		}
@@ -49,4 +49,12 @@ func BenchmarkLoopsM(b *testing.B) {
 func TestFmt(t *testing.T) {
 	// Different allocations should not be equal.
 	fmt.Println("xx")
+}
+func TestIDBufferSegmentManager_StartHotPreLoad(b *testing.T) {
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.CRITICAL, seederConfig))
+	m := NewIDBufferSegmentManager(Application)
+	m.StartHotPreLoad()
 }

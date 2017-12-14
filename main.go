@@ -18,9 +18,7 @@ var (
 	applicaton   *bootstrap.Application
 )
 
-
 var debug = flag.Bool("d", false, "run in debug model")
-
 var configFlag = flag.String("c", "./seeder.yaml", "config path")
 var versionFlat = flag.String("version", VERSION, "")
 var startFlag = flag.Bool("start", false, "start server")
@@ -32,24 +30,20 @@ func NewApplication() *bootstrap.Application {
 
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4g(0, seederConfig))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
-
+	manager.StartHotPreLoad()
 	return applicaton
 }
 
 func main() {
 	flag.Parse()
-	if  !*startFlag {
+	if !*startFlag {
 		println("seeder version ", VERSION)
+		println("usage: seeder -start ")
 		return
 	}
 
 	kernel := NewKernel(true)
 	kernel.SetApplication(NewApplication())
-	log := bootstrap.NewLogBootstrapper("/ab/abc")
-
-	kernel.RegisterBootstrapper(log)
-
 	kernel.BootstrapWith()
-
 	kernel.Serve()
 }

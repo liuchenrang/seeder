@@ -77,8 +77,7 @@ func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error){
 }
 
 func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGetIdParams) (r string, err error) {
-	id, err := manager.GetId(params.GetTag())
-
+	id, err := manager.GetId(params.GetTag(), params.GeneratorType)
 	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
 
 

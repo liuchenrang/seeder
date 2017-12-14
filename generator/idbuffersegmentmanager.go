@@ -17,9 +17,8 @@ type IDBufferSegmentManager struct {
 	application *bootstrap.Application
 }
 
-func (manager *IDBufferSegmentManager) GetId(bizTag string) (id uint64, e error) {
+func (manager *IDBufferSegmentManager) GetId(bizTag string ,generatorType int32) (id uint64, e error) {
 	segment := manager.GetSegmentByBizTag(bizTag)
-
 	id = segment.GetId()
 	return id, nil
 }
@@ -67,6 +66,19 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 	return segment
 
+}
+func (manager *IDBufferSegmentManager) StartHotPreLoad()  {
+	wg := sync.WaitGroup{}
+	for _,bizTag := range manager.application.GetConfig().Preload{
+		wg.Add(1)
+
+		go func(tag string) {
+			manager.GetSegmentByBizTag(tag)
+			wg.Done()
+		}(bizTag)
+	}
+	wg.Wait()
+	fmt.Printf("StartHotPreLoad Finish!\n")
 }
 func (manager *IDBufferSegmentManager) Stop() {
 	for _, segment := range manager.tagPool {
