@@ -12,9 +12,7 @@ import (
 	"sort"
 )
 
-func test(g IDGen) {
-	fmt.Println(g.GenerateSegment("uts"))
-}
+
 func TestNewEqual(t *testing.T) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	Application := bootstrap.NewApplication()
@@ -23,7 +21,8 @@ func TestNewEqual(t *testing.T) {
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
 	idGen := NewDBGen("uts", Application)
-	test(idGen)
+	fmt.Println(idGen.GenerateSegment("uts5"))
+
 	fmt.Println(seederConfig)
 	Application.GetLogger().Close()
 }
@@ -48,3 +47,4 @@ func BenchmarkNewDBGen(b *testing.B) {
 	sort.Ints(sgGroup)
 
 }
+

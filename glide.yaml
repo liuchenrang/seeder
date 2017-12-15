@@ -12,3 +12,4 @@ import:
 - package: gopkg.in/yaml.v2
   version: ^4.0.3
 - package: github.com/liuchenrang/log4go
+- package: github.com/ytf606/go-snowflake

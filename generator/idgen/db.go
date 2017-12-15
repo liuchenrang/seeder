@@ -108,11 +108,20 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 		this.application.GetLogger().Error("DBGEN",errBegin.Error())
 	}
 	errQuery := stmt.QueryRow(bizTag).Scan(&currentId, &cacheStep, &step)
+	var affected int64
+
 	if errQuery != nil {
-		this.application.GetLogger().Warn("DBGEN",errQuery.Error())
-		return 0,0,0,nil
+		if errQuery.Error() == "sql: no rows in result set" {
+			currentId = 0
+			cacheStep = 100
+			step = 1
+			affected,errQuery = this.InsertStep(tx, bizTag, currentId, step, cacheStep)
+		}else{
+			this.application.GetLogger().Error("DBGEN",errQuery.Error())
+			return 0,0,0,nil
+		}
 	}
-	affected , e := this.UpdateStep(tx, bizTag)
+	affected , errQuery = this.UpdateStep(tx, bizTag)
 	this.application.GetLogger().Info("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 	if cacheStep > 0 {
 		if affected  > 0 {
@@ -137,6 +146,24 @@ func (this *DBGen) UpdateStep(tx *sql.Tx, bizTag string) (int64, error) {
 		errorUpdate = errPrepare
 	}
 	result, errorExec := stmt.Exec(bizTag)
+	if errorExec != nil {
+		errorUpdate = errorExec
+		log.Fatal(errorExec)
+	}
+	affected, errorRwos := result.RowsAffected()
+	if errorRwos != nil {
+		errorUpdate = errorRwos
+	}
+	return affected, errorUpdate
+}
+func (this *DBGen) InsertStep(tx *sql.Tx, bizTag string, currentId uint64, step uint64, cacheStep uint64) (int64, error) {
+	stmt, errPrepare :=  tx.Prepare("INSERT " + this.application.GetConfig().Database.Account.Table + " (keyName,currentId,step,cacheStep) values(?,?,?,?)");
+	var errorUpdate error
+	defer stmt.Close()
+	if errPrepare != nil {
+		errorUpdate = errPrepare
+	}
+	result, errorExec := stmt.Exec(bizTag, currentId, step, cacheStep)
 	if errorExec != nil {
 		errorUpdate = errorExec
 		log.Fatal(errorExec)

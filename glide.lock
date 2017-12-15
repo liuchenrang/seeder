@@ -1,22 +1,22 @@
-hash: 53a8410664339a8604a449acc01c00bda3ad10f5ced40fef06146740694f37ef
-updated: 2017-12-12T19:09:01.175032+08:00
+hash: f005b3656a643bed75392f8b73b24a00de4714a22e53d563686e5453ed82f512
+updated: 2017-12-14T19:57:28.022327+08:00
 imports:
 - name: git.apache.org/thrift.git
   version: 327ebb6c2b6df8bf075da02ef45a2a034e9b79ba
   subpackages:
   - lib/go/thrift
-- name: github.com/alecthomas/log4go
-  version: a9cdec6a8ef5b02d7e1b8dd0782d34c62648f07d
 - name: github.com/go-sql-driver/mysql
   version: a732e14c62dde3285440047bba97581bc472ae18
-- name: github.com/golang/glog
-  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
 - name: github.com/liuchenrang/log4go
-  version: a9cdec6a8ef5b02d7e1b8dd0782d34c62648f07d
+  version: 2e45c746338654909da47580adfd16c5a528a0a1
+- name: github.com/ytf606/go-snowflake
+  version: dde9afce27f3319cdf4effa2a9a928afdadb68aa
 - name: golang.org/x/net
   version: d866cfc389cec985d6fda2859936a575a55a3ab6
   subpackages:
   - context
 - name: gopkg.in/yaml.v2
   version: ""
-testImports: []
+testImports:
+- name: github.com/alecthomas/log4go
+  version: a9cdec6a8ef5b02d7e1b8dd0782d34c62648f07d
