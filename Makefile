@@ -5,6 +5,10 @@ seeder:
 	go build -gcflags "-N -l"  -o sbin/seeder
 release:
 	go build  -o sbin/seeder
+	rm -Rf sbin/log4go.xml
+	rm -Rf sbin/seeder.yaml
+	cp log4go.xml sbin/
+	cp seeder.yaml sbin/
 
 build:
 	cd thrift && $(MAKE) build

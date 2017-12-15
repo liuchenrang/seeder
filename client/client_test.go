@@ -146,8 +146,8 @@ func BenchmarkInThrift(b *testing.B) {
 
 func NewInThriftClient(application *bootstrap.Application) *inthrift.ApiServiceClient {
 	config := application.GetConfig()
-	config.Server.Port = 9511
-	config.Server.Host = "127.0.0.1"
+	config.Server.Port = 9611
+	config.Server.Host = "10.10.106.28"
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 	fmt.Println("connect", config.Server.Host, config.Server.Port)
 	// tsocket, err := thrift.NewTSocket(net.JoinHostPort("10.10.109.250", fmt.Sprintf("%d", config.Server.Port)))
