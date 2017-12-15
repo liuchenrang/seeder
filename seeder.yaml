@@ -1,20 +1,22 @@
+
+
 database:
     account:
-         "name": "manager"
-         "password": "managermanager"
-         "database": "test"
+         "name": "root"
+         "password": "tortdh_gogo888!"
+         "database": "maindb"
          "table": "common_generator"
-         "dbname": "test"
+         "dbname": "maindb"
     master:
-#        -
-#          host: 10.10.106.218
-#          port: 3306
         -
-           host: 127.0.0.1
-           port: 3306
+          host: 10.10.106.218
+          port: 3307
+        -
+          host: 10.10.106.218
+          port: 3306
     connection_info:
-        max_open_conns: 10
-        max_idle_conns: 0
+        max_open_conns: 20
+        max_idle_conns: 3
 
 server:
      port: 8080
@@ -23,7 +25,7 @@ server:
 monitior:
 
 #    vigilant_value: 百分比最大100
-     vigilant_value: 5
+     vigilant_value: 90
 preload:
        - uts
        - test

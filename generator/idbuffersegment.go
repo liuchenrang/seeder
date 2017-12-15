@@ -9,9 +9,9 @@ import (
 type IDBufferSegment struct {
 	muGetId  sync.Mutex
 	muChage        sync.Mutex
-	muSlave        sync.Mutex
+	muSlave        sync.RWMutex
 	masterIDBuffer *IDBuffer
-	muMaster       sync.Mutex
+	muMaster       sync.RWMutex
 	slaveIdBuffer  *IDBuffer
 
 	muCreateBuffer sync.Mutex
@@ -23,8 +23,8 @@ type IDBufferSegment struct {
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
 	var idBuffer *IDBuffer
-	segment.muGetId.Lock()
-	defer segment.muGetId.Unlock()
+	//segment.muGetId.Lock()
+	//defer segment.muGetId.Unlock()
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
@@ -42,8 +42,8 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 }
 
 func (segment *IDBufferSegment) IsMasterUserOut() bool {
-	segment.muMaster.Lock()
-	defer segment.muMaster.Unlock()
+	segment.muMaster.RLock()
+	defer segment.muMaster.RUnlock()
 
 	return segment.masterIDBuffer.IsUseOut()
 }
@@ -77,13 +77,13 @@ func (segment *IDBufferSegment) GetBizTag() string {
 	return segment.bizTag
 }
 func (segment *IDBufferSegment) GetMasterIdBuffer() *IDBuffer {
-	segment.muMaster.Lock()
-	defer segment.muMaster.Unlock()
+	segment.muMaster.RLock()
+	defer segment.muMaster.RUnlock()
 	return segment.masterIDBuffer
 }
 func (segment *IDBufferSegment) GetSlaveIdBuffer() *IDBuffer {
-	segment.muSlave.Lock()
-	defer segment.muSlave.Unlock()
+	segment.muSlave.RLock()
+	defer segment.muSlave.RUnlock()
 	return segment.slaveIdBuffer
 }
 func (segment *IDBufferSegment) SetSlaveIdBuffer(slave *IDBuffer) {
@@ -112,8 +112,8 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	}
 }
 func (segment *IDBufferSegment) GetSlaveIdBufferIsUseOut() bool {
-	segment.muSlave.Lock()
-	defer segment.muSlave.Unlock()
+	segment.muSlave.RLock()
+	defer segment.muSlave.RUnlock()
 	return segment.slaveIdBuffer.IsUseOut()
 }
 func (segment *IDBufferSegment) Close() {

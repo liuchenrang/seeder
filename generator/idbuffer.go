@@ -42,6 +42,7 @@ func (this *IDBuffer) GetCacheStep() (id uint64) {
 	return atomic.LoadUint64(&this.cacheStep)
 }
 func (this *IDBuffer) GetId() (id uint64, e error) {
+
 	this.muGetId.Lock()
 	defer this.muGetId.Unlock()
 
@@ -57,6 +58,7 @@ func (this *IDBuffer) GetStats() *stats.Stats {
 	return this.stats
 }
 func (this *IDBuffer) IsUseOut() bool {
+
 	this.muUseOut.Lock()
 	defer this.muUseOut.Unlock()
 	id := this.GetCurrentId()
