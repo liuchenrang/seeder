@@ -1,5 +1,5 @@
-hash: f005b3656a643bed75392f8b73b24a00de4714a22e53d563686e5453ed82f512
-updated: 2017-12-14T19:57:28.022327+08:00
+hash: 1443f2ab36b2c57f9be6e38930c632684389ea3505ebc20777055b64652957c2
+updated: 2017-12-19T15:37:01.634172+08:00
 imports:
 - name: git.apache.org/thrift.git
   version: 327ebb6c2b6df8bf075da02ef45a2a034e9b79ba
@@ -9,6 +9,8 @@ imports:
   version: a732e14c62dde3285440047bba97581bc472ae18
 - name: github.com/liuchenrang/log4go
   version: 2e45c746338654909da47580adfd16c5a528a0a1
+- name: github.com/takama/daemon
+  version: f30a97dd1445619884e03e7ed088bc1b3c4f767e
 - name: github.com/ytf606/go-snowflake
   version: dde9afce27f3319cdf4effa2a9a928afdadb68aa
 - name: golang.org/x/net

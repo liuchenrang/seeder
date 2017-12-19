@@ -1,6 +1,7 @@
 package: .
 ignore:
 - rpc
+- inthrift
 - generator
 import:
 - package: git.apache.org/thrift.git
@@ -13,3 +14,4 @@ import:
   version: ^4.0.3
 - package: github.com/liuchenrang/log4go
 - package: github.com/ytf606/go-snowflake
+- package: github.com/takama/daemon

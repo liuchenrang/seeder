@@ -7,21 +7,38 @@ import (
 	seederGenerator "seeder/generator"
 
 	"seeder/logger"
+	"github.com/takama/daemon"
+	"os"
+	"fmt"
+	"log"
 )
 
-const VERSION = "1.0.0"
+const (
+	 VERSION = "1.0.0"
+	 project_name = "seeder"
+	 description = "id generator"
+)
+
 
 var (
+ 	dependencies = []string{"seeder.service"}
+ 	stdlog, errlog *log.Logger
+
 	manager      seederGenerator.IDBufferSegmentManager
 	seederConfig config.SeederConfig
 	logger       SeederLogger.Logger
 	applicaton   *bootstrap.Application
-)
+//install | remove | start | stop | status
 
-var debug = flag.Bool("d", false, "run in debug model")
-var configFlag = flag.String("c", "./seeder.yaml", "config path")
-var versionFlat = flag.String("version", VERSION, "")
-var startFlag = flag.Bool("start", false, "start server")
+	configFlag = flag.String("c", "./seeder.yaml", "config path")
+	loggerFlag = flag.String("cc", "./log4go.xml", "log config path")
+	versionFlat = flag.String("version", VERSION, "")
+
+	remove = flag.Bool("remove", false, "-remove")
+	start = flag.Bool("start", false, "-start")
+	stop = flag.Bool("stop", false, "-stop")
+	status = flag.Bool("status", false, "-status")
+)
 
 func NewApplication() *bootstrap.Application {
 	applicaton = bootstrap.NewApplication()
@@ -33,17 +50,22 @@ func NewApplication() *bootstrap.Application {
 	manager.StartHotPreLoad()
 	return applicaton
 }
-
+func init()  {
+	stdlog = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+}
 func main() {
 	flag.Parse()
-	if !*startFlag {
-		println("seeder version ", VERSION)
-		println("usage: seeder -start ")
-		return
+	fmt.Println("%s",*remove)
+	srv, err := daemon.New(project_name, description, dependencies...)
+	if err != nil {
+		stdlog.Println("Error: ", err)
+		os.Exit(1)
 	}
-
-	kernel := NewKernel(true)
-	kernel.SetApplication(NewApplication())
-	kernel.BootstrapWith()
-	kernel.Serve()
+	service := &Service{srv}
+	status, err := service.Manage()
+	if err != nil {
+		stdlog.Println(status, "\nError: ", err)
+		os.Exit(1)
+	}
+	fmt.Println(status)
 }

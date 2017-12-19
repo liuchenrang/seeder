@@ -12,6 +12,8 @@ import (
 	"os/signal"
 	"syscall"
 	"context"
+	"github.com/takama/daemon"
+	"flag"
 )
 
 type strapper bootstrap.Strapper
@@ -22,6 +24,47 @@ type Kernel struct {
 	SeederLogger.Logger
 	applicaton *bootstrap.Application
 }
+type Service struct {
+	daemon.Daemon
+}
+func (service *Service) Manage() (string, error) {
+
+	usage := "Usage: seeder install -c=seeder.yaml -cc=logo4go.xml | remove | start | stop | status"
+	if len(os.Args) >= 1{
+		s := os.Args[0]
+		if s[0] != 45 { //45 is string "-"
+			flag.CommandLine.Parse(os.Args[2:])
+		}
+	}
+	// if received any kind of command, do it
+	if len(os.Args) > 1 {
+		command := os.Args[1]
+		switch command {
+		case "install":
+
+			return service.Install(*configFlag,*loggerFlag)
+		case "remove":
+			return service.Remove()
+		case "start":
+			return service.Start()
+		case "stop":
+			return service.Stop()
+		case "status":
+			return service.Status()
+		case "help":
+			return usage, nil
+		}
+	}
+
+
+	kernel := NewKernel(true)
+	kernel.SetApplication(NewApplication())
+	kernel.BootstrapWith()
+	kernel.Serve()
+	// never happen, but need to complete code
+	return "", nil
+}
+
 
 func NewKernel(debug bool) *Kernel {
 	return new(Kernel)
