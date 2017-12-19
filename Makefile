@@ -10,7 +10,5 @@ d:
 #	go build -gcflags "-N -l"  -o sbin/seeder  &&   ./sbin/seeder -start 2>&1 | tee /tmp/seeder.log
 seeder:
 	go build -gcflags "-N -l"  -o sbin/seeder
-
-
 build:
 	cd thrift && $(MAKE) build

@@ -31,6 +31,12 @@ func (service *Service) Manage() (string, error) {
 
 	switch {
 	case *installFlag:
+		if *configFlag !="" {
+			*configFlag = "-c=" + *configFlag
+		}
+		if *loggerFlag !="" {
+			*loggerFlag = "-cc=" + *loggerFlag
+		}
 		return service.Install(*configFlag, *loggerFlag)
 	case *removeFlag:
 		return service.Remove()
