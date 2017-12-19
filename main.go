@@ -34,10 +34,11 @@ var (
 	loggerFlag = flag.String("cc", "./log4go.xml", "log config path")
 	versionFlat = flag.String("version", VERSION, "")
 
-	remove = flag.Bool("remove", false, "-remove")
-	start = flag.Bool("start", false, "-start")
-	stop = flag.Bool("stop", false, "-stop")
-	status = flag.Bool("status", false, "-status")
+	removeFlag = flag.Bool("remove", false, "-remove")
+	startFlag = flag.Bool("start", false, "-start")
+	stopFlag = flag.Bool("stop", false, "-stop")
+	statusFlag = flag.Bool("status", false, "-status")
+	installFlag = flag.Bool("install", false, "-install muset set -c and -cc ")
 )
 
 func NewApplication() *bootstrap.Application {
@@ -55,7 +56,6 @@ func init()  {
 }
 func main() {
 	flag.Parse()
-	fmt.Println("%s",*remove)
 	srv, err := daemon.New(project_name, description, dependencies...)
 	if err != nil {
 		stdlog.Println("Error: ", err)

@@ -13,7 +13,6 @@ import (
 	"syscall"
 	"context"
 	"github.com/takama/daemon"
-	"flag"
 )
 
 type strapper bootstrap.Strapper
@@ -22,40 +21,27 @@ type Kernel struct {
 	booted        bool
 	bootstrappers []strapper
 	SeederLogger.Logger
-	applicaton *bootstrap.Application
+	applicaton    *bootstrap.Application
 }
 type Service struct {
 	daemon.Daemon
 }
+
 func (service *Service) Manage() (string, error) {
 
-	usage := "Usage: seeder install -c=seeder.yaml -cc=logo4go.xml | remove | start | stop | status"
-	if len(os.Args) >= 1{
-		s := os.Args[0]
-		if s[0] != 45 { //45 is string "-"
-			flag.CommandLine.Parse(os.Args[2:])
-		}
-	}
-	// if received any kind of command, do it
-	if len(os.Args) > 1 {
-		command := os.Args[1]
-		switch command {
-		case "install":
+	switch {
+	case *installFlag:
+		return service.Install(*configFlag, *loggerFlag)
+	case *removeFlag:
+		return service.Remove()
+	case *startFlag:
+		return service.Start()
+	case *stopFlag:
+		return service.Stop()
+	case *statusFlag:
+		return service.Status()
 
-			return service.Install(*configFlag,*loggerFlag)
-		case "remove":
-			return service.Remove()
-		case "start":
-			return service.Start()
-		case "stop":
-			return service.Stop()
-		case "status":
-			return service.Status()
-		case "help":
-			return usage, nil
-		}
 	}
-
 
 	kernel := NewKernel(true)
 	kernel.SetApplication(NewApplication())
@@ -64,7 +50,6 @@ func (service *Service) Manage() (string, error) {
 	// never happen, but need to complete code
 	return "", nil
 }
-
 
 func NewKernel(debug bool) *Kernel {
 	return new(Kernel)
@@ -114,7 +99,7 @@ func NewSystemException(code generator.ErrorCode, errorName string, message stri
 type IdGeneratorServiceImpl struct {
 }
 
-func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error){
+func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error) {
 	return "idgen", nil
 
 }
@@ -123,7 +108,6 @@ func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGet
 	id, err := manager.GetId(params.GetTag(), params.GeneratorType)
 	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
 
-
 	if err != nil {
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
 	}
@@ -131,10 +115,8 @@ func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGet
 	return fmt.Sprintf("%d", id), nil
 }
 
-
 // Parameters:
 //  - Params
-
 
 func (kernel *Kernel) Serve() {
 
