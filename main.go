@@ -6,38 +6,37 @@ import (
 	"seeder/config"
 	seederGenerator "seeder/generator"
 
-	"seeder/logger"
-	"github.com/takama/daemon"
-	"os"
 	"fmt"
 	"log"
+	"os"
+	"seeder/logger"
+
+	"github.com/takama/daemon"
 )
 
 const (
-	 VERSION = "1.0.0"
-	 project_name = "seeder"
-	 description = "id generator"
+	VERSION      = "1.0.0"
+	project_name = "seeder"
+	description  = "id generator"
 )
 
-
 var (
- 	dependencies = []string{"seeder.service"}
- 	stdlog, errlog *log.Logger
+	dependencies   = []string{"seeder.service"}
+	stdlog, errlog *log.Logger
 
 	manager      seederGenerator.IDBufferSegmentManager
 	seederConfig config.SeederConfig
 	logger       SeederLogger.Logger
 	applicaton   *bootstrap.Application
-//install | remove | start | stop | status
 
-	configFlag = flag.String("c", "./seeder.yaml", "config path")
-	loggerFlag = flag.String("cc", "./log4go.xml", "log config path")
+	configFlag  = flag.String("c", "./seeder.yaml", "config path")
+	loggerFlag  = flag.String("cc", "./log4go.xml", "log config path")
 	versionFlat = flag.String("version", VERSION, "")
 
-	removeFlag = flag.Bool("remove", false, "-remove")
-	startFlag = flag.Bool("start", false, "-start")
-	stopFlag = flag.Bool("stop", false, "-stop")
-	statusFlag = flag.Bool("status", false, "-status")
+	removeFlag  = flag.Bool("remove", false, "-remove")
+	startFlag   = flag.Bool("start", false, "-start")
+	stopFlag    = flag.Bool("stop", false, "-stop")
+	statusFlag  = flag.Bool("status", false, "-status")
 	installFlag = flag.Bool("install", false, "-install muset set -c and -cc ")
 )
 
@@ -51,7 +50,7 @@ func NewApplication() *bootstrap.Application {
 	manager.StartHotPreLoad()
 	return applicaton
 }
-func init()  {
+func init() {
 	stdlog = log.New(os.Stdout, "", log.Ldate|log.Ltime)
 }
 func main() {

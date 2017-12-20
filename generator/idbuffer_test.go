@@ -4,6 +4,7 @@ import (
 	//"errors"
 	//"fmt"
 	"fmt"
+
 	"github.com/liuchenrang/log4go"
 
 	"seeder/bootstrap"
@@ -35,8 +36,9 @@ func TestIdBuffer(t *testing.T) {
 func TestNewIDBuffer(t *testing.T) {
 	// Different allocations should not be equal.
 	Application := bootstrap.NewApplication()
-	config := config.NewSeederConfig("../seeder.yaml")
-	Application.Set("globalSeederConfig", config)
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 
 	idBuf := generator.NewIDBuffer("photo", Application)
 	fmt.Println(idBuf)
