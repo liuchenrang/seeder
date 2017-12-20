@@ -2,16 +2,16 @@ package generator
 
 import (
 	"errors"
+	"fmt"
 	"seeder/bootstrap"
 	"seeder/generator/idgen"
 	"seeder/stats"
 	"sync"
 	"sync/atomic"
-	"fmt"
 )
 
 type IDBuffer struct {
-	muGetId sync.Mutex
+	muGetId     sync.Mutex
 	muCurrentId sync.Mutex
 	currentId   uint64
 	maxId       uint64
@@ -52,7 +52,7 @@ func (this *IDBuffer) GetId() (id uint64, e error) {
 	}
 	this.stats.Dig()
 
-	return atomic.AddUint64(&this.currentId, this.step),nil
+	return atomic.AddUint64(&this.currentId, this.step), nil
 }
 func (this *IDBuffer) GetStats() *stats.Stats {
 	return this.stats
@@ -62,8 +62,8 @@ func (this *IDBuffer) IsUseOut() bool {
 	this.muUseOut.Lock()
 	defer this.muUseOut.Unlock()
 	id := this.GetCurrentId()
-	this.isUseOut = id  > this.GetMaxId()
-	this.application.GetLogger().Debug(" IDBufferIsUseOut currentId", id, "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p",this) )
+	this.isUseOut = id > this.GetMaxId()
+	this.application.GetLogger().Debug(" IDBufferIsUseOut currentId", id, "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
 
 	return this.isUseOut
 }
@@ -76,9 +76,9 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	this := &IDBuffer{
 		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen,
 		application: application,
-		stats: &stats.Stats{},
+		stats:       &stats.Stats{},
 	} //
-	application.GetLogger().Error(" InitNewIDBuffer currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p",this) )
+	application.GetLogger().Debug(" InitNewIDBuffer currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
 
 	return this
 }

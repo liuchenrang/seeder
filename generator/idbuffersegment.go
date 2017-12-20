@@ -7,7 +7,7 @@ import (
 )
 
 type IDBufferSegment struct {
-	muGetId  sync.Mutex
+	muGetId        sync.Mutex
 	muChage        sync.Mutex
 	muSlave        sync.RWMutex
 	masterIDBuffer *IDBuffer
@@ -103,11 +103,11 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 		} else {
 			if segment.GetSlaveIdBufferIsUseOut() {
 				segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
-			}else{
+			} else {
 				segment.application.GetLogger().Debug(" UseMonitorSlave ", segment.bizTag)
 			}
 		}
-		segment.application.GetLogger().Error("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.slaveIdBuffer))
+		segment.application.GetLogger().Debug("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.slaveIdBuffer))
 		segment.SetMasterIDBuffer(segment.slaveIdBuffer)
 	}
 }
@@ -152,7 +152,7 @@ func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBu
 	segment.SetBizTag(bizTag)
 	segment.CreateMasterIDBuffer(segment.bizTag)
 	segment.StartMonitor()
-	segment.application.GetLogger().Error("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
+	segment.application.GetLogger().Debug("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
 
 	return segment
 }
