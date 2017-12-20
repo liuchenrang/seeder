@@ -7,11 +7,12 @@ import (
 	"seeder/logger"
 	"seeder/thrift/packages/generator"
 
-	"git.apache.org/thrift.git/lib/go/thrift"
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
-	"context"
+
+	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/takama/daemon"
 )
 
@@ -21,7 +22,7 @@ type Kernel struct {
 	booted        bool
 	bootstrappers []strapper
 	SeederLogger.Logger
-	applicaton    *bootstrap.Application
+	applicaton *bootstrap.Application
 }
 type Service struct {
 	daemon.Daemon
@@ -31,10 +32,10 @@ func (service *Service) Manage() (string, error) {
 
 	switch {
 	case *installFlag:
-		if *configFlag !="" {
+		if *configFlag != "" {
 			*configFlag = "-c=" + *configFlag
 		}
-		if *loggerFlag !="" {
+		if *loggerFlag != "" {
 			*loggerFlag = "-cc=" + *loggerFlag
 		}
 		return service.Install(*configFlag, *loggerFlag)
@@ -83,22 +84,18 @@ func (s *Kernel) BootstrapWith() {
 func NewUserException(code generator.ErrorCode, errorName string, message string) *generator.UserException {
 
 	uexp := generator.NewUserException()
-
 	uexp.ErrorCode = code
 	uexp.ErrorName = errorName
 	uexp.Message = &message
-
 	return uexp
 }
 
 func NewSystemException(code generator.ErrorCode, errorName string, message string) *generator.SystemException {
 
 	sexp := generator.NewSystemException()
-
 	sexp.ErrorCode = code
 	sexp.ErrorName = errorName
 	sexp.Message = &message
-
 	return sexp
 }
 
@@ -110,6 +107,7 @@ func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error) {
 
 }
 
+//GetId GetId
 func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGetIdParams) (r string, err error) {
 	id, err := manager.GetId(params.GetTag(), params.GeneratorType)
 	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
@@ -123,7 +121,6 @@ func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGet
 
 // Parameters:
 //  - Params
-
 func (kernel *Kernel) Serve() {
 
 	sigs := make(chan os.Signal, 1)
