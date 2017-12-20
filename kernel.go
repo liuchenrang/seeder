@@ -110,7 +110,7 @@ func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error) {
 //GetId GetId
 func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGetIdParams) (r string, err error) {
 	id, err := manager.GetId(params.GetTag(), params.GeneratorType)
-	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
+	applicaton.GetLogger().Info("request biz tag", params.GetTag())
 
 	if err != nil {
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")

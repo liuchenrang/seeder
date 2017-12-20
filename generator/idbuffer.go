@@ -63,7 +63,7 @@ func (this *IDBuffer) IsUseOut() bool {
 	defer this.muUseOut.Unlock()
 	id := this.GetCurrentId()
 	this.isUseOut = id > this.GetMaxId()
-	this.application.GetLogger().Debug(" IDBufferIsUseOut currentId", id, "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
+	this.application.GetLogger().Info(" IDBufferIsUseOut currentId", id, "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
 
 	return this.isUseOut
 }
@@ -78,7 +78,7 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 		application: application,
 		stats:       &stats.Stats{},
 	} //
-	application.GetLogger().Debug(" InitNewIDBuffer currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
+	application.GetLogger().Info(" InitNewIDBuffer currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
 
 	return this
 }

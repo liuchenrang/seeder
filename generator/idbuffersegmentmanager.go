@@ -42,7 +42,7 @@ func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBuff
 		}
 
 	}
-	manager.application.GetLogger().Debug(fmt.Sprintf("manager segment %p", seg))
+	manager.application.GetLogger().Info(fmt.Sprintf("manager segment %p", seg))
 
 	return seg
 
@@ -60,7 +60,7 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 	segment := NewIDBufferSegment(bizTag, manager.application)
 
-	manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
+	manager.application.GetLogger().Info("Manger  Segment  CreateMasterIDBuffer ")
 
 	manager.AddSegmentToPool(bizTag, segment)
 
