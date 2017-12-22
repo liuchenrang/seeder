@@ -33,6 +33,11 @@ type SeederConfig struct {
 	Server   Server
 	Monitior Monitior
 	Preload  []string `yaml:"preload"`
+	Snow     Snow
+}
+type Snow struct {
+	Node int
+	Idc  int
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`
