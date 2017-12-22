@@ -3,8 +3,6 @@ package config
 import (
 	"io/ioutil"
 	"log"
-
-	"gopkg.in/yaml.v2"
 )
 
 type Account struct {
@@ -36,8 +34,8 @@ type SeederConfig struct {
 	Snow     Snow
 }
 type Snow struct {
-	Node int
-	Idc  int
+	Node int64
+	Idc  int64
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`

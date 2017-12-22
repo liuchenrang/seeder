@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"seeder/bootstrap"
+	"seeder/generator/idgen"
 	"sync"
 )
 
@@ -18,8 +19,14 @@ type IDBufferSegmentManager struct {
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string, generatorType int32) (id uint64, e error) {
-	segment := manager.GetSegmentByBizTag(bizTag)
-	id = segment.GetId()
+	sonw := manager.application.GetConfig().Snow
+	if generatorType == 2 {
+		node, _ := idgen.NewNode(snow.Idc, sonw.Node)
+		id = node.Generate().Int64()
+	} else {
+		segment := manager.GetSegmentByBizTag(bizTag)
+		id = segment.GetId()
+	}
 	return id, nil
 }
 func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment) {
