@@ -74,7 +74,7 @@ func BenchmarkLoopsTest2(b *testing.B) {
 		client := NewClient(Application)
 
 		for pb.Next() {
-			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "test2", GeneratorType: 1})
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "test2", GeneratorType: 2})
 			if error != nil {
 				log.Fatal(error)
 			}

@@ -21,8 +21,8 @@ type IDBufferSegmentManager struct {
 func (manager *IDBufferSegmentManager) GetId(bizTag string, generatorType int32) (id uint64, e error) {
 	sonw := manager.application.GetConfig().Snow
 	if generatorType == 2 {
-		node, _ := idgen.NewNode(snow.Idc, sonw.Node)
-		id = node.Generate().Int64()
+		node, _ := idgen.NewNode(sonw.Idc, sonw.Node)
+		id = uint64(node.Generate().Int64())
 	} else {
 		segment := manager.GetSegmentByBizTag(bizTag)
 		id = segment.GetId()

@@ -3,6 +3,8 @@ package config
 import (
 	"io/ioutil"
 	"log"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Account struct {
