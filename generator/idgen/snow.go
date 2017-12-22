@@ -31,21 +31,14 @@ type Node struct {
 	time int64 "last used time"
 	node int64 "server node"
 	step int64 "last plus step"
-	s    store
 }
 
-type store interface {
-	get() int64
-	set(int64)
-}
-
-func NewNode(idc int64, node int64, s store) (*Node, error) {
+func NewNode(idc int64, node int64) (*Node, error) {
 	if node < 0 || node > nodeMax {
 		return nil, errors.New("Node number must be between 0 and 1023")
 	}
 
 	return &Node{
-		s:    s,
 		idc:  idc,
 		node: node,
 		time: 0,
@@ -53,7 +46,7 @@ func NewNode(idc int64, node int64, s store) (*Node, error) {
 	}, nil
 }
 
-func (n *Node) generate() ID {
+func (n *Node) Generate() ID {
 	n.Lock()
 	defer n.Unlock()
 
@@ -78,11 +71,6 @@ func (n *Node) generate() ID {
 	}
 
 	n.time = now
-
-	// 保存上次的使用时间,防止服务器重启后时间回拨
-	go func() {
-		n.s.set(n.time)
-	}()
 
 	return ID((now-epoch)<<timeShift |
 		(n.idc << idcShift) |
