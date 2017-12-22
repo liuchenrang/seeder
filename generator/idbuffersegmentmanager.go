@@ -16,13 +16,13 @@ type IDBufferSegmentManager struct {
 	tagPool   map[string]*IDBufferSegment
 
 	application *bootstrap.Application
+
+	snow *idgen.Node
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string, generatorType int32) (id uint64, e error) {
-	sonw := manager.application.GetConfig().Snow
 	if generatorType == 2 {
-		node, _ := idgen.NewNode(sonw.Idc, sonw.Node)
-		id = uint64(node.Generate().Int64())
+		id = manager.snow.Generate().UInt64()
 	} else {
 		segment := manager.GetSegmentByBizTag(bizTag)
 		id = segment.GetId()
@@ -97,6 +97,12 @@ func (manager *IDBufferSegmentManager) Stop() {
 
 func NewIDBufferSegmentManager(application *bootstrap.Application) *IDBufferSegmentManager {
 
-	manager := &IDBufferSegmentManager{application: application, tagPool: make(map[string]*IDBufferSegment)}
+	snowConfig := application.GetConfig().Snow
+	node, _ := idgen.NewNode(snowConfig.Idc, snowConfig.Node)
+	manager := &IDBufferSegmentManager{
+		application: application,
+		tagPool:     make(map[string]*IDBufferSegment),
+		snow:        node,
+	}
 	return manager
 }

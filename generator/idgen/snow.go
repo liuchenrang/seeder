@@ -81,6 +81,9 @@ func (n *Node) Generate() ID {
 func (f ID) Int64() int64 {
 	return int64(f)
 }
+func (f ID) UInt64() uint64 {
+	return uint64(f)
+}
 
 func (f ID) String() string {
 	return strconv.FormatInt(int64(f), 10)
