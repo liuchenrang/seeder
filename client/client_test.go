@@ -3,18 +3,17 @@ package client
 import (
 	"fmt"
 	"log"
+	"net"
+	"os"
 	"seeder/bootstrap"
 	"seeder/config"
 	"seeder/logger"
 	thriftGenerator "seeder/thrift/packages/generator"
+	"seeder/thrift/packages/inthrift"
 	"testing"
 
-	"github.com/liuchenrang/log4go"
-
-	"net"
-	"os"
 	"git.apache.org/thrift.git/lib/go/thrift"
-	"seeder/thrift/packages/inthrift"
+	"github.com/liuchenrang/log4go"
 )
 
 func TestNewClient(t *testing.T) {
@@ -30,7 +29,7 @@ func TestNewClient(t *testing.T) {
 	idp, _ := client.Ping(nil)
 	i := 0
 	for i < 3 {
-		id, error := client.GetId(nil,&thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
+		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
 		if error != nil {
 			log.Fatal(error)
 		}
@@ -52,7 +51,7 @@ func BenchmarkLoopsUts(b *testing.B) {
 		client := NewClient(Application)
 
 		for pb.Next() {
-			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "test4", GeneratorType: 1})
 			if error != nil {
 				log.Fatal(error)
 			}
@@ -116,11 +115,11 @@ func TestNewClient2(t *testing.T) {
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 	client := NewInThriftClient(Application)
-	id, error := client.Call(nil, "NABTestService", "getTestID","[]", "")
-	fmt.Println("id",id,"e",error)
-
+	id, error := client.Call(nil, "NABTestService", "getTestID", "[]", "")
+	fmt.Println("id", id, "e", error)
 
 }
+
 // 测试并发效率
 func BenchmarkInThrift(b *testing.B) {
 	Application := bootstrap.NewApplication()
@@ -132,7 +131,7 @@ func BenchmarkInThrift(b *testing.B) {
 		client := NewInThriftClient(Application)
 
 		for pb.Next() {
-			id, error := client.Call(nil, "NABTestService", "getTestID","[]", "")
+			id, error := client.Call(nil, "NABTestService", "getTestID", "[]", "")
 			if error != nil {
 				log.Fatal(error)
 			}

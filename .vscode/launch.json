@@ -17,14 +17,6 @@
             "args": [],
             "showLog": true,
             "trace": true
-        },
-        {
-            "type": "go",
-            "request": "attach",
-            "name": "Attach",
-            "port": 2366,
-            "host": "127.0.0.1",
-            "program": "${workspaceRoot}/seeder"
         }
     ]
 }

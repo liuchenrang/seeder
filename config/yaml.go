@@ -1,9 +1,10 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Account struct {
@@ -31,7 +32,7 @@ type SeederConfig struct {
 	Database Database
 	Server   Server
 	Monitior Monitior
-	Preload []string  `yaml:"preload"`
+	Preload  []string `yaml:"preload"`
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`
