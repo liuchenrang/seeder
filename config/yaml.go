@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Account struct {
@@ -33,6 +33,11 @@ type SeederConfig struct {
 	Server   Server
 	Monitior Monitior
 	Preload  []string `yaml:"preload"`
+	Snow     Snow
+}
+type Snow struct {
+	Node int64
+	Idc  int64
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`

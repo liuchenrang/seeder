@@ -30,3 +30,10 @@ preload:
        - uts
        - test
        - order
+preload:
+       - uts
+       - test
+       - order
+snow:
+    node: 1
+    idc: 1
