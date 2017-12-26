@@ -9,6 +9,8 @@ import (
 type IDBufferSegment struct {
 	muGetId        sync.Mutex
 	muChage        sync.Mutex
+
+	muSlaveApply   sync.Mutex
 	muSlave        sync.RWMutex
 	masterIDBuffer *IDBuffer
 	muMaster       sync.RWMutex
@@ -23,8 +25,6 @@ type IDBufferSegment struct {
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
 	var idBuffer *IDBuffer
-	//segment.muGetId.Lock()
-	//defer segment.muGetId.Unlock()
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
@@ -97,19 +97,25 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	defer segment.muChage.Unlock()
 
 	if segment.IsMasterUserOut() {
-
-		if segment.GetSlaveIdBuffer() == nil {
+		segment.application.GetLogger().Info("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.slaveIdBuffer))
+		segment.SetMasterIDBuffer(segment.ApplySlave())
+	}
+}
+func (segment *IDBufferSegment) ApplySlave() *IDBuffer  {
+	segment.muSlaveApply.Lock()
+	defer segment.muSlaveApply.Unlock()
+	if segment.GetSlaveIdBuffer() == nil {
+		segment.application.GetLogger().Info(" ApplySlaveNilCreate ", segment.bizTag)
+		segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
+	} else {
+		if segment.GetSlaveIdBufferIsUseOut() {
+			segment.application.GetLogger().Info(" ApplySlaveCreateSlave ", segment.bizTag)
 			segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
 		} else {
-			if segment.GetSlaveIdBufferIsUseOut() {
-				segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
-			} else {
-				segment.application.GetLogger().Info(" UseMonitorSlave ", segment.bizTag)
-			}
+			segment.application.GetLogger().Info(" UseMonitorSlave ", segment.bizTag)
 		}
-		segment.application.GetLogger().Info("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.slaveIdBuffer))
-		segment.SetMasterIDBuffer(segment.slaveIdBuffer)
 	}
+	return segment.GetSlaveIdBuffer()
 }
 func (segment *IDBufferSegment) GetSlaveIdBufferIsUseOut() bool {
 	segment.muSlave.RLock()
@@ -139,7 +145,7 @@ func (segment *IDBufferSegment) StartMonitor() {
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop {
 					application.GetLogger().Info(" OverCallCreateSlaveIDBuffer ", segment.bizTag)
-					segment.CreateSlaveIDBuffer(segment.bizTag)
+					segment.ApplySlave()
 					segment.GetMasterIdBuffer().GetStats().DoStop()
 				}
 			}
