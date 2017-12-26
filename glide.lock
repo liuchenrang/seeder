@@ -1,5 +1,5 @@
-hash: 1443f2ab36b2c57f9be6e38930c632684389ea3505ebc20777055b64652957c2
-updated: 2017-12-19T15:37:01.634172+08:00
+hash: 4b1a67c72e0e5f06018cdc5cdcd0266667d8624834a7d148e5ee98a07678180d
+updated: 2017-12-22T17:17:23.496026+08:00
 imports:
 - name: git.apache.org/thrift.git
   version: 327ebb6c2b6df8bf075da02ef45a2a034e9b79ba
@@ -9,6 +9,8 @@ imports:
   version: a732e14c62dde3285440047bba97581bc472ae18
 - name: github.com/liuchenrang/log4go
   version: 2e45c746338654909da47580adfd16c5a528a0a1
+- name: github.com/samuel/go-zookeeper
+  version: 471cd4e61d7a78ece1791fa5faa0345dc8c7d5a5
 - name: github.com/takama/daemon
   version: f30a97dd1445619884e03e7ed088bc1b3c4f767e
 - name: github.com/ytf606/go-snowflake

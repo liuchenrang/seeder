@@ -15,3 +15,4 @@ import:
 - package: github.com/liuchenrang/log4go
 - package: github.com/ytf606/go-snowflake
 - package: github.com/takama/daemon
+- package: github.com/samuel/go-zookeeper

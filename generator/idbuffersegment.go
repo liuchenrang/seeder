@@ -23,8 +23,8 @@ type IDBufferSegment struct {
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
 	var idBuffer *IDBuffer
-	//segment.muGetId.Lock()
-	//defer segment.muGetId.Unlock()
+	segment.muGetId.Lock()
+	defer segment.muGetId.Unlock()
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
@@ -151,7 +151,7 @@ func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBu
 	segment := &IDBufferSegment{application: application}
 	segment.SetBizTag(bizTag)
 	segment.CreateMasterIDBuffer(segment.bizTag)
-	segment.StartMonitor()
+	//segment.StartMonitor()
 	segment.application.GetLogger().Info("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
 
 	return segment

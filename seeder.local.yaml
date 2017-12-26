@@ -24,3 +24,11 @@ monitior:
 
 #    vigilant_value: 百分比最大100
      vigilant_value: 90
+
+preload:
+       - uts
+       - test
+       - order
+snow:
+    node: 1
+    idc: 1
