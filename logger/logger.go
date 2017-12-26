@@ -7,6 +7,7 @@ import (
 	"os"
 	"seeder/config"
 	"time"
+	"flag"
 )
 
 var (
@@ -45,10 +46,20 @@ func init()  {
 }
 func NewLogger4g(level log4go.Level, seederConfig config.SeederConfig) log4go.Logger {
 	log := log4go.NewDefaultLogger(level)
+	loggerFlag  := flag.String("cc", "./log4go.xml", "log config path")
 
-	logConfigFile := "/usr/local/Cellar/go/gopath/src/seeder/log4go.xml"
-	if _, err := os.Stat(logConfigFile); err == nil {
-		log.LoadConfiguration(logConfigFile)
+	if _, err := os.Stat(*loggerFlag); err == nil {
+		log.LoadConfiguration(*loggerFlag)
+		fmt.Println("load log4go config")
+	}
+
+	return log
+}
+func NewLogger4gWithConfig(level log4go.Level, seederConfig config.SeederConfig, loggerFlag *string) log4go.Logger {
+	log := log4go.NewDefaultLogger(0)
+
+	if _, err := os.Stat(*loggerFlag); err == nil {
+		log.LoadConfiguration(*loggerFlag)
 		fmt.Println("load log4go config")
 	}
 
