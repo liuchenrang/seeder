@@ -5,10 +5,14 @@ release:
 	cp log4go.xml sbin/
 	cp seeder.yaml sbin/
 
-d:
+test:
+	go build -gcflags "-N -l"  -o sbin/seeder  &&   ./sbin/seeder  2>&1 | tee /tmp/seeder.log
+
+race:
 	go build -gcflags "-N -l"  -race -o sbin/seeder  &&   ./sbin/seeder  2>&1 | tee /tmp/seeder.log
-#	go build -gcflags "-N -l"  -o sbin/seeder  &&   ./sbin/seeder -start 2>&1 | tee /tmp/seeder.log
-seeder:
-	go build -gcflags "-N -l"  -o sbin/seeder
+
+run:
+	go build -o sbin/seeder  &&   ./sbin/seeder  2>&1 | tee /tmp/seeder.log
+
 build:
 	cd thrift && $(MAKE) build

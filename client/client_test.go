@@ -30,18 +30,34 @@ func TestNewClient(t *testing.T) {
 
 	client := NewClient(Application)
 
-	idp, _ := client.Ping(nil)
 	i := 0
 	for i < 3 {
 		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
 		if error != nil {
 			log.Fatal(error)
 		}
-		fmt.Println("ping ", idp)
 		fmt.Println("id", id)
 		i++
 	}
 
+}
+func BenchmarkClient3(b *testing.B)  {
+
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	tags := GetTags()
+
+	for i := 0; i < 10; i++ { //use b.N for looping
+		client := NewClient(Application)
+		tag := tags[rand.Intn(len(tags))]
+		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: tag, GeneratorType: 1})
+		if error != nil {
+			log.Fatal(error)
+		}
+		fmt.Printf("tag %s , id %d",tag, id)
+	}
 }
 
 // 测试并发效率
@@ -73,7 +89,6 @@ func BenchmarkLoopsTest2(b *testing.B) {
 	seederConfig := config.NewSeederConfig("../seeder.yaml")
 	Application.Set("globalSeederConfig", seederConfig)
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
-
 	i := func(pb *testing.PB) {
 		client := NewClient(Application)
 
@@ -89,6 +104,23 @@ func BenchmarkLoopsTest2(b *testing.B) {
 	b.RunParallel(i)
 }
 
+
+func GetTags() []string{
+	f,_ := os.Open("./tags.csv")
+	defer f.Close()
+	scanner := bufio.NewScanner(f)
+	var tags []string
+	for scanner.Scan() {
+		tags = append(tags, string(bytes.TrimSpace([]byte(scanner.Text()))))
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	rand.Seed(time.Now().Unix())
+	return tags
+}
 // 测试并发效率
 func BenchmarkLoopsMultiTag(b *testing.B) {
 	Application := bootstrap.NewApplication()
@@ -99,6 +131,7 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	var tags []string
+
 	for scanner.Scan() {
 		tags = append(tags, string(bytes.TrimSpace([]byte(scanner.Text()))))
 	}
@@ -122,6 +155,7 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 
 		}
 	}
+	b.SetParallelism(50)
 	b.RunParallel(i)
 }
 // 测试并发效率

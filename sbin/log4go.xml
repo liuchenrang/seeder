@@ -1,11 +1,11 @@
 <logging>
-  <filter enabled="true">
+  <filter enabled="false">
     <tag>stdout</tag>
     <type>console</type>
     <!-- level is (:?FINEST|FINE|DEBUG|TRACE|INFO|WARNING|ERROR) -->
     <level>DEBUG</level>
   </filter>
-  <filter enabled="true">
+  <filter enabled="false">
     <tag>file</tag>
     <type>file</type>
     <level>DEBUG</level>

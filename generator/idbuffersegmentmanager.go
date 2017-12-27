@@ -21,6 +21,7 @@ type IDBufferSegmentManager struct {
 }
 
 func (manager *IDBufferSegmentManager) GetId(bizTag string, generatorType int32) (id uint64, e error) {
+	//return 1, nil
 	if generatorType == 2 {
 		id = manager.snow.Generate().UInt64()
 	} else {

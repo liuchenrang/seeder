@@ -86,14 +86,11 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 	m := NewIDBufferSegmentManager(Application)
 
 	i := func(pb *testing.PB) {
-
 		for pb.Next() {
 			tag := tags[rand.Intn(len)]
 			id, _ := m.GetId(tag, 1)
 			fmt.Printf("GetTag %s, GetId=%d ",tag, id)
-
 		}
 	}
-	b.SetParallelism(200)
 	b.RunParallel(i)
 }
