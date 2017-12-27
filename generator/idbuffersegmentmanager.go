@@ -32,6 +32,7 @@ func (manager *IDBufferSegmentManager) GetId(bizTag string, generatorType int32)
 func (manager *IDBufferSegmentManager) AddSegmentToPool(bizTag string, segment *IDBufferSegment) {
 	manager.muTagPool.Lock()
 	defer manager.muTagPool.Unlock()
+	manager.application.GetLogger().Debug("AddSegmentToPool %s",bizTag)
 	manager.tagPool[bizTag] = segment
 }
 

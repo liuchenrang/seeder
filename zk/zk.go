@@ -1,0 +1,5 @@
+package zk
+
+func Register() {
+
+}

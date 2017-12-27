@@ -14,6 +14,10 @@ import (
 
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/liuchenrang/log4go"
+	"bufio"
+	"bytes"
+	"time"
+	"math/rand"
 )
 
 func TestNewClient(t *testing.T) {
@@ -85,6 +89,41 @@ func BenchmarkLoopsTest2(b *testing.B) {
 	b.RunParallel(i)
 }
 
+// 测试并发效率
+func BenchmarkLoopsMultiTag(b *testing.B) {
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	f,_ := os.Open("./tags.csv")
+	defer f.Close()
+	scanner := bufio.NewScanner(f)
+	var tags []string
+	for scanner.Scan() {
+		tags = append(tags, string(bytes.TrimSpace([]byte(scanner.Text()))))
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	len := len(tags)
+	rand.Seed(time.Now().Unix())
+
+	i := func(pb *testing.PB) {
+		client := NewClient(Application)
+
+		for pb.Next() {
+			tag := tags[rand.Intn(len)]
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: tag, GeneratorType: 1})
+			if error != nil {
+				log.Fatal(error)
+			}
+			fmt.Printf("MultiTag %s %s \n", tag, id)
+
+		}
+	}
+	b.RunParallel(i)
+}
 // 测试并发效率
 func BenchmarkLoopsTest5(b *testing.B) {
 	Application := bootstrap.NewApplication()

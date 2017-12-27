@@ -78,7 +78,7 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 		application: application,
 		stats:       &stats.Stats{},
 	} //
-	application.GetLogger().Info(" InitNewIDBuffer currentId", this.GetCurrentId(), "max ", this.GetMaxId(), "out", this.isUseOut, fmt.Sprintf("this %p", this))
+	application.GetLogger().Info(" InitNewIDBuffer currentId %d, max %d, out %t, this %p, tag %s", this.GetCurrentId(),  this.GetMaxId(), this.isUseOut,  this, bizTag)
 
 	return this
 }

@@ -15,8 +15,8 @@ database:
           host: 10.10.106.218
           port: 3306
     connection_info:
-        max_open_conns: 20
-        max_idle_conns: 3
+          max_open_conns: 1024
+          max_idle_conns: 128
 
 server:
      port: 8080
