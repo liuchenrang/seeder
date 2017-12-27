@@ -96,7 +96,7 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	defer segment.muChage.Unlock()
 
 	if segment.IsMasterUserOut() {
-		segment.application.GetLogger().Info("ChangeSlaveToMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave %p", segment.GetSlaveIdBuffer()))
+		segment.application.GetLogger().Info("ChangeSlaveToMaster master %p slave %p", segment.slaveIdBuffer,  segment.GetSlaveIdBuffer())
 		slave := segment.ApplySlave()
 		segment.SetMasterIDBuffer(slave)
 	}
