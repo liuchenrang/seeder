@@ -27,7 +27,7 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
-		//segment.monitorCheck <- nil
+		segment.monitorCheck <- nil
 		segment.application.GetLogger().Info("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 		if idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
@@ -94,12 +94,9 @@ func (segment *IDBufferSegment) SetSlaveIdBuffer(slave *IDBuffer) {
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.muChage.Lock()
 	defer segment.muChage.Unlock()
-
-	if segment.IsMasterUserOut() {
-		segment.application.GetLogger().Info("ChangeSlaveToMaster master %p slave %p", segment.slaveIdBuffer,  segment.GetSlaveIdBuffer())
-		slave := segment.ApplySlave()
-		segment.SetMasterIDBuffer(slave)
-	}
+	segment.application.GetLogger().Info("ChangeSlaveToMaster master %p slave %p", segment.slaveIdBuffer,  segment.GetSlaveIdBuffer())
+	slave := segment.ApplySlave()
+	segment.SetMasterIDBuffer(slave)
 }
 func (segment *IDBufferSegment) ApplySlave() *IDBuffer {
 	segment.muSlaveApply.Lock()
