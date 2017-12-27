@@ -89,7 +89,7 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 		for pb.Next() {
 			tag := tags[rand.Intn(len)]
 			id, _ := m.GetId(tag, 1)
-			fmt.Printf("GetTag %s, GetId=%d ",tag, id)
+			fmt.Printf("GetTagResult %s, GetId=%d ",tag, id)
 		}
 	}
 	b.RunParallel(i)

@@ -27,7 +27,7 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
-		segment.monitorCheck <- nil
+		//segment.monitorCheck <- nil
 		segment.application.GetLogger().Info("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 		if idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
@@ -133,7 +133,7 @@ func (segment *IDBufferSegment) Close() {
 	}
 }
 func (segment *IDBufferSegment) StartMonitor() {
-	segment.monitorCheck = make(chan interface{}, 10)
+	segment.monitorCheck = make(chan interface{})
 	go func(check chan interface{}) {
 		application := segment.application
 		monitor := NewMonitor(segment, application)

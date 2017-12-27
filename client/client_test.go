@@ -49,7 +49,7 @@ func BenchmarkClient3(b *testing.B)  {
 	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
 	tags := GetTags()
 
-	for i := 0; i < 140; i++ { //use b.N for looping
+	for i := 0; i < 1000; i++ { //use b.N for looping
 		client := NewClient(Application)
 		tag := tags[rand.Intn(len(tags))]
 		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: tag, GeneratorType: 1})

@@ -74,11 +74,11 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
 
 	this := &IDBuffer{
-		bizTag: bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen,
+		bizTag:      bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen,
 		application: application,
 		stats:       &stats.Stats{},
 	} //
-	application.GetLogger().Info(" InitNewIDBuffer currentId %d, max %d, out %t, this %p, tag %s", this.GetCurrentId(),  this.GetMaxId(), this.isUseOut,  this, bizTag)
+	application.GetLogger().Info(" InitNewIDBuffer currentId %d, max %d, out %t, this %p, tag %s", this.GetCurrentId(), this.GetMaxId(), this.isUseOut, this, bizTag)
 
 	return this
 }

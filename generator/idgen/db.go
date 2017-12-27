@@ -19,10 +19,12 @@ type DBGen struct {
 
 	application *bootstrap.Application
 }
+
 func GoId() int {
-	defer func()  {
+	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("panic recover:panic info:%v", err)     }
+			fmt.Println("panic recover:panic info:%v", err)
+		}
 	}()
 
 	var buf [64]byte
@@ -34,6 +36,7 @@ func GoId() int {
 	}
 	return id
 }
+
 var (
 	DB   *sql.DB
 	muDB sync.Mutex
@@ -90,7 +93,6 @@ func (this *DBGen) GenerateSegment(bizTag string) (currentId uint64, cacheSteop 
 	return currentId, cacheSteop, step, e
 }
 
-
 func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step uint64, e error) {
 
 	tx, errBegin := this.db.Begin()
@@ -105,7 +107,7 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 	}
 	stmt.Exec(bizTag)
 	if errBegin != nil {
-		this.application.GetLogger().Error("DBGEN",errBegin.Error())
+		this.application.GetLogger().Error("DBGEN", errBegin.Error())
 	}
 	errQuery := stmt.QueryRow(bizTag).Scan(&currentId, &cacheStep, &step)
 	var affected int64
@@ -115,31 +117,40 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 			currentId = 0
 			cacheStep = 100
 			step = 1
-			affected,errQuery = this.InsertStep(tx, bizTag, currentId, step, cacheStep)
-		}else{
-			this.application.GetLogger().Error("DBGEN",errQuery.Error())
-			return 0,0,0,nil
+			affected, errQuery = this.InsertStep(tx, bizTag, currentId, step, cacheStep)
+		} else {
+			this.application.GetLogger().Error("DBGEN", errQuery.Error())
+			return 0, 0, 0, nil
 		}
 	}
-	affected , errQuery = this.UpdateStep(tx, bizTag)
+	updateType := false
+	if step >= cacheStep {
+		updateType = true
+		cacheStep = step * cacheStep //部分节点数据库中 step 1024 ,  cacheStep 100 导致每次取到的端都是用完的端的问题
+	}
+	affected, errQuery = this.UpdateStep(tx, bizTag, updateType)
 	this.application.GetLogger().Info("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 	if cacheStep > 0 {
-		if affected  > 0 {
+		if affected > 0 {
 			return currentId, cacheStep, step, errQuery
-		}else{
+		} else {
 			panic(e)
 		}
-	}else{
+	} else {
 		this.application.GetLogger().Error("DBGen UpdateStep Fail ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 		return currentId, cacheStep, step, errQuery
 	}
 
-
 }
 
-func (this *DBGen) UpdateStep(tx *sql.Tx, bizTag string) (int64, error) {
-
-	stmt, errPrepare := tx.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
+func (this *DBGen) UpdateStep(tx *sql.Tx, bizTag string, updateType bool) (int64, error) {
+	var stmt *sql.Stmt
+	var errPrepare error
+	if updateType == true { // step 大于 cacheStep 情况
+		stmt, errPrepare = tx.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep*step where keyName= ? ")
+	} else {
+		stmt, errPrepare = tx.Prepare("UPDATE " + this.application.GetConfig().Database.Account.Table + " SET currentId = currentId + cacheStep where keyName= ? ")
+	}
 	var errorUpdate error
 	defer stmt.Close()
 	if errPrepare != nil {
@@ -157,7 +168,7 @@ func (this *DBGen) UpdateStep(tx *sql.Tx, bizTag string) (int64, error) {
 	return affected, errorUpdate
 }
 func (this *DBGen) InsertStep(tx *sql.Tx, bizTag string, currentId uint64, step uint64, cacheStep uint64) (int64, error) {
-	stmt, errPrepare :=  tx.Prepare("INSERT " + this.application.GetConfig().Database.Account.Table + " (keyName,currentId,step,cacheStep) values(?,?,?,?)");
+	stmt, errPrepare := tx.Prepare("INSERT " + this.application.GetConfig().Database.Account.Table + " (keyName,currentId,step,cacheStep) values(?,?,?,?)");
 	var errorUpdate error
 	defer stmt.Close()
 	if errPrepare != nil {

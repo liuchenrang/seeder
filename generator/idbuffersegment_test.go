@@ -75,6 +75,31 @@ func TestGenID(t *testing.T) {
 	}
 
 }
+func TestGenID1024(t *testing.T) {
+
+
+	// Different allocations should not be equal.
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	segment := generator.NewIDBufferSegment("photo_tag_new_1019", Application)
+
+	var id uint64
+	logger := SeederLogger.NewLogger(seederConfig)
+	var i uint64
+	for i < 10000 {
+		id = segment.GetId()
+		nextId := segment.GetId()
+		logger.Debug("id ", id, "nextId", nextId)
+		if id+1024 != nextId {
+			t.Error("id error")
+			break
+		}
+		i++
+	}
+
+}
 
 func BenchmarkIDBufferSegment_GetId(b *testing.B) {
 	Application := bootstrap.NewApplication()

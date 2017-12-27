@@ -22,6 +22,7 @@ func (m *Monitor) IsOutVigilantValue() bool {
 	if total > 0 {
 		usePercent = (useTotal * 100 / total * 100) / 100
 		m.application.GetLogger().Info(m.segment.GetBizTag(), " usePercent ", usePercent, "useTotal", useTotal, "total Step", total)
+		m.application.GetLogger().Info("tag %s ,usePercent %d useTotal %d  total Step %d",m.segment.GetBizTag(), usePercent, useTotal, total)
 	}
 	return uint8(usePercent) >= m.threshold
 }
