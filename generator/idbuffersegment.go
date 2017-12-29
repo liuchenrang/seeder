@@ -99,7 +99,7 @@ func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.SetMasterIDBuffer(slave)
 }
 func (segment *IDBufferSegment) ApplySlave() *IDBuffer {
-	segment.muSlaveApply.Lock()
+	segment.muSlaveApply.Lock()  //多个goroutine申请会造成从库申请id浪费
 	defer segment.muSlaveApply.Unlock()
 
 	if segment.GetSlaveIdBuffer() == nil {
