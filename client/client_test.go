@@ -155,7 +155,7 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 
 		}
 	}
-	b.SetParallelism(100)
+	b.SetParallelism(1000)
 	b.RunParallel(i)
 }
 // 测试并发效率

@@ -37,3 +37,10 @@ preload:
 snow:
     node: 1
     idc: 1
+zookeeper:
+        -
+          host: 10.10.106.218
+          port: 3307
+        -
+          host: 10.10.106.218
+          port: 3307

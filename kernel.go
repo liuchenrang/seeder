@@ -109,13 +109,16 @@ func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error) {
 
 //GetId GetId
 func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGetIdParams) (r string, err error) {
+	defer func() {
+		if err := recover() ; err != nil  {
+			applicaton.GetLogger().Error(err)
+		}
+	}()
 	id, err := manager.GetId(params.GetTag(), params.GeneratorType)
 	applicaton.GetLogger().Info("request biz tag", params.GetTag())
-
 	if err != nil {
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
 	}
-
 	return fmt.Sprintf("%d", id), nil
 }
 

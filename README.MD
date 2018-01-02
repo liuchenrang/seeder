@@ -11,3 +11,7 @@ id 都用 uint64
     不可以, 会造成DBGEN多次刷新
 segment可以并发访问吗?
     可以, id是 基于原子的    
+
+seeder/servers/  临时节点
+seeder/snow-work/wid -> id
+seeder/ip-port/time -> time()

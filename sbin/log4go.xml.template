@@ -1,15 +1,15 @@
 <logging>
-  <filter enabled="false">
+  <filter enabled="true">
     <tag>stdout</tag>
     <type>console</type>
     <!-- level is (:?FINEST|FINE|DEBUG|TRACE|INFO|WARNING|ERROR) -->
     <level>DEBUG</level>
   </filter>
-  <filter enabled="false">
+  <filter enabled="true">
     <tag>file</tag>
     <type>file</type>
     <level>DEBUG</level>
-    <property name="filename">/usr/local/Cellar/go/gopath/src/seeder/logs/seeder.log</property>
+    <property name="filename">{{log_path}}</property>
     <!--
        %T - Time (15:04:05 MST)
        %t - Time (15:04)

@@ -1,0 +1,39 @@
+
+
+database:
+    account:
+         "name": "{{dbuser}}"
+         "password": "{{dbpassword}}"
+         "database": "{{database}}"
+         "table": "{{table}}"
+         "dbname": "{{dbname}}"
+    master:
+        -
+          host: {{dbhost1}}
+          port: {{dbport1}}
+        -
+          host: {{dbhost2}}
+          port: {{dbport2}}
+    connection_info:
+        max_open_conns: 20
+        max_idle_conns: 3
+
+server:
+     port: {{server_port}}
+     host: 0.0.0.0
+
+monitior:
+
+#    vigilant_value: 百分比最大100
+     vigilant_value: 90
+preload:
+       - uts
+       - test
+       - order
+preload:
+       - uts
+       - test
+       - order
+snow:
+    node: 1
+    idc: 1
