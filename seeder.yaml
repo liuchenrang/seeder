@@ -32,3 +32,5 @@ preload:
 snow:
     node: 1
     idc: 1
+zookeeper:
+        - 127.0.0.1

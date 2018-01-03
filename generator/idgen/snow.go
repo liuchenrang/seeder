@@ -5,6 +5,9 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"fmt"
+	"seeder/bootstrap"
+	"seeder/zk"
 )
 
 // snowFlake算法:
@@ -31,6 +34,7 @@ type Node struct {
 	time int64 "last used time"
 	node int64 "server node"
 	step int64 "last plus step"
+	application *bootstrap.Application
 }
 
 func NewNode(idc int64, node int64) (*Node, error) {
@@ -45,17 +49,45 @@ func NewNode(idc int64, node int64) (*Node, error) {
 		step: 0,
 	}, nil
 }
+func NewNodeWithTime(application  *bootstrap.Application, idc int64, node int64, lastTime int64, step int64) (*Node, error) {
+	if node < 0 || node > nodeMax {
+		return nil, errors.New("Node number must be between 0 and 1023")
+	}
 
+	return &Node{
+		idc:  idc,
+		node: node,
+		application: application,
+		time: lastTime,
+		step: step,
+	}, nil
+}
+func (n *Node) StartReport()  {
+	ticker :=  time.NewTicker(time.Second * 2)
+	fmt.Println("start at", n.time)
+
+	go func() {
+		for _ = range ticker.C {
+			soa := n.application.GetServerSoa().(*zk.ServerSoa)
+			soa.UpdateSnowTime(n.getNowTime())
+			fmt.Println("Tick at", n.time)
+		}
+	}()
+}
+func (n *Node) getNowTime() int64 {
+	return  time.Now().UnixNano() / 1000000
+}
 func (n *Node) Generate() ID {
 	n.Lock()
 	defer n.Unlock()
 
-	now := time.Now().UnixNano() / 1000000
+	now := n.getNowTime()
 
 	// 服务器时间回拨
 	if now < n.time {
 		for now >= n.time {
-			now = time.Now().UnixNano() / 1000000
+			now = n.getNowTime()
+			n.application.GetLogger().Warn("snow time back to old value, now=%d, time=%d",now,n.time)
 		}
 	}
 
@@ -63,7 +95,7 @@ func (n *Node) Generate() ID {
 		n.step = (n.step + 1) & stepMask
 		if n.step == 0 {
 			for n.time > now {
-				n.time = time.Now().UnixNano() / 1000000
+				n.time =  n.getNowTime()
 			}
 		}
 	} else {

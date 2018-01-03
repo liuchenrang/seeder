@@ -6,6 +6,7 @@ import (
 	"seeder/bootstrap"
 	"seeder/generator/idgen"
 	"sync"
+	"seeder/zk"
 )
 
 type IDBufferSegmentManager struct {
@@ -100,7 +101,10 @@ func (manager *IDBufferSegmentManager) Stop() {
 func NewIDBufferSegmentManager(application *bootstrap.Application) *IDBufferSegmentManager {
 
 	snowConfig := application.GetConfig().Snow
-	node, _ := idgen.NewNode(snowConfig.Idc, snowConfig.Node)
+	soa := application.GetServerSoa().(*zk.ServerSoa)
+	fmt.Println("xp",soa.GetSnowTime())
+	node, _ := idgen.NewNodeWithTime(application, snowConfig.Idc, snowConfig.Node, soa.GetSnowTime(), 0)
+	node.StartReport()
 	manager := &IDBufferSegmentManager{
 		application: application,
 		tagPool:     make(map[string]*IDBufferSegment),

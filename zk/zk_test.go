@@ -6,6 +6,12 @@ import (
 	"time"
 
 	"github.com/samuel/go-zookeeper/zk"
+	"seeder/bootstrap"
+	"seeder/logger"
+	"seeder/config"
+	"github.com/liuchenrang/log4go"
+	"seeder/generator/idgen"
+	zk2 "seeder/zk"
 )
 
 func TestRegister(t *testing.T) {
@@ -51,4 +57,17 @@ func TestRegister(t *testing.T) {
 	// e := <-ch
 	// fmt.Printf("%+v\n", e)
 	time.Sleep(time.Second * 35)
+}
+
+func TestServerSoa_AddNode(t *testing.T) {
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	soa := zk2.NewServerSoa(Application)
+	serverAddr := seederConfig.Server.Host + ":" + fmt.Sprintf("%d", seederConfig.Server.Port)
+
+	soa.Register(serverAddr)
+	node, _ := idgen.NewNodeWithTime(Application, seederConfig.Snow.Idc, seederConfig.Snow.Node, soa.GetSnowTime(), 0)
+	node.StartReport()
 }

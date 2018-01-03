@@ -14,6 +14,7 @@ import (
 
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/takama/daemon"
+	"seeder/zk"
 )
 
 type strapper bootstrap.Strapper
@@ -22,7 +23,7 @@ type Kernel struct {
 	booted        bool
 	bootstrappers []strapper
 	SeederLogger.Logger
-	applicaton *bootstrap.Application
+	applicaton    *bootstrap.Application
 }
 type Service struct {
 	daemon.Daemon
@@ -110,7 +111,7 @@ func (*IdGeneratorServiceImpl) Ping(ctx context.Context) (r string, err error) {
 //GetId GetId
 func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGetIdParams) (r string, err error) {
 	defer func() {
-		if err := recover() ; err != nil  {
+		if err := recover(); err != nil {
 			applicaton.GetLogger().Error(err)
 		}
 	}()
@@ -120,6 +121,11 @@ func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGet
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
 	}
 	return fmt.Sprintf("%d", id), nil
+}
+
+func (kernal *Kernel) RegisterServer() {
+	 soa := kernal.applicaton.GetServerSoa().(*zk.ServerSoa)
+	 soa.Register()
 }
 
 // Parameters:
@@ -148,6 +154,11 @@ func (kernel *Kernel) Serve() {
 		fmt.Println("stop finish ")
 
 	}()
-	server.Serve()
-
+	err = server.Listen()
+	if err != nil {
+		panic(err)
+	}
+	kernel.RegisterServer()
+	fmt.Println("node", kernel.applicaton.GetConfig().Snow.Node)
+	server.AcceptLoop()
 }

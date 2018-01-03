@@ -33,7 +33,8 @@ type SeederConfig struct {
 	Server   Server
 	Monitior Monitior
 	Preload  []string `yaml:"preload"`
-	Snow     Snow
+	Zookeeper  []string `yaml:"zookeeper"`
+	Snow     *Snow
 }
 type Snow struct {
 	Node int64

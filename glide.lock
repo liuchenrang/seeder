@@ -1,5 +1,5 @@
-hash: 4b1a67c72e0e5f06018cdc5cdcd0266667d8624834a7d148e5ee98a07678180d
-updated: 2017-12-22T17:17:23.496026+08:00
+hash: fc443b077e9f1c8ac11eeb9c74f8d193ff84dc76d06c4a398f50771b31dbf2f3
+updated: 2018-01-02T19:04:23.971887+08:00
 imports:
 - name: git.apache.org/thrift.git
   version: 327ebb6c2b6df8bf075da02ef45a2a034e9b79ba
@@ -7,10 +7,14 @@ imports:
   - lib/go/thrift
 - name: github.com/go-sql-driver/mysql
   version: a732e14c62dde3285440047bba97581bc472ae18
+- name: github.com/liuchenrang/ipfilter
+  version: 92b77f0d431482b155c01b24db0beae3cf750435
 - name: github.com/liuchenrang/log4go
   version: 2e45c746338654909da47580adfd16c5a528a0a1
 - name: github.com/samuel/go-zookeeper
   version: 471cd4e61d7a78ece1791fa5faa0345dc8c7d5a5
+  subpackages:
+  - zk
 - name: github.com/takama/daemon
   version: f30a97dd1445619884e03e7ed088bc1b3c4f767e
 - name: github.com/ytf606/go-snowflake

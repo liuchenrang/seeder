@@ -12,6 +12,7 @@ id 都用 uint64
 segment可以并发访问吗?
     可以, id是 基于原子的    
 
-seeder/servers/  临时节点
-seeder/snow-work/wid -> id
-seeder/ip-port/time -> time()
+/seeder/servers/  临时节点
+/seeder/workers/    临时顺序节点产生id
+/seeder/data/ip-port/time -> time()
+/seeder/data/ip-port/id -> 123

@@ -18,6 +18,8 @@ import (
 	"bytes"
 	"time"
 	"math/rand"
+	"runtime"
+	"ipfilter"
 )
 
 func TestNewClient(t *testing.T) {
@@ -32,7 +34,7 @@ func TestNewClient(t *testing.T) {
 
 	i := 0
 	for i < 3 {
-		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
+		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 2})
 		if error != nil {
 			log.Fatal(error)
 		}
@@ -40,6 +42,7 @@ func TestNewClient(t *testing.T) {
 		i++
 	}
 
+	fmt.Println(ipfilter.GetPrivateIP(true))
 }
 func BenchmarkClient3(b *testing.B)  {
 
@@ -130,6 +133,9 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 	f,_ := os.Open("./tags.csv")
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
+	runtime.SetCPUProfileRate(2);
+
+
 	var tags []string
 
 	for scanner.Scan() {
@@ -155,7 +161,7 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 
 		}
 	}
-	b.SetParallelism(1000)
+	b.SetParallelism(500)
 	b.RunParallel(i)
 }
 // 测试并发效率

@@ -12,6 +12,7 @@ import (
 	"seeder/logger"
 
 	"github.com/takama/daemon"
+	"seeder/zk"
 )
 
 const (
@@ -41,10 +42,13 @@ var (
 )
 
 func NewApplication() *bootstrap.Application {
-	applicaton = bootstrap.NewApplication()
 	seederConfig = config.NewSeederConfig(*configFlag)
+	serverAddr := seederConfig.Server.Host + ":" + fmt.Sprintf("%d", seederConfig.Server.Port)
+
+	applicaton = bootstrap.NewApplication()
 	applicaton.Set("globalSeederConfig", seederConfig)
 
+	applicaton.Set("globalServerSoa", zk.NewServerSoa(applicaton, serverAddr))
 	applicaton.Set("globalLogger", SeederLogger.NewLogger4gWithConfig(0, seederConfig, loggerFlag))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
 	manager.StartHotPreLoad()
