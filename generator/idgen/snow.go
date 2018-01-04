@@ -103,7 +103,7 @@ func (n *Node) Generate() ID {
 		n.step = (n.step + 1) & stepMask
 		if n.step == 0 {
 			for n.time > now {
-				n.time =  n.getNowTime()
+				now =  n.getNowTime()
 			}
 		}
 	} else {
