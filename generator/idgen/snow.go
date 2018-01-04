@@ -11,7 +11,7 @@ import (
 )
 
 // snowFlake算法:
-// timestamtp(41) + idc(3) + node(7) + step(12) = 63
+// timestamtp(41) + idc(4) + node(6) + step(12) = 63
 const (
 	idcBits         = 3
 	nodeBits        = 7
@@ -22,6 +22,8 @@ const (
 	nodeShift       = stepBits
 	idcShift        = nodeBits + stepBits
 	timeShift       = idcBits + idcShift
+
+	WRITE_SNOW_TIME_INTERVAL = 10
 )
 
 var epoch int64 = 1513856639
@@ -37,21 +39,19 @@ type Node struct {
 	application *bootstrap.Application
 }
 
-func NewNode(idc int64, node int64) (*Node, error) {
-	if node < 0 || node > nodeMax {
-		return nil, errors.New("Node number must be between 0 and 1023")
-	}
 
-	return &Node{
-		idc:  idc,
-		node: node,
-		time: 0,
-		step: 0,
-	}, nil
+func checkConfig(idc int64, node int64) error{
+	if node < 0 || node > nodeMax {
+		return  errors.New("Node number must be between 0 and " + fmt.Sprintf("%d",nodeMax))
+	}
+	if idc < 0 || idc > idcMax {
+		return  errors.New("idc number must be between 0 and " +  fmt.Sprintf("%d",idcMax))
+	}
+	return nil
 }
 func NewNodeWithTime(application  *bootstrap.Application, idc int64, node int64, lastTime int64, step int64) (*Node, error) {
-	if node < 0 || node > nodeMax {
-		return nil, errors.New("Node number must be between 0 and 1023")
+	if error := checkConfig(idc, node); error !=nil {
+		return nil, error
 	}
 
 	return &Node{
@@ -63,14 +63,19 @@ func NewNodeWithTime(application  *bootstrap.Application, idc int64, node int64,
 	}, nil
 }
 func (n *Node) StartReport()  {
-	ticker :=  time.NewTicker(time.Second * 2)
+	ticker :=  time.NewTicker(time.Second * WRITE_SNOW_TIME_INTERVAL)
+	soa := n.application.GetServerSoa().(*zk.ServerSoa)
 	fmt.Println("start at", n.time)
+	soa.UpdateSnowTime(n.getNowTime() + WRITE_SNOW_TIME_INTERVAL * 1000) //初期启动时, 时间跳读到下次刷入时间
 
 	go func() {
 		for _ = range ticker.C {
-			soa := n.application.GetServerSoa().(*zk.ServerSoa)
-			soa.UpdateSnowTime(n.getNowTime())
-			fmt.Println("Tick at", n.time)
+			now := n.getNowTime()
+			if now >= n.time {
+				soa.UpdateSnowTime(n.getNowTime() + WRITE_SNOW_TIME_INTERVAL * 1000)
+			}else{
+				n.application.GetLogger().Error("tick time back to old value, now=%d, time=%d",now,n.time)
+			}
 		}
 	}()
 }
@@ -82,12 +87,15 @@ func (n *Node) Generate() ID {
 	defer n.Unlock()
 
 	now := n.getNowTime()
+	n.application.GetLogger().Debug("snow time  value, now=%d, time=%d",now,n.time)
 
-	// 服务器时间回拨
+	// 服务器时间回拨 后者 是 异常终端
 	if now < n.time {
-		for now >= n.time {
+		for now < n.time {
+			fmt.Printf("wait snow time  value, now=%d, time=%d",now,n.time)
+			differ := time.Duration(n.time-now)
+			time.Sleep(time.Millisecond  * differ)
 			now = n.getNowTime()
-			n.application.GetLogger().Warn("snow time back to old value, now=%d, time=%d",now,n.time)
 		}
 	}
 

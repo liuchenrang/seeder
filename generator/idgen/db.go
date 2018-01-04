@@ -129,7 +129,7 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 		cacheStep = step * cacheStep //部分节点数据库中 step 1024 ,  cacheStep 100 导致每次取到的端都是用完的端的问题
 	}
 	affected, errQuery = this.UpdateStep(tx, bizTag, updateType)
-	this.application.GetLogger().Info("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
+	this.application.GetLogger().Debug("DBGen Find ", sqlSelect, "currentId", currentId, "cacheStep", cacheStep, "bizTag", bizTag)
 	if cacheStep > 0 {
 		if affected > 0 {
 			return currentId, cacheStep, step, errQuery

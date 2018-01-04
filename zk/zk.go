@@ -7,6 +7,7 @@ import (
 	"strings"
 	"strconv"
 	"encoding/binary"
+	error2 "seeder/error"
 	"fmt"
 )
 
@@ -19,8 +20,8 @@ type ServerSoa struct {
 func (soa *ServerSoa) Register() {
 
 	_, error := soa.zkClient.Create("/seeder/servers/"+soa.host, nil, zk.FlagEphemeral, zk.WorldACL(zk.PermAll))
-	if error != nil {
-		soa.application.GetLogger().Error(error)
+	if error != nil && error.Error() != error2.ZK_NODE_EXITSTS {
+		soa.application.GetLogger().Warn(error)
 	}
 }
 
@@ -84,6 +85,7 @@ func (soa *ServerSoa) Initialize(serverAddr string) *ServerSoa {
 		soa.application.GetLogger().Error(err)
 		panic(err)
 	}
+
 	soa.zkClient = c
 	soa.AddNode("/seeder", nil)
 	soa.AddNode("/seeder/servers", nil)
@@ -101,7 +103,7 @@ func (soa *ServerSoa) Initialize(serverAddr string) *ServerSoa {
 		nodeId = int64(tid)
 	}
 	configSeeder := soa.application.GetConfig()
-
+	soa.application.GetLogger().Info("snow work id %d", nodeId)
 	configSeeder.Snow.Node = nodeId
 
 	return soa

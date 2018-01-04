@@ -20,6 +20,18 @@ benchfix:
 #	go test  -bench ^BenchmarkLoopsUts$ |tee -a /tmp/iduts.log &
 	go test   -test.benchtime 5s -test.bench ^BenchmarkLoopsMultiTag$$ -run ^$$ |tee  /tmp/iduts.log &
 #	echo total `cat /tmp/iduts.log|grep -v ping|grep id |awk '{print $2}'|wc -l`
+
+
+benchmusnow:
+	rm -Rf ./client_test
+	rm -Rf /tmp/iduts.log
+	go test   -test.benchtime 5s -test.bench ^BenchmarkSnowMultiTag$$ -run ^$$ |tee  /tmp/iduts.log &
+	cat /tmp/iduts.log|grep -v ping|grep MultiTag |awk '{print $3}'| sort -k 1 |uniq -c| sort -k 1 -n -r|less
+benchsnow:
+	rm -Rf ./client_test
+	rm -Rf /tmp/iduts.log
+	go test   -test.benchtime 5s -test.bench ^BenchmarkLoopsSnow$$ -run ^$$ |tee  /tmp/iduts.log &
+	cat /tmp/iduts.log|grep -v ping|grep id |awk '{print $2}'| sort -k 1 |uniq -c| sort -k 1 -n -r|less
 benin:
 	rm -Rf ./client_test
 	rm -Rf /tmp/iduts.log

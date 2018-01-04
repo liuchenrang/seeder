@@ -52,7 +52,7 @@ func (manager *IDBufferSegmentManager) GetSegmentByBizTag(bizTag string) *IDBuff
 		}
 
 	}
-	manager.application.GetLogger().Info(fmt.Sprintf("manager segment %p", seg))
+	manager.application.GetLogger().Debug(fmt.Sprintf("manager segment %p", seg))
 
 	return seg
 
@@ -70,7 +70,7 @@ func (manager *IDBufferSegmentManager) CreateBizTagSegment(bizTag string) *IDBuf
 
 	segment := NewIDBufferSegment(bizTag, manager.application)
 
-	manager.application.GetLogger().Info("Manger  Segment  CreateMasterIDBuffer ")
+	manager.application.GetLogger().Debug("Manger  Segment  CreateMasterIDBuffer ")
 
 	manager.AddSegmentToPool(bizTag, segment)
 
@@ -102,7 +102,6 @@ func NewIDBufferSegmentManager(application *bootstrap.Application) *IDBufferSegm
 
 	snowConfig := application.GetConfig().Snow
 	soa := application.GetServerSoa().(*zk.ServerSoa)
-	fmt.Println("xp",soa.GetSnowTime())
 	node, _ := idgen.NewNodeWithTime(application, snowConfig.Idc, snowConfig.Node, soa.GetSnowTime(), 0)
 	node.StartReport()
 	manager := &IDBufferSegmentManager{

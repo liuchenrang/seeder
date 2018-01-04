@@ -241,3 +241,67 @@ func NewInThriftClient(application *bootstrap.Application) *inthrift.ApiServiceC
 	return client
 
 }
+
+
+
+// 测试并发效率
+func BenchmarkLoopsSnow(b *testing.B) {
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	i := func(pb *testing.PB) {
+		client := NewClient(Application)
+
+		for pb.Next() {
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "test", GeneratorType: 2})
+			if error != nil {
+				log.Fatal(error)
+			}
+			fmt.Println("id", id)
+
+		}
+	}
+	b.RunParallel(i)
+}
+
+// 测试并发效率
+func BenchmarkSnowMultiTag(b *testing.B) {
+	Application := bootstrap.NewApplication()
+	seederConfig := config.NewSeederConfig("../seeder.yaml")
+	Application.Set("globalSeederConfig", seederConfig)
+	Application.Set("globalLogger", SeederLogger.NewLogger4g(log4go.DEBUG, seederConfig))
+	f,_ := os.Open("./tags.csv")
+	defer f.Close()
+	scanner := bufio.NewScanner(f)
+	runtime.SetCPUProfileRate(2);
+
+
+	var tags []string
+
+	for scanner.Scan() {
+		tags = append(tags, string(bytes.TrimSpace([]byte(scanner.Text()))))
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	len := len(tags)
+	rand.Seed(time.Now().Unix())
+
+	i := func(pb *testing.PB) {
+		client := NewClient(Application)
+
+		for pb.Next() {
+			tag := tags[rand.Intn(len)]
+			id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: tag, GeneratorType: 2})
+			if error != nil {
+				log.Fatal(error)
+			}
+			fmt.Printf("MultiTag %s %s \n", tag, id)
+
+		}
+	}
+	b.SetParallelism(500)
+	b.RunParallel(i)
+}

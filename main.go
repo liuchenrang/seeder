@@ -47,9 +47,9 @@ func NewApplication() *bootstrap.Application {
 
 	applicaton = bootstrap.NewApplication()
 	applicaton.Set("globalSeederConfig", seederConfig)
+	applicaton.Set("globalLogger", SeederLogger.NewLogger4gWithConfig(0, seederConfig, loggerFlag))
 
 	applicaton.Set("globalServerSoa", zk.NewServerSoa(applicaton, serverAddr))
-	applicaton.Set("globalLogger", SeederLogger.NewLogger4gWithConfig(0, seederConfig, loggerFlag))
 	manager = *seederGenerator.NewIDBufferSegmentManager(applicaton)
 	manager.StartHotPreLoad()
 	return applicaton

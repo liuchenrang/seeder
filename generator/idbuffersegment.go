@@ -28,14 +28,14 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 		idBuffer = segment.GetMasterIdBuffer()
 		id, _ = idBuffer.GetId()
 		segment.monitorCheck <- nil
-		segment.application.GetLogger().Info("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
+		segment.application.GetLogger().Debug("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 		if idBuffer.IsUseOut() {
 			segment.ChangeSlaveToMaster()
 		} else {
 			break
 		}
 	}
-	segment.application.GetLogger().Info("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
+	segment.application.GetLogger().Debug("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
 
 	return id
 }
@@ -94,7 +94,7 @@ func (segment *IDBufferSegment) SetSlaveIdBuffer(slave *IDBuffer) {
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.muChage.Lock()
 	defer segment.muChage.Unlock()
-	segment.application.GetLogger().Info("ChangeSlaveToMaster master %p slave %p", segment.slaveIdBuffer,  segment.GetSlaveIdBuffer())
+	segment.application.GetLogger().Debug("ChangeSlaveToMaster master %p slave %p", segment.slaveIdBuffer,  segment.GetSlaveIdBuffer())
 	slave := segment.ApplySlave()
 	segment.SetMasterIDBuffer(slave)
 }
@@ -103,14 +103,14 @@ func (segment *IDBufferSegment) ApplySlave() *IDBuffer {
 	defer segment.muSlaveApply.Unlock()
 
 	if segment.GetSlaveIdBuffer() == nil {
-		segment.application.GetLogger().Info(" ApplySlaveNilCreate ", segment.bizTag)
+		segment.application.GetLogger().Debug("ApplySlaveNilCreate ", segment.bizTag)
 		segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
 	} else {
 		if segment.GetSlaveIdBufferIsUseOut() {
-			segment.application.GetLogger().Info(" ApplySlaveCreateSlave ", segment.bizTag)
+			segment.application.GetLogger().Debug("ApplySlaveCreateSlave ", segment.bizTag)
 			segment.SetSlaveIdBuffer(segment.CreateBuffer(segment.bizTag))
 		} else {
-			segment.application.GetLogger().Info(" UseMonitorSlave ", segment.bizTag)
+			segment.application.GetLogger().Debug("UseMonitorSlave ", segment.bizTag)
 		}
 	}
 	return segment.GetSlaveIdBuffer()
@@ -137,12 +137,12 @@ func (segment *IDBufferSegment) StartMonitor() {
 		for {
 			<-segment.monitorCheck
 			vigilanValue := application.GetConfig().Monitior.VigilantValue
-			application.GetLogger().Info("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
+			application.GetLogger().Debug("NewMonitor timer ", segment.bizTag, "Vigilant", vigilanValue)
 			if vigilanValue <= 100 {
 				monitor.SetVigilantValue(vigilanValue)
 				vigilant := monitor.IsOutVigilantValue()
 				if vigilant && !segment.GetMasterIdBuffer().GetStats().Stop {
-					application.GetLogger().Info(" OverCallCreateSlaveIDBuffer ", segment.bizTag)
+					application.GetLogger().Debug(" OverCallCreateSlaveIDBuffer ", segment.bizTag)
 
 					segment.ApplySlave()
 					segment.GetMasterIdBuffer().GetStats().DoStop()
@@ -157,7 +157,7 @@ func NewIDBufferSegment(bizTag string, application *bootstrap.Application) *IDBu
 	segment.SetBizTag(bizTag)
 	segment.CreateMasterIDBuffer(segment.bizTag)
 	segment.StartMonitor()
-	segment.application.GetLogger().Info("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
+	segment.application.GetLogger().Debug("InitMaster ", fmt.Sprintf("master %p", segment.masterIDBuffer), fmt.Sprintf("slave ", segment.slaveIdBuffer))
 
 	return segment
 }
