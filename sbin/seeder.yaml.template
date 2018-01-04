@@ -24,16 +24,15 @@ server:
 
 monitior:
 
-#    vigilant_value: 百分比最大100
+# 百分比最大100
      vigilant_value: 90
 preload:
-       - uts
        - test
-       - order
-preload:
-       - uts
-       - test
-       - order
 snow:
     node: 1
     idc: 1
+zookeeper:
+#       - 127.0.0.1:2184
+        - {{zookeeper_1}}
+        - {{zookeeper_2}}
+        - {{zookeeper_3}}
