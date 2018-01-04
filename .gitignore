@@ -1,4 +1,5 @@
 .idea
+sbin/seeder 
 logs/*.log
 example
 ../sbin/seeder
