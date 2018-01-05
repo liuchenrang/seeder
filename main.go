@@ -43,7 +43,10 @@ var (
 
 func NewApplication() *bootstrap.Application {
 	seederConfig = config.NewSeederConfig(*configFlag)
-	ipfilter.GetPrivateIP(true)
+	privateIp := ipfilter.GetPrivateIP(true)
+	if len(privateIp) >= 1  {
+		seederConfig.Server.Host = privateIp[0]
+	}
 	serverAddr := seederConfig.Server.Host + ":" + fmt.Sprintf("%d", seederConfig.Server.Port)
 
 	applicaton = bootstrap.NewApplication()
