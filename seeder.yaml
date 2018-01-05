@@ -2,7 +2,6 @@ database:
     account:
          "name": "manager"
          "password": "managermanager"
-         "database": "test"
          "table": "common_generator"
          "dbname": "test"
     master:
@@ -26,8 +25,7 @@ monitior:
      vigilant_value: 90
 
 preload:
-       - uts
-       - test
+       - xxxxxxxxxx
 snow:
     node: 1
     idc: 1

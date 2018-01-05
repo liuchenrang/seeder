@@ -13,6 +13,7 @@ import (
 
 	"github.com/takama/daemon"
 	"seeder/zk"
+	"github.com/liuchenrang/ipfilter"
 )
 
 const (
@@ -33,7 +34,6 @@ var (
 	configFlag  = flag.String("c", "./seeder.yaml", "config path")
 	loggerFlag  = flag.String("cc", "./log4go.xml", "log config path")
 	versionFlat = flag.String("version", VERSION, "")
-
 	removeFlag  = flag.Bool("remove", false, "-remove")
 	startFlag   = flag.Bool("start", false, "-start")
 	stopFlag    = flag.Bool("stop", false, "-stop")
@@ -43,6 +43,7 @@ var (
 
 func NewApplication() *bootstrap.Application {
 	seederConfig = config.NewSeederConfig(*configFlag)
+	ipfilter.GetPrivateIP(true)
 	serverAddr := seederConfig.Server.Host + ":" + fmt.Sprintf("%d", seederConfig.Server.Port)
 
 	applicaton = bootstrap.NewApplication()

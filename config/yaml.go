@@ -10,7 +10,6 @@ import (
 type Account struct {
 	Name     string
 	Password string
-	Database string
 	Table    string
 	DBName   string `yaml:"dbname"`
 }

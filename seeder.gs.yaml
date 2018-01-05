@@ -4,7 +4,6 @@ database:
     account:
          "name": "root"
          "password": "tortdh_gogo888!"
-         "database": "maindb"
          "table": "common_generator"
          "dbname": "maindb"
     master:

@@ -97,13 +97,16 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 
 	tx, errBegin := this.db.Begin()
 	defer tx.Commit()
-
+	if errBegin != nil {
+		this.application.GetLogger().Error("DBGEN", errBegin.Error())
+		log.Fatal(errBegin.Error())
+	}
 	sqlSelect := "SELECT currentId,cacheStep,step from " + this.application.GetConfig().Database.Account.Table + " where keyName= ? FOR UPDATE"
 	stmt, errPrepare := tx.Prepare(sqlSelect)
 	defer stmt.Close()
 	if errPrepare != nil {
-		this.application.GetLogger().Error("DBGEN", errBegin.Error())
-		log.Fatal(errBegin.Error())
+		this.application.GetLogger().Error("DBGEN", errPrepare.Error())
+		log.Fatal(errPrepare.Error())
 	}
 	stmt.Exec(bizTag)
 	if errBegin != nil {
