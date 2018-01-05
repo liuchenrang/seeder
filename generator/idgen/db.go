@@ -6,7 +6,7 @@ import (
 	"log"
 	"seeder/bootstrap"
 	"sync"
-
+	error2 "seeder/error"
 	_ "github.com/go-sql-driver/mysql"
 	"runtime"
 	"strings"
@@ -116,7 +116,7 @@ func (this *DBGen) Find(bizTag string) (currentId uint64, cacheStep uint64, step
 	var affected int64
 
 	if errQuery != nil {
-		if errQuery.Error() == "sql: no rows in result set" {
+		if errQuery.Error() == error2.SQL_NO_ROWS {
 			currentId = 0
 			cacheStep = 100
 			step = 1

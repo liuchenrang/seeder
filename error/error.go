@@ -7,6 +7,7 @@ type Error struct {
 	Message string
 }
 const ZK_NODE_EXITSTS = "zk: node already exists"
+const SQL_NO_ROWS = "sql: no rows in result set"
 
 func (e Error) Error() string {
 	return fmt.Sprintf("ErrorCode: %d, ErrorMessage: %s", e.Code, e.Message)
