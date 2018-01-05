@@ -92,9 +92,9 @@ func (n *Node) Generate() ID {
 	// 服务器时间回拨 后者 是 异常终端
 	if now < n.time {
 		for now < n.time {
-			fmt.Printf("wait snow time  value, now=%d, time=%d",now,n.time)
-			differ := time.Duration(n.time-now)
-			time.Sleep(time.Millisecond  * differ)
+			//fmt.Printf("wait snow time  value, now=%d, time=%d",now,n.time)
+			//differ := time.Duration(n.time-now)
+			//time.Sleep(time.Millisecond  * differ)
 			now = n.getNowTime()
 		}
 	}

@@ -302,6 +302,6 @@ func BenchmarkSnowMultiTag(b *testing.B) {
 
 		}
 	}
-	b.SetParallelism(500)
+	b.SetParallelism(100)
 	b.RunParallel(i)
 }
