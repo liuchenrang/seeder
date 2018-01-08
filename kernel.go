@@ -121,7 +121,7 @@ func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGet
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
 	}
 	fmt.Println(id)
-	return fmt.Sprintf("success %d", id), nil
+	return fmt.Sprintf("%d", id), nil
 }
 
 func (kernal *Kernel) RegisterServer() {
