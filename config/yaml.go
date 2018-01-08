@@ -34,6 +34,7 @@ type SeederConfig struct {
 	Preload  []string `yaml:"preload"`
 	Zookeeper  []string `yaml:"zookeeper"`
 	Snow     *Snow
+	Common  Common
 }
 type Snow struct {
 	Node int64
@@ -41,6 +42,9 @@ type Snow struct {
 }
 type Monitior struct {
 	VigilantValue uint8 `yaml:"vigilant_value"`
+}
+type Common struct{
+	ZkPrefix string `yaml:"zkprefix"`
 }
 
 func NewSeederConfig(yamlfile string) SeederConfig {

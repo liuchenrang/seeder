@@ -39,3 +39,5 @@ snow:
 zookeeper:
         - 10.10.106.218:232
         - 10.10.106.218:232
+common:
+      zkprefix: dev

@@ -14,12 +14,13 @@ import (
 type ServerSoa struct {
 	host        string
 	zkClient    *zk.Conn
+	ZkPrefix string
 	application *bootstrap.Application
 }
 
 func (soa *ServerSoa) Register() {
 
-	_, error := soa.zkClient.Create("/seeder/servers/"+soa.host, nil, zk.FlagEphemeral, zk.WorldACL(zk.PermAll))
+	_, error := soa.zkClient.Create( soa.ZkPrefix + "/seeder/servers/"+soa.host, nil, zk.FlagEphemeral, zk.WorldACL(zk.PermAll))
 	if error != nil && error.Error() != error2.ZK_NODE_EXITSTS {
 		soa.application.GetLogger().Warn(error)
 	}
@@ -36,7 +37,7 @@ func BytesToInt64(buf []byte) int64 {
 }
 func (soa *ServerSoa) UpdateSnowTime(time int64) {
 
-	snowTimePath := "/seeder/data/" + soa.host + "/time"
+	snowTimePath := soa.ZkPrefix  +  "/seeder/data/" + soa.host + "/time"
 	_, stat, err := soa.zkClient.Get(snowTimePath)
 	if err != nil {
 		soa.application.GetLogger().Error(err)
@@ -49,7 +50,7 @@ func (soa *ServerSoa) UpdateSnowTime(time int64) {
 }
 func (soa *ServerSoa) GetSnowTime() (int64) {
 
-	snowTimePath := "/seeder/data/" + soa.host + "/time"
+	snowTimePath := soa.ZkPrefix  + "/seeder/data/" + soa.host + "/time"
 	data, _, err := soa.zkClient.Get(snowTimePath)
 	if err != nil {
 		soa.application.GetLogger().Error(err)
@@ -60,7 +61,7 @@ func (soa *ServerSoa) GetSnowTime() (int64) {
 
 }
 func (soa *ServerSoa) GeneratorID() (int string) {
-	path, error := soa.zkClient.Create("/seeder/workers/", nil, zk.FlagEphemeral+zk.FlagSequence, zk.WorldACL(zk.PermAll))
+	path, error := soa.zkClient.Create(soa.ZkPrefix  + "/seeder/workers/", nil, zk.FlagEphemeral+zk.FlagSequence, zk.WorldACL(zk.PermAll))
 	if error != nil {
 		soa.application.GetLogger().Error(path)
 		panic(error)
@@ -87,18 +88,19 @@ func (soa *ServerSoa) Initialize(serverAddr string) *ServerSoa {
 	}
 
 	soa.zkClient = c
-	soa.AddNode("/seeder", nil)
-	soa.AddNode("/seeder/servers", nil)
-	soa.AddNode("/seeder/workers", nil)
-	soa.AddNode("/seeder/data", nil)
-	soa.AddNode("/seeder/data/"+soa.host, nil)
-	soa.AddNode("/seeder/data/"+soa.host+"/time", nil)
-	if exists, _, _ := soa.zkClient.Exists("/seeder/data/" + soa.host + "/id"); !exists {
+	soa.AddNode(soa.ZkPrefix, nil)
+	soa.AddNode(soa.ZkPrefix  + "/seeder", nil)
+	soa.AddNode(soa.ZkPrefix  + "/seeder/servers", nil)
+	soa.AddNode(soa.ZkPrefix  + "/seeder/workers", nil)
+	soa.AddNode(soa.ZkPrefix  + "/seeder/data", nil)
+	soa.AddNode(soa.ZkPrefix  + "/seeder/data/"+soa.host, nil)
+	soa.AddNode(soa.ZkPrefix  + "/seeder/data/"+soa.host+"/time", nil)
+	if exists, _, _ := soa.zkClient.Exists(soa.ZkPrefix  + "/seeder/data/" + soa.host + "/id"); !exists {
 		int := soa.GeneratorID()
-		soa.zkClient.Create("/seeder/data/"+soa.host+"/id", []byte(int), 0, zk.WorldACL(zk.PermAll))
+		soa.zkClient.Create(soa.ZkPrefix  + "/seeder/data/"+soa.host+"/id", []byte(int), 0, zk.WorldACL(zk.PermAll))
 		nodeId, _ = strconv.ParseInt(int, 10, 32)
 	} else {
-		nodeData, _, _ := soa.zkClient.Get("/seeder/data/" + soa.host + "/id")
+		nodeData, _, _ := soa.zkClient.Get(soa.ZkPrefix  + "/seeder/data/" + soa.host + "/id")
 		tid, _ := strconv.Atoi(string(nodeData[:]))
 		nodeId = int64(tid)
 	}
@@ -118,6 +120,7 @@ func (soa *ServerSoa) AddNode(path string, data []byte) (result string, err erro
 func NewServerSoa(application *bootstrap.Application, host string) *ServerSoa {
 	soa := &ServerSoa{
 		application: application,
+		ZkPrefix: application.GetConfig().Common.ZkPrefix,
 	}
 	return soa.Initialize(host)
 }

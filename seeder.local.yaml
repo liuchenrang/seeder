@@ -33,3 +33,5 @@ snow:
     idc: 1
 zookeeper:
         - 127.0.0.1
+common:
+      zkprefix: dev

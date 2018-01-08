@@ -37,3 +37,5 @@ zookeeper:
         - {{zookeeper_5}}
         - {{zookeeper_6}}
         - {{zookeeper_7}}
+common:
+      zkprefix: {{zkprefix}}
