@@ -72,7 +72,9 @@ func NewIDBuffer(bizTag string, application *bootstrap.Application) *IDBuffer {
 	typeIdMake := TypeIDMake{}
 	dbGen := typeIdMake.Make(bizTag, application)
 	currentId, cacheStep, step, _ := dbGen.GenerateSegment(bizTag)
-
+	if step <= 0 {
+		panic(fmt.Sprintf("bizTag %s, step %d is error", bizTag, step))
+	}
 	this := &IDBuffer{
 		bizTag:      bizTag, step: step, currentId: currentId, maxId: currentId + cacheStep, cacheStep: atomic.LoadUint64(&cacheStep), db: dbGen,
 		application: application,
