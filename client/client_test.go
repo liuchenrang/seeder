@@ -34,7 +34,7 @@ func TestNewClient(t *testing.T) {
 
 	i := 0
 	for i < 3 {
-		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "uts", GeneratorType: 1})
+		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "users", GeneratorType: 1})
 		if error != nil {
 			log.Fatal(error)
 		}

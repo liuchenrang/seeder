@@ -116,11 +116,11 @@ func (*IdGeneratorServiceImpl) GetId(ctx context.Context, params *generator.TGet
 		}
 	}()
 	id, err := manager.GetId(params.GetTag(), params.GeneratorType)
-	applicaton.GetLogger().Debug("request biz tag", params.GetTag())
 	if err != nil {
 		return "", NewSystemException(500, "SYSTEM_ERROR", "系统错误")
 	}
-	fmt.Println(id)
+	applicaton.GetLogger().Debug("request-biz tag %s, %d", params.GetTag(), id)
+
 	return fmt.Sprintf("%d", id), nil
 }
 

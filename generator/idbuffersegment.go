@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"seeder/bootstrap"
 	"sync"
+	error2 "seeder/error"
 )
 
 type IDBufferSegment struct {
@@ -24,12 +25,20 @@ type IDBufferSegment struct {
 
 func (segment *IDBufferSegment) GetId() (id uint64) {
 	var idBuffer *IDBuffer
+	var err error
+	var useOut bool
 	for {
 		idBuffer = segment.GetMasterIdBuffer()
-		id, _ = idBuffer.GetId()
+		id, err = idBuffer.GetId()
+		if err != nil {
+			useOut = err.Error() == error2.ID_USE_OUT
+		}
+		if id > 0 {
+			break
+		}
 		segment.monitorCheck <- nil
-		segment.application.GetLogger().Debug("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
-		if idBuffer.IsUseOut() {
+		segment.application.GetLogger().Debug("Check current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", useOut))
+		if useOut {
 			segment.ChangeSlaveToMaster()
 		} else {
 			break
@@ -94,12 +103,12 @@ func (segment *IDBufferSegment) SetSlaveIdBuffer(slave *IDBuffer) {
 func (segment *IDBufferSegment) ChangeSlaveToMaster() {
 	segment.muChage.Lock()
 	defer segment.muChage.Unlock()
-	segment.application.GetLogger().Debug("ChangeSlaveToMaster master %p slave %p", segment.slaveIdBuffer,  segment.GetSlaveIdBuffer())
+	segment.application.GetLogger().Debug("ChangeSlaveToMaster master %p slave %p", segment.masterIDBuffer, segment.GetSlaveIdBuffer())
 	slave := segment.ApplySlave()
 	segment.SetMasterIDBuffer(slave)
 }
 func (segment *IDBufferSegment) ApplySlave() *IDBuffer {
-	segment.muSlaveApply.Lock()  //多个goroutine申请会造成从库申请id浪费
+	segment.muSlaveApply.Lock() //多个goroutine申请会造成从库申请id浪费
 	defer segment.muSlaveApply.Unlock()
 
 	if segment.GetSlaveIdBuffer() == nil {

@@ -15,8 +15,8 @@ func NewClient(application *bootstrap.Application) *generator.IdGeneratorService
 	config := application.GetConfig()
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 	fmt.Println("connect", config.Server.Host, config.Server.Port)
-	 config.Server.Host = "58.215.141.112"
-	 config.Server.Port = 8001
+	 //config.Server.Host = "58.215.141.112"
+	 //config.Server.Port = 8001
 	// tsocket, err := thrift.NewTSocket(net.JoinHostPort("10.10.109.250", fmt.Sprintf("%d", config.Server.Port)))
 	hostInfo := net.JoinHostPort(config.Server.Host, fmt.Sprintf("%d", config.Server.Port))
 	timeout,_ := time.ParseDuration("30s")
