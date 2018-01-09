@@ -44,7 +44,7 @@ func (segment *IDBufferSegment) GetId() (id uint64) {
 			break
 		}
 	}
-	segment.application.GetLogger().Debug("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", idBuffer.IsUseOut()))
+	segment.application.GetLogger().Debug("Return ", "id", id, " current=", idBuffer.GetCurrentId(), "max=", idBuffer.GetMaxId(), fmt.Sprintf("this %p", idBuffer), fmt.Sprintf("segment %p", segment), fmt.Sprintf("out=%t", useOut))
 
 	return id
 }

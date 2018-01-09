@@ -3,3 +3,4 @@ sbin/seeder
 logs/*.log
 example
 ../sbin/seeder
+debug
