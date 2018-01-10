@@ -12,8 +12,8 @@ database:
            host: 127.0.0.1
            port: 3306
     connection_info:
-        max_open_conns: 20
-        max_idle_conns: 3
+        max_open_conns: 1000
+        max_idle_conns: 256
 
 server:
      port: 8001

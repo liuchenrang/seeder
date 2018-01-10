@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"time"
 	"math/rand"
-	"runtime"
 	"ipfilter"
 )
 
@@ -34,7 +33,7 @@ func TestNewClient(t *testing.T) {
 
 	i := 0
 	for i < 3 {
-		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "users", GeneratorType: 1})
+		id, error := client.GetId(nil, &thriftGenerator.TGetIdParams{Tag: "users", GeneratorType: 2})
 		if error != nil {
 			log.Fatal(error)
 		}
@@ -133,7 +132,6 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 	f,_ := os.Open("./tags.csv")
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
-	runtime.SetCPUProfileRate(2);
 
 
 	var tags []string
@@ -161,7 +159,7 @@ func BenchmarkLoopsMultiTag(b *testing.B) {
 
 		}
 	}
-	b.SetParallelism(500)
+	b.SetParallelism(60)
 	b.RunParallel(i)
 }
 // 测试并发效率
@@ -262,6 +260,8 @@ func BenchmarkLoopsSnow(b *testing.B) {
 
 		}
 	}
+	b.SetParallelism(20)
+
 	b.RunParallel(i)
 }
 
@@ -274,7 +274,6 @@ func BenchmarkSnowMultiTag(b *testing.B) {
 	f,_ := os.Open("./tags.csv")
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
-	runtime.SetCPUProfileRate(2);
 
 
 	var tags []string
@@ -302,6 +301,6 @@ func BenchmarkSnowMultiTag(b *testing.B) {
 
 		}
 	}
-	b.SetParallelism(100)
+	b.SetParallelism(20)
 	b.RunParallel(i)
 }
